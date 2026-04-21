@@ -252,187 +252,6 @@ const EX = [
   { id: 'hanging-windshield', name: 'Wycieraczki w zwisie', m: 'core', eq: 'bodyweight', t: 'isolation', rr: [6, 12] },
 ];
 
-// ============================================================
-// EXERCISE DESCRIPTIONS (technique cues for main lifts)
-// ============================================================
-const DESC = {
-  // KLATKA
-  'bb-bench': {
-    setup: 'Łopatki ściągnięte i schowane w dół, mostek wypchnięty, stopy mocno na podłodze. Chwyt nieco szerszy niż barki, nadgarstki nad łokciami.',
-    cues: ['Sztanga ląduje na dolnej części klatki', 'Łokcie pod kątem ~45° do tułowia', 'Pchnij się od ławki — całe ciało napięte', 'Pełen zakres — dotknij klatki, wyprostuj ramiona'],
-    mistake: 'Łokcie rozłożone na 90° → ból barków. Brak ściągniętych łopatek → niestabilność.',
-  },
-  'bb-incline': {
-    setup: 'Ławka na 30-45°. Łopatki ściągnięte, stopy stabilne. Chwyt jak na płaskiej.',
-    cues: ['Sztanga schodzi do górnej części klatki', 'Wyprost prosto w górę, nie łukiem', 'Łokcie 45°', 'Wyższy kąt = więcej barków, niższy = więcej klatki'],
-  },
-  'db-bench': {
-    setup: 'Hantle nad sutkami, dłonie skierowane do siebie lub w dół. Łopatki ściągnięte.',
-    cues: ['Pełen zakres — hantle obok klatki na dole', 'W górze wyciśnij i lekko zbliż hantle', 'Kontrolowany ekscentryk (2-3s w dół)', 'Łokcie pod hantlami przez cały ruch'],
-  },
-  'dips-chest': {
-    setup: 'Tułów lekko pochylony do przodu, łokcie skierowane na zewnątrz. Nogi za sobą lub skrzyżowane.',
-    cues: ['Pochyl się do przodu = więcej klatki', 'Schodź do uczucia rozciągnięcia w klatce', 'Łokcie nie blokują się w pełnym wyproście', 'Dodaj obciążenie gdy 12+ powtórzeń'],
-  },
-  'cable-cross-high': {
-    setup: 'Wyciągi ustawione wysoko, lekkie pochylenie tułowia, jedna noga z przodu dla stabilności.',
-    cues: ['Łuk ruchu — łokcie lekko ugięte i nie ruszają się', 'Ruch w dół i do siebie', 'Spinaj klatkę na końcu zakresu', 'Rozciągnij klatkę kontrolowanie w pozycji startowej'],
-  },
-  'pec-deck': {
-    setup: 'Plecy mocno przylegają, stopy płasko. Łokcie na poduszkach (lub przedramiona).',
-    cues: ['Tylko łokcie się stykają, nie ręce', 'Powolny ekscentryk', 'Pełne rozciągnięcie na końcu', '1-2 sekundowa pauza w skurczu'],
-  },
-  // PLECY
-  'deadlift': {
-    setup: 'Sztanga nad środkiem stóp, golenie blisko sztangi. Chwyt nieco szerszy niż nogi. Plecy proste, klatka wypchnięta, biodra wyżej niż kolana.',
-    cues: ['Sztanga prowadzona blisko ciała', 'Wypych nogami od podłogi, biodra i klatka idą razem', 'Aktywne łopatki — bary lekko ściągnięte', 'Bez przeprostu w lędźwiach na górze'],
-    mistake: 'Zaokrąglone plecy = kontuzja. Sztanga z dala od goleni = utrata dźwigni.',
-  },
-  'sumo-dl': {
-    setup: 'Stopy szeroko, palce na zewnątrz ~30°. Chwyt sztangi wąski, w środku.',
-    cues: ['Biodra niżej, tułów bardziej pionowy niż w klasycznym DL', 'Kolana wypchnięte na zewnątrz, w linii ze stopami', 'Łopatki nad sztangą na starcie', 'Prowadź klatkę do góry, sztanga wzdłuż goleni'],
-  },
-  'rdl': {
-    setup: 'Sztanga w rękach, kolana lekko ugięte i nieruchome. Plecy proste, klatka wypchnięta.',
-    cues: ['Biodra do tyłu — jak zamykanie drzwi tyłkiem', 'Sztanga zsuwa się po udach blisko ciała', 'Schodź do uczucia rozciągnięcia dwugłowych', 'Wracaj wypychając biodra do przodu'],
-    mistake: 'Zginanie kolan zamiast bioder. Zaokrąglone plecy.',
-  },
-  'pull-up': {
-    setup: 'Chwyt nachwytem nieco szerszy niż barki. Pełny zwis na rozciągniętych ramionach (z aktywnymi łopatkami).',
-    cues: ['Najpierw ściągnij łopatki, potem ciągnij ramieniem', 'Klatka do drążka, łokcie do bioder', 'Pełen zakres — broda wyraźnie nad drążkiem', 'Kontrolowany ekscentryk (2-3s)'],
-  },
-  'lat-pulldown-wide': {
-    setup: 'Drążek szeroki, chwyt nachwytem szerzej niż barki. Lekko odchyl tułów (~10°).',
-    cues: ['Ciągnij łokciami w dół do żeber, nie rękami', 'Drążek do górnej części klatki', 'Spin łopatki na dole', 'Nie kołysz tułowiem'],
-  },
-  'bb-row': {
-    setup: 'Pochylenie ~45°, plecy proste, sztanga wisi pod barkami. Chwyt szerokość barków.',
-    cues: ['Łokcie w stronę bioder', 'Sztanga ląduje na dolnych żebrach/pępku', 'Spin łopatek na końcu', 'Tułów stabilny — nie buja'],
-  },
-  'db-row': {
-    setup: 'Jedno kolano i ręka na ławce, plecy prostopadle do podłogi. Hantel wisi swobodnie.',
-    cues: ['Ciągnij łokciem do biodra (nie do barku)', 'Pełne rozciągnięcie na dole', 'Spin łopatki na końcu', 'Bez rotacji tułowia'],
-  },
-  'cable-row-narrow': {
-    setup: 'Stopy oparte, kolana lekko ugięte, plecy proste, klatka wypchnięta.',
-    cues: ['Ciągnij łokciami obok ciała', 'Uchwyt do brzucha', 'Spin łopatek na końcu', 'Nie odchylaj tułowia ponad pion'],
-  },
-  'face-pull': {
-    setup: 'Wyciąg na poziomie twarzy, chwyt linki nadchwytem.',
-    cues: ['Łokcie wysoko na poziomie barków', 'Końce linki do uszu', 'Pauza ze ściągniętymi tylnymi aktonami', 'Lekki ciężar, kontrola'],
-  },
-  // BARKI
-  'ohp': {
-    setup: 'Sztanga na obojczykach, chwyt nieco szerszy niż barki. Pośladki i brzuch napięte, łokcie lekko z przodu sztangi.',
-    cues: ['Cofnij głowę gdy sztanga przechodzi twarz', 'Wypych pionowo w górę', 'Na górze sztanga nad środkiem stóp', 'Bez wybijania z bioder (chyba że robisz push press)'],
-  },
-  'db-shoulder-press': {
-    setup: 'Hantle na wysokości barków, dłonie do przodu. Łokcie pod hantlami.',
-    cues: ['Wypych w górę po lekkim łuku', 'Hantle stykają się delikatnie na górze', 'Pełen zakres — łokcie poniżej barków na dole', 'Brzuch napięty, bez przeprostu w lędźwiach'],
-  },
-  'lateral-raise': {
-    setup: 'Stopy szerokość bioder, hantle przy biodrach, lekkie pochylenie tułowia do przodu.',
-    cues: ['Łokcie prowadzą ruch, nie dłonie', 'Hantle do poziomu barków, nie wyżej', 'Lekkie ugięcie łokci, zafiksowane', 'Powolny ekscentryk (2-3s)'],
-    mistake: 'Bujanie ciężarem z bioder. Zbyt ciężki ciężar = trapezy zamiast barków.',
-  },
-  'rear-delt-machine': {
-    setup: 'Klatka oparta o poduszkę, chwyt uchwytów neutralny lub nachwytem.',
-    cues: ['Łokcie na zewnątrz, prowadzą ruch', 'Spin łopatek na końcu zakresu', 'Bez rzucania — kontrola', 'Lekkie pochylenie głowy do przodu izoluje tylne aktony'],
-  },
-  // BICEPS
-  'bb-curl': {
-    setup: 'Chwyt podchwytem szerokość barków. Łokcie blisko tułowia, ramiona unieruchomione.',
-    cues: ['Tylko łokieć się rusza', 'Pełen zakres — sztanga do barków', 'Bez bujania bioder', 'Spin biceps na górze'],
-  },
-  'db-curl': {
-    setup: 'Hantle przy biodrach, dłonie do przodu lub neutralne (skręcaj w trakcie ruchu).',
-    cues: ['Łokcie unieruchomione przy ciele', 'Supinacja (skręt nadgarstka) podczas wznoszenia', 'Pełen zakres', 'Powolny ekscentryk'],
-  },
-  'hammer-curl': {
-    setup: 'Hantle przy biodrach, dłonie zwrócone do siebie (chwyt młotkowy).',
-    cues: ['Trzymaj chwyt neutralny przez cały ruch', 'Łokcie przy ciele', 'Pełen zakres do barków', 'Atakuje brachialis i przedramię'],
-  },
-  // TRICEPS
-  'tri-pushdown-rope': {
-    setup: 'Wyciąg na samej górze, chwyt linki neutralny. Łokcie blisko ciała, lekkie pochylenie do przodu.',
-    cues: ['Tylko łokieć się rusza', 'Rozciągnij linkę na dole — końce w bok', 'Pełen wyprost na końcu', 'Łokcie nigdy nie odchodzą od tułowia'],
-  },
-  'overhead-tri-cable': {
-    setup: 'Plecami do wyciągu, linka nad głową. Łokcie skierowane do przodu, blisko głowy.',
-    cues: ['Łokcie nieruchome, prowadzą do góry', 'Pełne rozciągnięcie tricepsa na dole', 'Wyprost na samej górze', 'Bez wyginania pleców'],
-  },
-  'skullcrusher-ez': {
-    setup: 'Leżąc na ławce, sztanga EZ nad klatką. Łokcie skierowane w sufit.',
-    cues: ['Tylko łokieć się rusza, ramię pionowe', 'Sztanga schodzi do czoła lub za głowę', 'Pełen wyprost', 'Łokcie nie rozjeżdżają się na boki'],
-  },
-  'close-grip': {
-    setup: 'Jak wyciskanie, ale chwyt na szerokość barków lub minimalnie węższy. Łokcie blisko tułowia.',
-    cues: ['Łokcie schowane, blisko żeber', 'Sztanga do dolnej części klatki', 'Pełen wyprost ramion', 'Pełna ROM = lepsza praca tricepsa'],
-  },
-  // NOGI
-  'back-squat': {
-    setup: 'Sztanga na górnej części trapezów (high-bar) lub niżej na tylnych aktonach (low-bar). Stopy szerokość barków, palce lekko na zewnątrz.',
-    cues: ['Klatka wypchnięta, plecy proste przez cały ruch', 'Kolana w linii ze stopami (nie do środka)', 'Schodź do równoległości lub poniżej', 'Wypych przez piętę i śródstopie, nie palce'],
-    mistake: 'Kolana zwijane do środka. Zaokrąglenie pleców na dole. Pięty odrywające się od podłogi.',
-  },
-  'front-squat': {
-    setup: 'Sztanga na przednich aktonach barków, łokcie wysoko (równolegle do podłogi). Chwyt frontalny lub krzyżowy.',
-    cues: ['Łokcie wysoko przez cały ruch', 'Tułów bardziej pionowy niż w back squat', 'Schodź głębiej — większy zakres ruchu', 'Pchaj kolana do przodu i na zewnątrz'],
-  },
-  'leg-press': {
-    setup: 'Stopy na platformie szerokość barków. Plecy i pośladki przylegają. Kąt kolan ~90° na starcie.',
-    cues: ['Schodź kontrolowanie do ~90° lub niżej', 'Bez odrywania pośladków — to obciąża lędźwie', 'Kolana w linii ze stopami', 'Nie blokuj kolan na końcu'],
-  },
-  'hack-squat': {
-    setup: 'Plecy oparte, ramiona pod poduszkami. Stopy na platformie szerokość barków.',
-    cues: ['Schodź do równoległości lub poniżej', 'Stopy wyżej = więcej pośladków, niżej = więcej czworogłowych', 'Kolana zgodnie ze stopami', 'Powolny ekscentryk'],
-  },
-  'bulgarian': {
-    setup: 'Tylna noga oparta o ławkę, przednia ~70cm przed ławką. Tułów lekko pochylony do przodu.',
-    cues: ['Ciężar na przedniej nodze (~80%)', 'Przednia pięta mocno na podłodze', 'Schodź aż tylne kolano blisko podłogi', 'Bez rotacji bioder'],
-  },
-  'leg-ext': {
-    setup: 'Plecy przy oparciu, podkładka tuż nad kostkami. Uchwyty trzymane mocno.',
-    cues: ['Pełen wyprost — spin czworogłowych na górze', 'Powolny ekscentryk', 'Bez kompensacji bioder', '1-2 sekundowa pauza w skurczu'],
-  },
-  'lying-curl': {
-    setup: 'Leżąc twarzą w dół, podkładka nad piętami (nie na łydkach).',
-    cues: ['Pięty do pośladków — pełen zakres', 'Bez odrywania bioder od poduszki', 'Powolny ekscentryk', 'Spin dwugłowych na górze'],
-  },
-  'seated-curl': {
-    setup: 'Plecy oparte, podkładka nad piętami. Pas biodrowy zapięty jeśli jest.',
-    cues: ['Pełen zakres — pięty pod ławkę', 'Bez odrywania ud', 'Powolny ekscentryk (2-3s)', 'Lekkie zgięcie palców stóp w trakcie zwiększa aktywację'],
-  },
-  'hip-thrust': {
-    setup: 'Plecy oparte o ławkę pod łopatkami, sztanga na biodrach (z padem). Stopy szerokość barków, golenie pionowe na górze.',
-    cues: ['Wypchnij biodra w górę aż tułów-uda-golenie tworzą linię', 'Spin pośladków 1-2s na górze', 'Broda lekko schowana — neutralna szyja', 'Pchaj przez pięty'],
-  },
-  'standing-calf': {
-    setup: 'Palce na podstawce, pięty zwisają. Plecy proste, korpus napięty.',
-    cues: ['Pełne rozciągnięcie na dole (2s)', 'Maksymalny wyprost na palcach', 'Powolne tempo — bez bujania', 'Pauza na górze i na dole'],
-  },
-  'seated-calf': {
-    setup: 'Kolana pod poduszkami, palce na podstawce.',
-    cues: ['Atakuje płaszczkowaty (soleus)', 'Pełen zakres — pełne rozciągnięcie i pełen wyprost', 'Powolne tempo', 'Wyższe powtórzenia (12-20)'],
-  },
-  // CORE
-  'plank': {
-    setup: 'Łokcie pod barkami, ciało w linii prostej od głowy do pięt. Brzuch napięty, pośladki ściśnięte.',
-    cues: ['Bez opadania bioder', 'Bez wypinania pośladków w górę', 'Oddychaj normalnie', 'Krótszy plank z dobrą formą > długi z opadającymi biodrami'],
-  },
-  'leg-raise': {
-    setup: 'Wis na drążku z aktywnym chwytem, łopatki lekko ściągnięte.',
-    cues: ['Unoś nogi siłą brzucha, nie biodrami', 'Nogi proste = trudniej, ugięte = łatwiej', 'Bez bujania', 'Powolny ekscentryk'],
-  },
-  'cable-crunch': {
-    setup: 'Klęcz przed wyciągiem górnym, linka za głową, łokcie blisko twarzy.',
-    cues: ['Zwijaj się — broda do bioder', 'Ruch tylko z brzucha, nie biodra', 'Pauza w skurczu', 'Powolny powrót'],
-  },
-  'ab-wheel': {
-    setup: 'Klęcz, rolka pod barkami, brzuch napięty.',
-    cues: ['Wytocz tak daleko jak utrzymasz proste plecy', 'Bez wyginania lędźwi w dół', 'Wracaj siłą brzucha', 'Zaczynaj od krótkich powtórzeń'],
-  },
-};
 
 // YouTube search URL helper
 const ytUrl = (name) => `https://www.youtube.com/results?search_query=${encodeURIComponent(name + ' technika wykonania')}`;
@@ -802,9 +621,21 @@ function HomeView({ profile, plan, history, onStart, onPickWorkout }) {
   // Suggest next workout: cycle through plan based on last completed
   const todayIdx = useMemo(() => {
     if (!plan || plan.length === 0) return 0;
-    const sessions = Object.values(history).flat().sort((a, b) => b.date - a.date);
-    if (sessions.length === 0) return 0;
-    const lastName = sessions[0]?.workoutName;
+    const sessionsMap = {};
+    for (const [exId, sessions] of Object.entries(history)) {
+      for (const s of sessions || []) {
+        if (!sessionsMap[s.sessionId]) {
+          sessionsMap[s.sessionId] = {
+            sessionId: s.sessionId,
+            workoutName: s.workoutName,
+            date: s.date,
+          };
+        }
+      }
+    }
+    const sessionsList = Object.values(sessionsMap).sort((a, b) => b.date - a.date);
+    if (sessionsList.length === 0) return 0;
+    const lastName = sessionsList[0]?.workoutName;
     const idx = plan.findIndex(w => w.name === lastName);
     return idx === -1 ? 0 : (idx + 1) % plan.length;
   }, [plan, history]);
@@ -864,111 +695,32 @@ function HomeView({ profile, plan, history, onStart, onPickWorkout }) {
   );
 }
 
-// ============================================================
-// EXERCISE DETAIL MODAL
-// ============================================================
-function ExerciseDetail({ exercise, history, onClose, onSwap, swapMode }) {
-  const desc = DESC[exercise.id];
-  const exHistory = history?.[exercise.id] || [];
-  const allSets = exHistory.flatMap(s => s.sets.filter(st => st.completed));
-  const pr = allSets.reduce((a, s) => Math.max(a, s.weight || 0), 0);
-
-  return (
-    <div className="fixed inset-0 z-50 bg-black/80 flex items-end sm:items-center justify-center" onClick={onClose}>
-      <div
-        className="bg-[#0a0a0a] border-t-2 sm:border-2 border-[#d4ff00] w-full max-w-lg max-h-[90vh] overflow-y-auto"
-        onClick={e => e.stopPropagation()}
-      >
-        <div className="sticky top-0 bg-[#0a0a0a] border-b border-neutral-900 px-5 py-4 flex items-start justify-between gap-3">
-          <div>
-            <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-[#d4ff00] mb-1">
-              <span>{exercise.m}</span>
-              <span className="text-neutral-700">·</span>
-              <span className="text-neutral-500">{eqLabel(exercise.eq)}</span>
-              <span className="text-neutral-700">·</span>
-              <span className="text-neutral-500">{exercise.t === 'compound' ? 'Wielost.' : 'Izol.'}</span>
-            </div>
-            <h2 className="font-display text-2xl uppercase leading-tight">{exercise.name}</h2>
-          </div>
-          <button onClick={onClose} className="shrink-0 w-8 h-8 flex items-center justify-center text-neutral-500 hover:text-white">
-            <X size={20}/>
-          </button>
-        </div>
-
-        <div className="p-5 space-y-5">
-          {pr > 0 && (
-            <div className="border border-neutral-800 p-3 flex items-center gap-3">
-              <Award className="text-[#d4ff00]" size={20}/>
-              <div>
-                <div className="text-[10px] uppercase tracking-widest text-neutral-500">Twój rekord</div>
-                <div className="font-mono text-lg text-white">{pr} kg</div>
-              </div>
-            </div>
-          )}
-
-          {desc ? (
-            <>
-              <div>
-                <div className="text-xs uppercase tracking-widest text-[#d4ff00] mb-2">Pozycja wyjściowa</div>
-                <p className="text-sm text-neutral-300 leading-relaxed">{desc.setup}</p>
-              </div>
-              <div>
-                <div className="text-xs uppercase tracking-widest text-[#d4ff00] mb-2">Wskazówki techniczne</div>
-                <ul className="space-y-1.5">
-                  {desc.cues.map((c, i) => (
-                    <li key={i} className="text-sm text-neutral-300 flex gap-2 leading-relaxed">
-                      <span className="text-[#d4ff00] mt-0.5 shrink-0">▸</span>
-                      <span>{c}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              {desc.mistake && (
-                <div className="border border-red-900/40 bg-red-950/20 p-3">
-                  <div className="text-xs uppercase tracking-widest text-red-400 mb-1">Częste błędy</div>
-                  <p className="text-sm text-neutral-300 leading-relaxed">{desc.mistake}</p>
+<div className="space-y-2">
+        {filtered.map(e => {
+          return (
+            <button
+              key={e.id}
+              onClick={() => setSelected(e)}
+              className="w-full text-left border border-neutral-800 p-3 hover:border-[#d4ff00]/40 active:scale-[0.99] transition-all"
+            >
+              <div className="flex items-baseline justify-between gap-2">
+                <h3 className="font-body text-sm text-white truncate flex-1">{e.name}</h3>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <span className="text-[10px] font-mono text-[#d4ff00] uppercase">wideo</span>
+                  <span className="text-[10px] font-mono text-neutral-500 uppercase">{e.t === 'compound' ? 'Wielost.' : 'Izol.'}</span>
                 </div>
-              )}
-            </>
-          ) : (
-            <div className="border border-dashed border-neutral-800 p-4 text-sm text-neutral-500">
-              Szczegółowy opis dla tego ćwiczenia nie jest jeszcze dostępny. Sprawdź demonstrację na YouTube.
-            </div>
-          )}
-
-          <div className="border border-neutral-800 p-3">
-            <div className="text-xs uppercase tracking-widest text-neutral-500 mb-2">Zakres roboczy</div>
-            <div className="font-mono text-base text-white">{exercise.rr[0]}–{exercise.rr[1]} {exercise.unit || 'powtórzeń'}</div>
-          </div>
-
-          <a
-            href={ytUrl(exercise.name)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-full bg-neutral-900 border border-neutral-800 hover:border-red-500/60 transition-colors p-4 flex items-center justify-between"
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-7 bg-red-600 rounded-sm flex items-center justify-center">
-                <Play size={14} fill="white" stroke="white"/>
               </div>
-              <div>
-                <div className="font-display text-base uppercase">Zobacz na YouTube</div>
-                <div className="text-[10px] text-neutral-500 uppercase tracking-widest">Demonstracja techniki</div>
+              <div className="flex items-center gap-2 mt-1">
+                <span className="text-[10px] text-[#d4ff00] uppercase tracking-widest">{e.m}</span>
+                <span className="text-[10px] text-neutral-600">·</span>
+                <span className="text-[10px] text-neutral-500">{eqLabel(e.eq)}</span>
+                <span className="text-[10px] text-neutral-600">·</span>
+                <span className="text-[10px] font-mono text-neutral-500">{e.rr[0]}–{e.rr[1]} {e.unit || 'powt'}</span>
               </div>
-            </div>
-            <ExternalLink size={16} className="text-neutral-500"/>
-          </a>
-
-          {onSwap && (
-            <Btn variant="ghost" onClick={onSwap} className="w-full">
-              <Repeat size={16}/>{swapMode ? 'Wymień to ćwiczenie' : 'Pokaż alternatywy'}
-            </Btn>
-          )}
-        </div>
+            </button>
+          );
+        })}
       </div>
-    </div>
-  );
-}
 
 // ============================================================
 // SWAP EXERCISE MODAL
@@ -1324,17 +1076,26 @@ function SetRow({ idx, set, ex, recommended, allTimeBest, onUpdate }) {
 // ============================================================
 function HistoryView({ history }) {
   const allSessions = useMemo(() => {
-    const arr = [];
-    for (const sessions of Object.values(history)) {
-      for (const s of sessions || []) arr.push(s);
+    const sessionsMap = {};
+    
+    for (const [exId, sessions] of Object.entries(history)) {
+      for (const s of sessions || []) {
+        if (!sessionsMap[s.sessionId]) {
+          sessionsMap[s.sessionId] = {
+            sessionId: s.sessionId,
+            workoutName: s.workoutName,
+            date: s.date,
+            exercises: []
+          };
+        }
+        sessionsMap[s.sessionId].exercises.push({
+          exerciseId: exId,
+          sets: s.sets
+        });
+      }
     }
-    // dedupe by sessionId
-    const seen = new Set();
-    return arr.filter(s => {
-      if (seen.has(s.sessionId)) return false;
-      seen.add(s.sessionId);
-      return true;
-    }).sort((a, b) => b.date - a.date);
+    
+    return Object.values(sessionsMap).sort((a, b) => b.date - a.date);
   }, [history]);
 
   return (
@@ -1455,47 +1216,8 @@ function MiniChart({ sessions }) {
 // ============================================================
 // LIBRARY VIEW
 // ============================================================
-function LibraryView({ history }) {
-  const [filter, setFilter] = useState('all');
-  const [search, setSearch] = useState('');
-  const [selected, setSelected] = useState(null);
-  const muscles = ['all', ...Array.from(new Set(EX.map(e => e.m)))];
-  let filtered = filter === 'all' ? EX : EX.filter(e => e.m === filter);
-  if (search.trim()) {
-    const s = search.trim().toLowerCase();
-    filtered = filtered.filter(e => e.name.toLowerCase().includes(s));
-  }
-
-  return (
-    <div className="px-5 pt-10 pb-24">
-      <h1 className="font-display text-4xl uppercase mb-1">Biblioteka</h1>
-      <p className="text-neutral-500 text-xs uppercase tracking-widest mb-4">{EX.length} ćwiczeń</p>
-
-      <input
-        type="text"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        placeholder="Szukaj ćwiczenia..."
-        className="w-full p-3 bg-neutral-950 border border-neutral-800 text-sm text-white placeholder:text-neutral-600 focus:border-[#d4ff00] outline-none mb-3"
-      />
-
-      <div className="flex gap-2 overflow-x-auto scroll-hide -mx-5 px-5 pb-3 mb-3">
-        {muscles.map(m => (
-          <button
-            key={m}
-            onClick={() => setFilter(m)}
-            className={`shrink-0 px-3 py-1.5 text-xs uppercase tracking-wider border ${filter === m ? 'border-[#d4ff00] bg-[#d4ff00] text-black' : 'border-neutral-800 text-neutral-400'}`}
-          >
-            {m === 'all' ? 'Wszystkie' : m}
-          </button>
-        ))}
-      </div>
-
-      <div className="text-xs text-neutral-600 mb-2 font-mono">{filtered.length} wyników</div>
-
-      <div className="space-y-2">
+<div className="space-y-2">
         {filtered.map(e => {
-          const hasDesc = !!DESC[e.id];
           return (
             <button
               key={e.id}
@@ -1505,7 +1227,7 @@ function LibraryView({ history }) {
               <div className="flex items-baseline justify-between gap-2">
                 <h3 className="font-body text-sm text-white truncate flex-1">{e.name}</h3>
                 <div className="flex items-center gap-1.5 shrink-0">
-                  {hasDesc && <span className="text-[9px] font-mono text-[#d4ff00] uppercase">opis</span>}
+                  <span className="text-[10px] font-mono text-[#d4ff00] uppercase">wideo</span>
                   <span className="text-[10px] font-mono text-neutral-500 uppercase">{e.t === 'compound' ? 'Wielost.' : 'Izol.'}</span>
                 </div>
               </div>
@@ -1520,17 +1242,6 @@ function LibraryView({ history }) {
           );
         })}
       </div>
-
-      {selected && (
-        <ExerciseDetail
-          exercise={selected}
-          history={history}
-          onClose={() => setSelected(null)}
-        />
-      )}
-    </div>
-  );
-}
 
 // ============================================================
 // PLAN EDITOR
@@ -1869,26 +1580,45 @@ export default function App() {
     saveOne(KEY_ACTIVE, newActive);
   };
 
+  const handleSwapExercise = (exIdx, newEx) => {
+    if (!active || !plan) return;
+    
+    const workoutIdx = active.workoutIdx;
+    
+    const updatedPlan = [...plan];
+    const updatedWorkout = { ...updatedPlan[workoutIdx] };
+    const updatedExercises = [...updatedWorkout.exercises];
+    
+    const oldSetsCount = updatedExercises[exIdx]?.sets || 3;
+    updatedExercises[exIdx] = { ...newEx, sets: oldSetsCount };
+    
+    updatedWorkout.exercises = updatedExercises;
+    updatedPlan[workoutIdx] = updatedWorkout;
+    
+    setPlan(updatedPlan);
+    saveOne(KEY_PLAN, updatedPlan);
+  };
+
   const finishWorkout = () => {
     if (!active) return;
-    const w = plan[active.workoutIdx];
     const session = {
       sessionId: active.sessionId,
       workoutName: active.workoutName,
       date: active.date,
       exercises: active.exercises,
     };
-    // Persist to per-exercise history
+    
     const newHistory = { ...history };
     active.exercises.forEach((e) => {
       if (!newHistory[e.exerciseId]) newHistory[e.exerciseId] = [];
       newHistory[e.exerciseId] = [...newHistory[e.exerciseId], { date: session.date, sessionId: session.sessionId, workoutName: session.workoutName, sets: e.sets }];
     });
+    
     setHistory(newHistory);
     saveOne(KEY_HISTORY, newHistory);
     setActive(null);
     saveOne(KEY_ACTIVE, null);
-    setView('history');
+    setView('home');
   };
 
   const cancelWorkout = () => {
@@ -1961,7 +1691,7 @@ export default function App() {
           onFinish={finishWorkout}
           onCancel={cancelWorkout}
           profile={profile}
-          onSwapExercise={() => {}}
+          onSwapExercise={handleSwapExercise}
         />
       </>
     );
