@@ -2,261 +2,95 @@ import { useState, useEffect, useMemo } from 'react';
 import { ChevronRight, Plus, Minus, Check, X, Dumbbell, History, Library, Home, Settings, TrendingUp, Trash2, RotateCcw, Play, Award, Target, Info, Timer, Repeat, FileText, Pause, ExternalLink, Flame, Sparkles } from 'lucide-react';
 
 // ============================================================
-// EXERCISE DATABASE
+// BAZA ĆWICZEŃ: FABRYKA SIŁY (Priorytetowe z linkami)
 // ============================================================
-const EX = [
-  // ============ KLATKA (chest) ============
-  { id: 'bb-bench', name: 'Wyciskanie sztangi na ławce płaskiej', m: 'klatka', eq: 'barbell', t: 'compound', rr: [5, 10] },
-  { id: 'bb-incline', name: 'Wyciskanie sztangi na ławce skośnej', m: 'klatka', eq: 'barbell', t: 'compound', rr: [6, 12] },
-  { id: 'bb-decline', name: 'Wyciskanie sztangi na ławce ujemnej', m: 'klatka', eq: 'barbell', t: 'compound', rr: [6, 12] },
-  { id: 'bb-floor-press', name: 'Wyciskanie sztangi z podłogi', m: 'klatka', eq: 'barbell', t: 'compound', rr: [5, 8] },
-  { id: 'db-bench', name: 'Wyciskanie hantli na ławce płaskiej', m: 'klatka', eq: 'dumbbell', t: 'compound', rr: [6, 12] },
-  { id: 'db-incline', name: 'Wyciskanie hantli na ławce skośnej', m: 'klatka', eq: 'dumbbell', t: 'compound', rr: [6, 12] },
-  { id: 'db-decline', name: 'Wyciskanie hantli na ławce ujemnej', m: 'klatka', eq: 'dumbbell', t: 'compound', rr: [8, 12] },
-  { id: 'db-floor-press', name: 'Wyciskanie hantli z podłogi', m: 'klatka', eq: 'dumbbell', t: 'compound', rr: [6, 10] },
-  { id: 'sa-db-bench', name: 'Wyciskanie hantli jednorącz', m: 'klatka', eq: 'dumbbell', t: 'compound', rr: [8, 12] },
-  { id: 'db-fly-flat', name: 'Rozpiętki hantlami na ławce płaskiej', m: 'klatka', eq: 'dumbbell', t: 'isolation', rr: [10, 15] },
-  { id: 'db-fly-incline', name: 'Rozpiętki hantlami na ławce skośnej', m: 'klatka', eq: 'dumbbell', t: 'isolation', rr: [10, 15] },
-  { id: 'db-fly-decline', name: 'Rozpiętki hantlami na ławce ujemnej', m: 'klatka', eq: 'dumbbell', t: 'isolation', rr: [10, 15] },
-  { id: 'svend-press', name: 'Svend press (ściskanie talerza)', m: 'klatka', eq: 'dumbbell', t: 'isolation', rr: [12, 20] },
-  { id: 'around-world', name: 'Around the worlds z hantlami', m: 'klatka', eq: 'dumbbell', t: 'isolation', rr: [10, 15] },
-  { id: 'cable-cross-high', name: 'Krzyżowanie wyciągów z góry', m: 'klatka', eq: 'cable', t: 'isolation', rr: [10, 15] },
-  { id: 'cable-cross-low', name: 'Krzyżowanie wyciągów z dołu', m: 'klatka', eq: 'cable', t: 'isolation', rr: [10, 15] },
-  { id: 'cable-cross-mid', name: 'Krzyżowanie wyciągów na wprost', m: 'klatka', eq: 'cable', t: 'isolation', rr: [10, 15] },
-  { id: 'cable-fly-bench', name: 'Rozpiętki na wyciągu na ławce', m: 'klatka', eq: 'cable', t: 'isolation', rr: [10, 15] },
-  { id: 'sa-cable-press', name: 'Wyciskanie wyciągu jednorącz', m: 'klatka', eq: 'cable', t: 'compound', rr: [10, 15] },
-  { id: 'pec-deck', name: 'Pec deck (butterfly)', m: 'klatka', eq: 'machine', t: 'isolation', rr: [10, 15] },
-  { id: 'machine-press-flat', name: 'Wyciskanie na maszynie (płaskie)', m: 'klatka', eq: 'machine', t: 'compound', rr: [8, 12] },
-  { id: 'machine-press-incline', name: 'Wyciskanie na maszynie (skośne)', m: 'klatka', eq: 'machine', t: 'compound', rr: [8, 12] },
-  { id: 'machine-press-decline', name: 'Wyciskanie na maszynie (ujemne)', m: 'klatka', eq: 'machine', t: 'compound', rr: [8, 12] },
-  { id: 'smith-bench-flat', name: 'Wyciskanie na suwnicy Smitha (płaskie)', m: 'klatka', eq: 'machine', t: 'compound', rr: [6, 12] },
-  { id: 'smith-bench-incline', name: 'Wyciskanie na suwnicy Smitha (skośne)', m: 'klatka', eq: 'machine', t: 'compound', rr: [6, 12] },
-  { id: 'dips-chest', name: 'Dipy na poręczach (klatka)', m: 'klatka', eq: 'bodyweight', t: 'compound', rr: [6, 15] },
-  { id: 'pushup', name: 'Pompki klasyczne', m: 'klatka', eq: 'bodyweight', t: 'compound', rr: [10, 25] },
-  { id: 'pushup-incline', name: 'Pompki ze stopami niżej (łatwiejsze)', m: 'klatka', eq: 'bodyweight', t: 'compound', rr: [10, 25] },
-  { id: 'pushup-decline', name: 'Pompki ze stopami w górze', m: 'klatka', eq: 'bodyweight', t: 'compound', rr: [8, 20] },
-  { id: 'pushup-deficit', name: 'Pompki na uchwytach (deficit)', m: 'klatka', eq: 'bodyweight', t: 'compound', rr: [8, 15] },
-  { id: 'pushup-archer', name: 'Pompki łucznika', m: 'klatka', eq: 'bodyweight', t: 'compound', rr: [5, 12] },
-  { id: 'plyo-pushup', name: 'Pompki plyometryczne', m: 'klatka', eq: 'bodyweight', t: 'compound', rr: [5, 10] },
+const fsRaw = [
+  // NOGI / POŚLADKI
+  ['Zakroki Zerchera', 'czworogłowe', 'barbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/zakroki-zerchera'],
+  ['Wyprosty kolan na maszynie jednonóż', 'czworogłowe', 'machine', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/wyprosty-kolan-na-maszynie-jednonoz'],
+  ['Przysiad ze sztangą ze stojaków', 'czworogłowe', 'barbell', 'compound', 5, 10, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/przysiad-ze-sztagna-ze-stojakow'],
+  ['Pistolet na podwyższeniu', 'czworogłowe', 'bodyweight', 'compound', 4, 8, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/pistolet-na-podwyzszeniu'],
+  ['Zakroki ze sztangą na plecach', 'czworogłowe', 'barbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/zakroki-ze-sztanga-na-plecach'],
+  ['Wykroki chodzone z hantlami', 'czworogłowe', 'dumbbell', 'compound', 10, 16, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/wykroki-chodzone-z-hantlami-w-dloniach'],
+  ['Przysiad bułgarski z hantlami', 'czworogłowe', 'dumbbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/przysiad-bulgarski-z-hantlami-wersja-dla-miesnia-czworoglowego-uda'],
+  ['Wypychanie nogami na suwnicy', 'czworogłowe', 'machine', 'compound', 8, 15, 'https://www.fabrykasily.pl/cwiczenia/czworoglowe-uda/wypychanie-nogami-na-suwnicy'],
+  ['Przysiad ze sztangą na plecach', 'czworogłowe', 'barbell', 'compound', 5, 10, 'https://www.fabrykasily.pl/cwiczenia/czworoglowe-uda/przysiad-ze-sztanga-trzymana-na-plecach'],
+  ['Rumuński martwy ciąg (RDL)', 'dwugłowe uda', 'barbell', 'compound', 6, 10, 'https://www.fabrykasily.pl/cwiczenia/dwuglowe-uda/martwy-ciag-na-prostych-nogach-barbell'],
+  ['Hip thrust ze sztangą', 'pośladki', 'barbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda/unoszenie-bioder-ze-sztanga-w-oparciu-o-laweczke'],
+  ['Zginanie nóg na maszynie', 'dwugłowe uda', 'machine', 'isolation', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/dwuglowe-uda/zginanie-nog-na-maszynie-siedzac-seated'],
+  ['Żuraw (Nordic curl)', 'dwugłowe uda', 'bodyweight', 'isolation', 4, 8, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda/zuraw'],
+  
+  // PLECY
+  ['Klasyczny martwy ciąg', 'plecy', 'barbell', 'compound', 3, 6, 'https://www.fabrykasily.pl/cwiczenia/na-plecy/klasyczny-martwy-ciag-barbell-deadlift'],
+  ['Podciąganie na drążku nachwytem', 'plecy', 'bodyweight', 'compound', 5, 12, 'https://www.fabrykasily.pl/cwiczenia/na-plecy/podciaganie-na-drazku-trzymanym-nachwytem-pullups'],
+  ['Wiosłowanie sztangą podchwytem', 'plecy', 'barbell', 'compound', 6, 10, 'https://www.fabrykasily.pl/cwiczenia/na-plecy/wioslowanie-sztanga-trzymana-podchwytem-w-opadzie'],
+  ['Wiosłowanie hantlami w opadzie', 'plecy', 'dumbbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/na-plecy/wioslowanie-hantlami-w-opadzie-tulowia-bentover'],
+  ['Ściąganie drążka wyciągu do klatki', 'plecy', 'cable', 'compound', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/na-plecy/sciaganie-drazka-wyciagu-gornego-do-klatki'],
+  ['Przyciąganie linki wyciągu siedząc', 'plecy', 'cable', 'compound', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/na-plecy/przyciaganie-linki-wyciagu-dolnego-siedzac-seated'],
 
-  // ============ PLECY (back) ============
-  { id: 'deadlift', name: 'Martwy ciąg klasyczny', m: 'plecy', eq: 'barbell', t: 'compound', rr: [3, 6] },
-  { id: 'sumo-dl', name: 'Martwy ciąg sumo', m: 'plecy', eq: 'barbell', t: 'compound', rr: [3, 6] },
-  { id: 'trap-bar-dl', name: 'Martwy ciąg trap-bar', m: 'plecy', eq: 'barbell', t: 'compound', rr: [4, 8] },
-  { id: 'rack-pull', name: 'Rack pulls (martwy ciąg z podstawek)', m: 'plecy', eq: 'barbell', t: 'compound', rr: [5, 8] },
-  { id: 'deficit-dl', name: 'Martwy ciąg z deficytu', m: 'plecy', eq: 'barbell', t: 'compound', rr: [4, 6] },
-  { id: 'pull-up', name: 'Podciąganie nachwytem', m: 'plecy', eq: 'bodyweight', t: 'compound', rr: [5, 12] },
-  { id: 'pull-up-wide', name: 'Podciąganie szerokim nachwytem', m: 'plecy', eq: 'bodyweight', t: 'compound', rr: [4, 10] },
-  { id: 'chin-up', name: 'Podciąganie podchwytem', m: 'plecy', eq: 'bodyweight', t: 'compound', rr: [5, 12] },
-  { id: 'pull-up-neutral', name: 'Podciąganie chwytem neutralnym', m: 'plecy', eq: 'bodyweight', t: 'compound', rr: [5, 12] },
-  { id: 'weighted-pull-up', name: 'Podciąganie z obciążeniem', m: 'plecy', eq: 'bodyweight', t: 'compound', rr: [4, 8] },
-  { id: 'inverted-row', name: 'Australijskie podciąganie (wiosło)', m: 'plecy', eq: 'bodyweight', t: 'compound', rr: [8, 15] },
-  { id: 'lat-pulldown-wide', name: 'Ściąganie drążka szerokim chwytem', m: 'plecy', eq: 'cable', t: 'compound', rr: [8, 12] },
-  { id: 'lat-pulldown-narrow', name: 'Ściąganie drążka wąskim chwytem', m: 'plecy', eq: 'cable', t: 'compound', rr: [8, 12] },
-  { id: 'lat-pulldown-neutral', name: 'Ściąganie drążka chwytem neutralnym', m: 'plecy', eq: 'cable', t: 'compound', rr: [8, 12] },
-  { id: 'lat-pulldown-reverse', name: 'Ściąganie drążka podchwytem', m: 'plecy', eq: 'cable', t: 'compound', rr: [8, 12] },
-  { id: 'sa-lat-pulldown', name: 'Ściąganie wyciągu jednorącz', m: 'plecy', eq: 'cable', t: 'compound', rr: [10, 15] },
-  { id: 'straight-arm-pulldown', name: 'Ściąganie wyciągu prostymi rękami', m: 'plecy', eq: 'cable', t: 'isolation', rr: [10, 15] },
-  { id: 'bb-row', name: 'Wiosłowanie sztangą w opadzie', m: 'plecy', eq: 'barbell', t: 'compound', rr: [6, 10] },
-  { id: 'yates-row', name: 'Wiosłowanie sztangą podchwytem (Yates)', m: 'plecy', eq: 'barbell', t: 'compound', rr: [6, 10] },
-  { id: 'pendlay-row', name: 'Pendlay row (wiosłowanie z podłogi)', m: 'plecy', eq: 'barbell', t: 'compound', rr: [5, 8] },
-  { id: 'meadows-row', name: 'Meadows row (landmine jednorącz)', m: 'plecy', eq: 'barbell', t: 'compound', rr: [8, 12] },
-  { id: 'seal-row', name: 'Seal row (wiosło na ławce w pozycji leżącej)', m: 'plecy', eq: 'barbell', t: 'compound', rr: [8, 12] },
-  { id: 't-bar', name: 'Wiosłowanie T-bar', m: 'plecy', eq: 'barbell', t: 'compound', rr: [8, 12] },
-  { id: 'db-row', name: 'Wiosłowanie hantlą jednorącz', m: 'plecy', eq: 'dumbbell', t: 'compound', rr: [8, 12] },
-  { id: 'kroc-row', name: 'Kroc row (ciężka wiosło hantlą)', m: 'plecy', eq: 'dumbbell', t: 'compound', rr: [10, 20] },
-  { id: 'chest-supp-db-row', name: 'Wiosłowanie hantlami z podparciem klatki', m: 'plecy', eq: 'dumbbell', t: 'compound', rr: [8, 12] },
-  { id: 'cable-row-wide', name: 'Wiosłowanie wyciągiem (szeroko)', m: 'plecy', eq: 'cable', t: 'compound', rr: [8, 12] },
-  { id: 'cable-row-narrow', name: 'Wiosłowanie wyciągiem (wąsko)', m: 'plecy', eq: 'cable', t: 'compound', rr: [8, 12] },
-  { id: 'sa-cable-row', name: 'Wiosłowanie wyciągiem jednorącz', m: 'plecy', eq: 'cable', t: 'compound', rr: [10, 15] },
-  { id: 'machine-row', name: 'Wiosłowanie na maszynie', m: 'plecy', eq: 'machine', t: 'compound', rr: [8, 12] },
-  { id: 'high-row-machine', name: 'High row na maszynie', m: 'plecy', eq: 'machine', t: 'compound', rr: [8, 12] },
-  { id: 'db-pullover', name: 'Pullover z hantlą', m: 'plecy', eq: 'dumbbell', t: 'isolation', rr: [10, 15] },
-  { id: 'cable-pullover', name: 'Pullover na wyciągu', m: 'plecy', eq: 'cable', t: 'isolation', rr: [10, 15] },
-  { id: 'face-pull', name: 'Przyciąganie liny do twarzy', m: 'plecy', eq: 'cable', t: 'isolation', rr: [12, 20] },
-  { id: 'shrugs-db', name: 'Wzruszenia barkami z hantlami', m: 'plecy', eq: 'dumbbell', t: 'isolation', rr: [10, 15] },
-  { id: 'shrugs-bb', name: 'Wzruszenia barkami ze sztangą', m: 'plecy', eq: 'barbell', t: 'isolation', rr: [10, 15] },
-  { id: 'shrugs-cable', name: 'Wzruszenia barkami na wyciągu', m: 'plecy', eq: 'cable', t: 'isolation', rr: [12, 20] },
-  { id: 'shrugs-trap-bar', name: 'Wzruszenia barkami trap-bar', m: 'plecy', eq: 'barbell', t: 'isolation', rr: [8, 12] },
+  // KLATKA
+  ['Wyciskanie sztangi na ławce płaskiej', 'klatka', 'barbell', 'compound', 5, 10, 'https://www.fabrykasily.pl/cwiczenia/na-klatke-piersiowa/wyciskanie-sztangi-na-lawce-plaskiej-barbell'],
+  ['Wyciskanie sztangi na skosie dodatnim', 'klatka', 'barbell', 'compound', 6, 12, 'https://www.fabrykasily.pl/cwiczenia/na-klatke-piersiowa/wyciskanie-sztangi-na-lawce-dodatniej-incline'],
+  ['Wyciskanie sztangielek na ławce płaskiej', 'klatka', 'dumbbell', 'compound', 6, 12, 'https://www.fabrykasily.pl/cwiczenia/na-klatke-piersiowa/wyciskanie-sztangielek-na-lawce-plaskiej-dumbbell'],
+  ['Wyciskanie sztangielek na skosie dodatnim', 'klatka', 'dumbbell', 'compound', 6, 12, 'https://www.fabrykasily.pl/cwiczenia/na-klatke-piersiowa/wyciskanie-sztangielek-na-lawce-dodatniej-incline'],
+  ['Rozpiętki z hantlami na ławce płaskiej', 'klatka', 'dumbbell', 'isolation', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/na-klatke-piersiowa/rozpietki-z-hantlami-na-lawce-plaskiej'],
+  ['Pompki na poręczach (Dips)', 'klatka', 'bodyweight', 'compound', 6, 15, 'https://www.fabrykasily.pl/cwiczenia/na-klatke-piersiowa/pompki-na-poreczach-dips-chest'],
+  ['Pompki (wersja klasyczna)', 'klatka', 'bodyweight', 'compound', 10, 25, 'https://www.fabrykasily.pl/cwiczenia/klatka-piersiowa/pompki-wersja-klasyczna'],
 
-  // ============ BARKI (shoulders) ============
-  { id: 'ohp', name: 'Wyciskanie żołnierskie stojąc (OHP)', m: 'barki', eq: 'barbell', t: 'compound', rr: [5, 10] },
-  { id: 'seated-bb-press', name: 'Wyciskanie sztangi siedząc', m: 'barki', eq: 'barbell', t: 'compound', rr: [6, 10] },
-  { id: 'push-press', name: 'Push press (z odbicia nóg)', m: 'barki', eq: 'barbell', t: 'compound', rr: [4, 8] },
-  { id: 'btn-press', name: 'Wyciskanie zza karku', m: 'barki', eq: 'barbell', t: 'compound', rr: [6, 10] },
-  { id: 'landmine-press', name: 'Landmine press (mina)', m: 'barki', eq: 'barbell', t: 'compound', rr: [8, 12] },
-  { id: 'db-shoulder-press', name: 'Wyciskanie hantli nad głowę stojąc', m: 'barki', eq: 'dumbbell', t: 'compound', rr: [6, 12] },
-  { id: 'seated-db-press', name: 'Wyciskanie hantli nad głowę siedząc', m: 'barki', eq: 'dumbbell', t: 'compound', rr: [6, 12] },
-  { id: 'arnold', name: 'Arnold press', m: 'barki', eq: 'dumbbell', t: 'compound', rr: [8, 12] },
-  { id: 'sa-db-press', name: 'Wyciskanie hantli nad głowę jednorącz', m: 'barki', eq: 'dumbbell', t: 'compound', rr: [8, 12] },
-  { id: 'machine-shoulder', name: 'Wyciskanie barków na maszynie', m: 'barki', eq: 'machine', t: 'compound', rr: [8, 12] },
-  { id: 'smith-shoulder-press', name: 'Wyciskanie nad głowę na suwnicy Smitha', m: 'barki', eq: 'machine', t: 'compound', rr: [6, 12] },
-  { id: 'lateral-raise', name: 'Wznosy hantli bokiem', m: 'barki', eq: 'dumbbell', t: 'isolation', rr: [10, 15] },
-  { id: 'seated-lateral', name: 'Wznosy hantli bokiem siedząc', m: 'barki', eq: 'dumbbell', t: 'isolation', rr: [12, 15] },
-  { id: 'leaning-lateral', name: 'Wznosy bokiem w przechyle (jednorącz)', m: 'barki', eq: 'dumbbell', t: 'isolation', rr: [12, 15] },
-  { id: 'cable-lateral', name: 'Wznosy linki bokiem', m: 'barki', eq: 'cable', t: 'isolation', rr: [12, 20] },
-  { id: 'machine-lateral', name: 'Wznosy bokiem na maszynie', m: 'barki', eq: 'machine', t: 'isolation', rr: [10, 15] },
-  { id: 'front-raise-db', name: 'Wznosy hantli przodem', m: 'barki', eq: 'dumbbell', t: 'isolation', rr: [10, 15] },
-  { id: 'front-raise-bb', name: 'Wznosy sztangi przodem', m: 'barki', eq: 'barbell', t: 'isolation', rr: [10, 15] },
-  { id: 'front-raise-cable', name: 'Wznosy linki przodem', m: 'barki', eq: 'cable', t: 'isolation', rr: [12, 20] },
-  { id: 'plate-raise', name: 'Wznosy talerzem przodem', m: 'barki', eq: 'barbell', t: 'isolation', rr: [10, 15] },
-  { id: 'rear-delt-machine', name: 'Odwrotne rozpiętki na maszynie (rear delt)', m: 'barki', eq: 'machine', t: 'isolation', rr: [10, 15] },
-  { id: 'rear-delt-db', name: 'Odwrotne rozpiętki hantlami w opadzie', m: 'barki', eq: 'dumbbell', t: 'isolation', rr: [12, 15] },
-  { id: 'rear-delt-cable', name: 'Odwrotne rozpiętki na wyciągu', m: 'barki', eq: 'cable', t: 'isolation', rr: [12, 20] },
-  { id: 'cable-rear-cross', name: 'Krzyżowanie wyciągów na tylne aktony', m: 'barki', eq: 'cable', t: 'isolation', rr: [12, 20] },
-  { id: 'cuban-press', name: 'Cuban press', m: 'barki', eq: 'dumbbell', t: 'compound', rr: [8, 12] },
-  { id: 'bradford-press', name: 'Bradford press', m: 'barki', eq: 'barbell', t: 'compound', rr: [8, 12] },
-  { id: 'pike-pushup', name: 'Pompki w pozycji szczupaka', m: 'barki', eq: 'bodyweight', t: 'compound', rr: [8, 15] },
-  { id: 'handstand-pushup', name: 'Pompki w staniu na rękach', m: 'barki', eq: 'bodyweight', t: 'compound', rr: [3, 8] },
+  // BARKI
+  ['Wyciskanie sztangi nad głowę (OHP)', 'barki', 'barbell', 'compound', 5, 10, 'https://www.fabrykasily.pl/cwiczenia/na-barki/wyciskanie-sztangi-nad-glowe-standing-front'],
+  ['Wyciskanie hantli nad głowę siedząc', 'barki', 'dumbbell', 'compound', 6, 12, 'https://www.fabrykasily.pl/cwiczenia/na-barki/wyciskanie-hantli-nad-glowe-siedzac-seated'],
+  ['Odwodzenie ramion w bok ze sztangielkami', 'barki', 'dumbbell', 'isolation', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/na-barki/odwodzenie-ramion-w-bok-ze-sztangielkami'],
+  ['Przyciąganie liny wyciągu (Face pull)', 'barki', 'cable', 'isolation', 12, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/barki/przyciaganie-liny-z-wyciagu-do-twarzy-face-pull'],
 
-  // ============ BICEPS ============
-  { id: 'bb-curl', name: 'Uginanie ramion ze sztangą prostą', m: 'biceps', eq: 'barbell', t: 'isolation', rr: [8, 12] },
-  { id: 'ez-curl', name: 'Uginanie ramion ze sztangą łamaną (EZ)', m: 'biceps', eq: 'barbell', t: 'isolation', rr: [8, 12] },
-  { id: 'db-curl', name: 'Uginanie ramion z hantlami stojąc', m: 'biceps', eq: 'dumbbell', t: 'isolation', rr: [8, 12] },
-  { id: 'seated-db-curl', name: 'Uginanie hantli siedząc', m: 'biceps', eq: 'dumbbell', t: 'isolation', rr: [8, 12] },
-  { id: 'alt-db-curl', name: 'Uginanie hantli naprzemiennie', m: 'biceps', eq: 'dumbbell', t: 'isolation', rr: [10, 15] },
-  { id: 'hammer-curl', name: 'Uginanie młotkowe', m: 'biceps', eq: 'dumbbell', t: 'isolation', rr: [8, 12] },
-  { id: 'cross-hammer', name: 'Uginanie młotkowe na klatkę', m: 'biceps', eq: 'dumbbell', t: 'isolation', rr: [10, 12] },
-  { id: 'preacher-curl-bb', name: 'Uginanie na modlitewniku ze sztangą', m: 'biceps', eq: 'barbell', t: 'isolation', rr: [8, 12] },
-  { id: 'preacher-curl-db', name: 'Uginanie na modlitewniku z hantlą', m: 'biceps', eq: 'dumbbell', t: 'isolation', rr: [8, 12] },
-  { id: 'preacher-machine', name: 'Uginanie na modlitewniku (maszyna)', m: 'biceps', eq: 'machine', t: 'isolation', rr: [10, 15] },
-  { id: 'cable-curl', name: 'Uginanie ramion na wyciągu (drążek)', m: 'biceps', eq: 'cable', t: 'isolation', rr: [10, 15] },
-  { id: 'cable-rope-curl', name: 'Uginanie ramion na wyciągu (linka)', m: 'biceps', eq: 'cable', t: 'isolation', rr: [10, 15] },
-  { id: 'bayesian-curl', name: 'Bayesian curl (wyciąg za plecami)', m: 'biceps', eq: 'cable', t: 'isolation', rr: [10, 15] },
-  { id: 'concentration-curl', name: 'Uginanie z koncentracją (concentration curl)', m: 'biceps', eq: 'dumbbell', t: 'isolation', rr: [10, 12] },
-  { id: 'incline-curl', name: 'Uginanie hantli na ławce skośnej', m: 'biceps', eq: 'dumbbell', t: 'isolation', rr: [8, 12] },
-  { id: 'spider-curl', name: 'Spider curl', m: 'biceps', eq: 'dumbbell', t: 'isolation', rr: [10, 12] },
-  { id: 'zottman-curl', name: 'Zottman curl', m: 'biceps', eq: 'dumbbell', t: 'isolation', rr: [10, 12] },
-  { id: '21s', name: '21-tki ze sztangą', m: 'biceps', eq: 'barbell', t: 'isolation', rr: [21, 21] },
-  { id: 'reverse-curl', name: 'Uginanie sztangi nachwytem (reverse)', m: 'biceps', eq: 'barbell', t: 'isolation', rr: [10, 12] },
-  { id: 'drag-curl', name: 'Drag curl', m: 'biceps', eq: 'barbell', t: 'isolation', rr: [10, 12] },
+  // BICEPS / TRICEPS
+  ['Zginanie przedramion ze sztangą', 'biceps', 'barbell', 'isolation', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/na-biceps/zginanie-przedramion-ze-sztanga-stojac-barbell'],
+  ['Zginanie przedramion w chwycie młotkowym', 'biceps', 'dumbbell', 'isolation', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/na-biceps/zginanie-przedramion-z-hantlami-w-chwycie'],
+  ['Wyciskanie wąskim chwytem na płaskiej', 'triceps', 'barbell', 'compound', 6, 10, 'https://www.fabrykasily.pl/cwiczenia/na-triceps/wyciskanie-sztangi-lamanej-waskim-chwytem'],
+  ['Francuskie wyciskanie leżąc (Skull crusher)', 'triceps', 'barbell', 'isolation', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/na-triceps/prostowanie-przedramion-ze-sztanga-lamana-lezac'],
+  ['Prostowanie przedramion z linką wyciągu', 'triceps', 'cable', 'isolation', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/na-triceps/prostowanie-przedramion-z-lina-z-wyciagu'],
 
-  // ============ TRICEPS ============
-  { id: 'tri-pushdown-rope', name: 'Prostowanie ramion na wyciągu (linka)', m: 'triceps', eq: 'cable', t: 'isolation', rr: [10, 15] },
-  { id: 'tri-pushdown-vbar', name: 'Prostowanie ramion na wyciągu (V-bar)', m: 'triceps', eq: 'cable', t: 'isolation', rr: [10, 15] },
-  { id: 'tri-pushdown-bar', name: 'Prostowanie ramion na wyciągu (drążek prosty)', m: 'triceps', eq: 'cable', t: 'isolation', rr: [10, 15] },
-  { id: 'reverse-pushdown', name: 'Prostowanie ramion podchwytem', m: 'triceps', eq: 'cable', t: 'isolation', rr: [12, 15] },
-  { id: 'sa-pushdown', name: 'Prostowanie ramion jednorącz na wyciągu', m: 'triceps', eq: 'cable', t: 'isolation', rr: [10, 15] },
-  { id: 'overhead-tri-db', name: 'Wyciskanie francuskie nad głową (hantel)', m: 'triceps', eq: 'dumbbell', t: 'isolation', rr: [10, 15] },
-  { id: 'overhead-tri-cable', name: 'Wyciskanie francuskie nad głową (wyciąg)', m: 'triceps', eq: 'cable', t: 'isolation', rr: [10, 15] },
-  { id: 'overhead-tri-ez', name: 'Wyciskanie francuskie nad głową (EZ)', m: 'triceps', eq: 'barbell', t: 'isolation', rr: [10, 12] },
-  { id: 'skullcrusher-ez', name: 'Wyciskanie francuskie leżąc (EZ)', m: 'triceps', eq: 'barbell', t: 'isolation', rr: [8, 12] },
-  { id: 'skullcrusher-db', name: 'Wyciskanie francuskie leżąc (hantle)', m: 'triceps', eq: 'dumbbell', t: 'isolation', rr: [10, 12] },
-  { id: 'jm-press', name: 'JM press', m: 'triceps', eq: 'barbell', t: 'compound', rr: [6, 10] },
-  { id: 'tate-press', name: 'Tate press', m: 'triceps', eq: 'dumbbell', t: 'isolation', rr: [10, 12] },
-  { id: 'close-grip', name: 'Wyciskanie wąsko sztangą', m: 'triceps', eq: 'barbell', t: 'compound', rr: [6, 10] },
-  { id: 'close-grip-smith', name: 'Wyciskanie wąsko na suwnicy Smitha', m: 'triceps', eq: 'machine', t: 'compound', rr: [8, 12] },
-  { id: 'tri-dips', name: 'Dipy między ławkami', m: 'triceps', eq: 'bodyweight', t: 'compound', rr: [8, 15] },
-  { id: 'parallel-dips', name: 'Dipy na poręczach (triceps)', m: 'triceps', eq: 'bodyweight', t: 'compound', rr: [6, 12] },
-  { id: 'diamond-pushup', name: 'Pompki diamentowe', m: 'triceps', eq: 'bodyweight', t: 'compound', rr: [8, 15] },
-  { id: 'kickback', name: 'Wyprost ramienia w opadzie (kickback)', m: 'triceps', eq: 'dumbbell', t: 'isolation', rr: [10, 15] },
-  { id: 'cable-kickback', name: 'Kickback na wyciągu', m: 'triceps', eq: 'cable', t: 'isolation', rr: [12, 15] },
-
-  // ============ CZWOROGŁOWE (quads) ============
-  { id: 'back-squat', name: 'Przysiad ze sztangą (back squat)', m: 'czworogłowe', eq: 'barbell', t: 'compound', rr: [5, 10] },
-  { id: 'low-bar-squat', name: 'Przysiad low-bar', m: 'czworogłowe', eq: 'barbell', t: 'compound', rr: [3, 6] },
-  { id: 'front-squat', name: 'Przysiad przedni (front squat)', m: 'czworogłowe', eq: 'barbell', t: 'compound', rr: [5, 8] },
-  { id: 'pause-squat', name: 'Przysiad z pauzą', m: 'czworogłowe', eq: 'barbell', t: 'compound', rr: [3, 6] },
-  { id: 'box-squat', name: 'Box squat (przysiad na skrzynię)', m: 'czworogłowe', eq: 'barbell', t: 'compound', rr: [3, 6] },
-  { id: 'zercher-squat', name: 'Przysiad Zerchera', m: 'czworogłowe', eq: 'barbell', t: 'compound', rr: [6, 10] },
-  { id: 'safety-bar-squat', name: 'Przysiad ze sztangą bezpieczeństwa', m: 'czworogłowe', eq: 'barbell', t: 'compound', rr: [5, 8] },
-  { id: 'goblet-squat', name: 'Przysiad goblet z hantlą', m: 'czworogłowe', eq: 'dumbbell', t: 'compound', rr: [8, 12] },
-  { id: 'heel-elev-goblet', name: 'Przysiad goblet z piętami uniesionymi', m: 'czworogłowe', eq: 'dumbbell', t: 'compound', rr: [8, 12] },
-  { id: 'bulgarian', name: 'Przysiad bułgarski (split squat)', m: 'czworogłowe', eq: 'dumbbell', t: 'compound', rr: [8, 12] },
-  { id: 'fes-split-squat', name: 'Split squat z przednią nogą uniesioną', m: 'czworogłowe', eq: 'dumbbell', t: 'compound', rr: [8, 12] },
-  { id: 'lunges', name: 'Wykroki w miejscu z hantlami', m: 'czworogłowe', eq: 'dumbbell', t: 'compound', rr: [8, 12] },
-  { id: 'walking-lunges', name: 'Wykroki chodzone z hantlami', m: 'czworogłowe', eq: 'dumbbell', t: 'compound', rr: [10, 16] },
-  { id: 'reverse-lunges', name: 'Wykroki w tył', m: 'czworogłowe', eq: 'dumbbell', t: 'compound', rr: [8, 12] },
-  { id: 'step-up', name: 'Wchodzenie na skrzynię', m: 'czworogłowe', eq: 'dumbbell', t: 'compound', rr: [8, 12] },
-  { id: 'cossack-squat', name: 'Przysiad kozacki', m: 'czworogłowe', eq: 'dumbbell', t: 'compound', rr: [6, 10] },
-  { id: 'leg-press', name: 'Wypychanie nogami na suwnicy', m: 'czworogłowe', eq: 'machine', t: 'compound', rr: [8, 15] },
-  { id: 'sa-leg-press', name: 'Wypychanie nogą jednonóż', m: 'czworogłowe', eq: 'machine', t: 'compound', rr: [10, 15] },
-  { id: 'hack-squat', name: 'Hack przysiad (maszyna)', m: 'czworogłowe', eq: 'machine', t: 'compound', rr: [8, 12] },
-  { id: 'pendulum-squat', name: 'Pendulum squat (maszyna)', m: 'czworogłowe', eq: 'machine', t: 'compound', rr: [8, 12] },
-  { id: 'belt-squat', name: 'Przysiad z pasem (belt squat)', m: 'czworogłowe', eq: 'machine', t: 'compound', rr: [8, 12] },
-  { id: 'smith-squat', name: 'Przysiad na suwnicy Smitha', m: 'czworogłowe', eq: 'machine', t: 'compound', rr: [8, 12] },
-  { id: 'leg-ext', name: 'Prostowanie nóg siedząc', m: 'czworogłowe', eq: 'machine', t: 'isolation', rr: [10, 15] },
-  { id: 'sa-leg-ext', name: 'Prostowanie nogi jednonóż', m: 'czworogłowe', eq: 'machine', t: 'isolation', rr: [12, 15] },
-  { id: 'sissy-squat', name: 'Sissy squat', m: 'czworogłowe', eq: 'bodyweight', t: 'isolation', rr: [10, 15] },
-  { id: 'cyclist-squat', name: 'Przysiad cyklisty (wąska postawa)', m: 'czworogłowe', eq: 'dumbbell', t: 'compound', rr: [8, 12] },
-  { id: 'wall-sit', name: 'Wall sit (siad pod ścianą)', m: 'czworogłowe', eq: 'bodyweight', t: 'isolation', rr: [30, 60], unit: 's' },
-  { id: 'pistol-squat', name: 'Pistolet (przysiad jednonóż)', m: 'czworogłowe', eq: 'bodyweight', t: 'compound', rr: [4, 8] },
-
-  // ============ DWUGŁOWE UDA (hamstrings) ============
-  { id: 'rdl', name: 'Martwy ciąg rumuński (RDL)', m: 'dwugłowe uda', eq: 'barbell', t: 'compound', rr: [6, 10] },
-  { id: 'db-rdl', name: 'RDL z hantlami', m: 'dwugłowe uda', eq: 'dumbbell', t: 'compound', rr: [8, 12] },
-  { id: 'sl-rdl', name: 'RDL na jednej nodze', m: 'dwugłowe uda', eq: 'dumbbell', t: 'compound', rr: [8, 12] },
-  { id: 'stiff-leg-dl', name: 'Stiff-leg deadlift (sztywne nogi)', m: 'dwugłowe uda', eq: 'barbell', t: 'compound', rr: [6, 10] },
-  { id: 'lying-curl', name: 'Uginanie nóg leżąc', m: 'dwugłowe uda', eq: 'machine', t: 'isolation', rr: [8, 12] },
-  { id: 'seated-curl', name: 'Uginanie nóg siedząc', m: 'dwugłowe uda', eq: 'machine', t: 'isolation', rr: [10, 15] },
-  { id: 'standing-curl', name: 'Uginanie nóg stojąc', m: 'dwugłowe uda', eq: 'machine', t: 'isolation', rr: [10, 15] },
-  { id: 'nordic-curl', name: 'Nordic curl', m: 'dwugłowe uda', eq: 'bodyweight', t: 'isolation', rr: [4, 8] },
-  { id: 'ghr', name: 'Glute-ham raise (GHR)', m: 'dwugłowe uda', eq: 'machine', t: 'isolation', rr: [6, 10] },
-  { id: 'good-morning', name: 'Good morning ze sztangą', m: 'dwugłowe uda', eq: 'barbell', t: 'compound', rr: [8, 12] },
-  { id: 'pull-through', name: 'Cable pull-through', m: 'dwugłowe uda', eq: 'cable', t: 'compound', rr: [10, 15] },
-  { id: 'reverse-hyper', name: 'Reverse hyper (odwrotne unoszenie tułowia)', m: 'dwugłowe uda', eq: 'machine', t: 'isolation', rr: [10, 15] },
-  { id: 'back-extension', name: 'Hyperextension (unoszenie tułowia)', m: 'dwugłowe uda', eq: 'bodyweight', t: 'isolation', rr: [10, 15] },
-
-  // ============ POŚLADKI (glutes) ============
-  { id: 'hip-thrust', name: 'Hip thrust ze sztangą', m: 'pośladki', eq: 'barbell', t: 'compound', rr: [8, 12] },
-  { id: 'db-hip-thrust', name: 'Hip thrust z hantlą', m: 'pośladki', eq: 'dumbbell', t: 'compound', rr: [10, 15] },
-  { id: 'machine-hip-thrust', name: 'Hip thrust na maszynie', m: 'pośladki', eq: 'machine', t: 'compound', rr: [10, 15] },
-  { id: 'sl-hip-thrust', name: 'Hip thrust na jednej nodze', m: 'pośladki', eq: 'bodyweight', t: 'compound', rr: [8, 12] },
-  { id: 'b-stance-hip-thrust', name: 'B-stance hip thrust', m: 'pośladki', eq: 'barbell', t: 'compound', rr: [10, 15] },
-  { id: 'glute-bridge', name: 'Mostek biodrowy', m: 'pośladki', eq: 'bodyweight', t: 'isolation', rr: [12, 20] },
-  { id: 'frog-pump', name: 'Frog pump', m: 'pośladki', eq: 'bodyweight', t: 'isolation', rr: [15, 25] },
-  { id: 'cable-kickback', name: 'Pośladek na wyciągu (kickback)', m: 'pośladki', eq: 'cable', t: 'isolation', rr: [12, 15] },
-  { id: 'machine-kickback', name: 'Kickback pośladkowy na maszynie', m: 'pośladki', eq: 'machine', t: 'isolation', rr: [10, 15] },
-  { id: 'glute-medius', name: 'Wznosy nogi bokiem (glute medius)', m: 'pośladki', eq: 'cable', t: 'isolation', rr: [12, 20] },
-  { id: 'clamshell', name: 'Clamshells z taśmą', m: 'pośladki', eq: 'bodyweight', t: 'isolation', rr: [15, 20] },
-
-  // ============ ŁYDKI (calves) ============
-  { id: 'standing-calf', name: 'Wspięcia na palce stojąc (maszyna)', m: 'łydki', eq: 'machine', t: 'isolation', rr: [10, 15] },
-  { id: 'seated-calf', name: 'Wspięcia na palce siedząc (maszyna)', m: 'łydki', eq: 'machine', t: 'isolation', rr: [12, 20] },
-  { id: 'donkey-calf', name: 'Donkey calf raise', m: 'łydki', eq: 'machine', t: 'isolation', rr: [10, 15] },
-  { id: 'leg-press-calf', name: 'Wspięcia na suwnicy', m: 'łydki', eq: 'machine', t: 'isolation', rr: [10, 15] },
-  { id: 'smith-calf', name: 'Wspięcia na suwnicy Smitha', m: 'łydki', eq: 'machine', t: 'isolation', rr: [10, 15] },
-  { id: 'sl-db-calf', name: 'Wspięcia jednonóż z hantlą', m: 'łydki', eq: 'dumbbell', t: 'isolation', rr: [12, 20] },
-  { id: 'db-calf', name: 'Wspięcia z hantlami', m: 'łydki', eq: 'dumbbell', t: 'isolation', rr: [12, 20] },
-  { id: 'bb-calf', name: 'Wspięcia ze sztangą', m: 'łydki', eq: 'barbell', t: 'isolation', rr: [10, 15] },
-  { id: 'tibialis-raise', name: 'Wznosy piszczeli (tibialis)', m: 'łydki', eq: 'bodyweight', t: 'isolation', rr: [15, 25] },
-
-  // ============ PRZEDRAMIONA (forearms) ============
-  { id: 'wrist-curl-bb', name: 'Uginanie nadgarstków ze sztangą', m: 'przedramiona', eq: 'barbell', t: 'isolation', rr: [12, 20] },
-  { id: 'wrist-curl-db', name: 'Uginanie nadgarstków z hantlami', m: 'przedramiona', eq: 'dumbbell', t: 'isolation', rr: [12, 20] },
-  { id: 'reverse-wrist-curl', name: 'Odwrotne uginanie nadgarstków', m: 'przedramiona', eq: 'barbell', t: 'isolation', rr: [12, 20] },
-  { id: 'behind-back-wrist', name: 'Uginanie nadgarstków zza pleców', m: 'przedramiona', eq: 'barbell', t: 'isolation', rr: [12, 20] },
-  { id: 'farmers-carry', name: 'Spacer farmera', m: 'przedramiona', eq: 'dumbbell', t: 'compound', rr: [20, 40], unit: 's' },
-  { id: 'plate-pinch', name: 'Pinch grip (ściskanie talerzy)', m: 'przedramiona', eq: 'bodyweight', t: 'isolation', rr: [15, 30], unit: 's' },
-  { id: 'dead-hang', name: 'Wis na drążku', m: 'przedramiona', eq: 'bodyweight', t: 'isolation', rr: [20, 60], unit: 's' },
-  { id: 'wrist-roller', name: 'Wrist roller (zwijanie ciężaru)', m: 'przedramiona', eq: 'bodyweight', t: 'isolation', rr: [3, 6] },
-
-  // ============ CORE / BRZUCH ============
-  { id: 'plank', name: 'Deska (plank)', m: 'core', eq: 'bodyweight', t: 'isolation', rr: [30, 60], unit: 's' },
-  { id: 'side-plank', name: 'Deska boczna', m: 'core', eq: 'bodyweight', t: 'isolation', rr: [20, 45], unit: 's' },
-  { id: 'leg-raise', name: 'Unoszenie nóg w zwisie', m: 'core', eq: 'bodyweight', t: 'isolation', rr: [8, 15] },
-  { id: 'knee-raise', name: 'Unoszenie kolan w zwisie', m: 'core', eq: 'bodyweight', t: 'isolation', rr: [10, 20] },
-  { id: 'cable-crunch', name: 'Brzuszki na wyciągu', m: 'core', eq: 'cable', t: 'isolation', rr: [10, 15] },
-  { id: 'decline-crunch', name: 'Brzuszki na ławce ujemnej', m: 'core', eq: 'bodyweight', t: 'isolation', rr: [12, 20] },
-  { id: 'situp', name: 'Klasyczne brzuszki', m: 'core', eq: 'bodyweight', t: 'isolation', rr: [15, 25] },
-  { id: 'russian-twist', name: 'Russian twist', m: 'core', eq: 'dumbbell', t: 'isolation', rr: [16, 30] },
-  { id: 'bicycle-crunch', name: 'Rowerek (bicycle crunch)', m: 'core', eq: 'bodyweight', t: 'isolation', rr: [16, 30] },
-  { id: 'ab-wheel', name: 'Rolka do brzucha', m: 'core', eq: 'bodyweight', t: 'isolation', rr: [8, 15] },
-  { id: 'dragon-flag', name: 'Dragon flag', m: 'core', eq: 'bodyweight', t: 'isolation', rr: [4, 8] },
-  { id: 'l-sit', name: 'L-sit', m: 'core', eq: 'bodyweight', t: 'isolation', rr: [10, 30], unit: 's' },
-  { id: 'v-up', name: 'V-up', m: 'core', eq: 'bodyweight', t: 'isolation', rr: [10, 20] },
-  { id: 'mountain-climber', name: 'Mountain climbers', m: 'core', eq: 'bodyweight', t: 'isolation', rr: [20, 40] },
-  { id: 'dead-bug', name: 'Dead bug', m: 'core', eq: 'bodyweight', t: 'isolation', rr: [10, 15] },
-  { id: 'pallof-press', name: 'Pallof press', m: 'core', eq: 'cable', t: 'isolation', rr: [10, 15] },
-  { id: 'woodchopper', name: 'Wood chopper na wyciągu', m: 'core', eq: 'cable', t: 'isolation', rr: [10, 15] },
-  { id: 'hanging-windshield', name: 'Wycieraczki w zwisie', m: 'core', eq: 'bodyweight', t: 'isolation', rr: [6, 12] },
+  // BRZUCH / ŁYDKI
+  ['Deska (Plank przodem)', 'core', 'bodyweight', 'isolation', 30, 60, 'https://www.fabrykasily.pl/cwiczenia/na-brzuch/izometryczny-skurcz-miesni-brzucha-w-podporze'],
+  ['Spięcia brzucha z linkami (Allahy)', 'core', 'cable', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/spiecia-brzucha-z-linkami-wyciagu-gornego'],
+  ['Wspięcia na palcach siedząc (maszyna)', 'łydki', 'machine', 'isolation', 12, 20, 'https://www.fabrykasily.pl/cwiczenia/na-lydki/wspiecia-na-palcach-siedzac-na-maszynie'],
+  ['Wspięcia na palcach stojąc z hantlą', 'łydki', 'dumbbell', 'isolation', 12, 20, 'https://www.fabrykasily.pl/cwiczenia/na-lydki/wspiecia-na-palcach-stojac-z-hantlami']
 ];
 
+const fsExercises = fsRaw.map((d, i) => ({
+  id: 'fs-' + i, name: d[0], m: d[1], eq: d[2], t: d[3], rr: [d[4], d[5]],
+  unit: d[4] >= 20 && d[1] === 'core' && d[0].toLowerCase().includes('deska') ? 's' : 'powt',
+  url: d[6]
+}));
 
-// YouTube search URL helper
-const ytUrl = (name) => `https://www.youtube.com/results?search_query=${encodeURIComponent(name + ' technika wykonania')}`;
+// ============================================================
+// BAZA ĆWICZEŃ: ORYGINALNA (Jako Fallback dla generatora)
+// ============================================================
+const originalEx = [
+  { id: 'cable-cross-high', name: 'Krzyżowanie wyciągów z góry', m: 'klatka', eq: 'cable', t: 'isolation', rr: [10, 15] },
+  { id: 'pec-deck', name: 'Pec deck (butterfly)', m: 'klatka', eq: 'machine', t: 'isolation', rr: [10, 15] },
+  { id: 'machine-press-flat', name: 'Wyciskanie na maszynie', m: 'klatka', eq: 'machine', t: 'compound', rr: [8, 12] },
+  { id: 'sumo-dl', name: 'Martwy ciąg sumo', m: 'plecy', eq: 'barbell', t: 'compound', rr: [3, 6] },
+  { id: 'lat-pulldown-narrow', name: 'Ściąganie drążka wąskim chwytem', m: 'plecy', eq: 'cable', t: 'compound', rr: [8, 12] },
+  { id: 'machine-row', name: 'Wiosłowanie na maszynie', m: 'plecy', eq: 'machine', t: 'compound', rr: [8, 12] },
+  { id: 'machine-shoulder', name: 'Wyciskanie barków na maszynie', m: 'barki', eq: 'machine', t: 'compound', rr: [8, 12] },
+  { id: 'cable-lateral', name: 'Wznosy linki bokiem', m: 'barki', eq: 'cable', t: 'isolation', rr: [12, 20] },
+  { id: 'cable-curl', name: 'Uginanie ramion na wyciągu', m: 'biceps', eq: 'cable', t: 'isolation', rr: [10, 15] },
+  { id: 'preacher-machine', name: 'Uginanie na modlitewniku (maszyna)', m: 'biceps', eq: 'machine', t: 'isolation', rr: [10, 15] },
+  { id: 'tri-pushdown-vbar', name: 'Prostowanie triceps na wyciągu (V-bar)', m: 'triceps', eq: 'cable', t: 'isolation', rr: [10, 15] },
+  { id: 'leg-ext', name: 'Prostowanie nóg siedząc', m: 'czworogłowe', eq: 'machine', t: 'isolation', rr: [10, 15] },
+  { id: 'hack-squat', name: 'Hack przysiad (maszyna)', m: 'czworogłowe', eq: 'machine', t: 'compound', rr: [8, 12] },
+  { id: 'leg-press-calf', name: 'Wspięcia na suwnicy', m: 'łydki', eq: 'machine', t: 'isolation', rr: [10, 15] }
+];
 
-// Plate calculator (kg, standard plates)
+// Scalona baza (gwarantuje, że generator ma zawsze pełny wybór sprzętu)
+const EX = [...fsExercises, ...originalEx];
+
+const ytUrl = (name) => `https://www.youtube.com/results?search_query=${encodeURIComponent(name + ' fabryka siły')}`;
+
+// ============================================================
+// HELPERS
+// ============================================================
 const PLATES = [25, 20, 15, 10, 5, 2.5, 1.25];
 function calcPlates(targetWeight, barWeight = 20) {
   const perSide = (targetWeight - barWeight) / 2;
@@ -264,24 +98,17 @@ function calcPlates(targetWeight, barWeight = 20) {
   const result = [];
   let remaining = perSide;
   for (const p of PLATES) {
-    while (remaining >= p - 0.001) {
-      result.push(p);
-      remaining -= p;
-    }
+    while (remaining >= p - 0.001) { result.push(p); remaining -= p; }
   }
   return result;
 }
 
-// Warm-up calculator: returns array of {weight, reps}
 function warmupSets(topWeight, isCompound) {
   if (topWeight < 30) return [];
   const sets = isCompound
     ? [{ pct: 0.4, reps: 8 }, { pct: 0.6, reps: 5 }, { pct: 0.8, reps: 3 }]
     : [{ pct: 0.5, reps: 8 }, { pct: 0.75, reps: 5 }];
-  return sets.map(s => ({
-    weight: Math.round((topWeight * s.pct) / 2.5) * 2.5,
-    reps: s.reps,
-  }));
+  return sets.map(s => ({ weight: Math.round((topWeight * s.pct) / 2.5) * 2.5, reps: s.reps }));
 }
 
 const EQUIPMENT_AVAILABILITY = {
@@ -324,60 +151,13 @@ function generatePlan(profile) {
   const seen = new Set();
   const days = profile.days;
 
-  const PUSH = [
-    { muscles: ['klatka'], type: 'compound', sets: 4 },
-    { muscles: ['barki'], type: 'compound', sets: 3 },
-    { muscles: ['klatka'], sets: 3 },
-    { muscles: ['barki'], type: 'isolation', sets: 3 },
-    { muscles: ['triceps'], sets: 3 },
-    { muscles: ['triceps'], sets: 3 },
-  ];
-  const PULL = [
-    { muscles: ['plecy'], type: 'compound', sets: 4 },
-    { muscles: ['plecy'], type: 'compound', sets: 3 },
-    { muscles: ['plecy'], sets: 3 },
-    { muscles: ['barki'], type: 'isolation', sets: 3 },
-    { muscles: ['biceps'], sets: 3 },
-    { muscles: ['biceps'], sets: 3 },
-  ];
-  const LEGS = [
-    { muscles: ['czworogłowe'], type: 'compound', sets: 4 },
-    { muscles: ['dwugłowe uda'], type: 'compound', sets: 3 },
-    { muscles: ['pośladki', 'czworogłowe'], sets: 3 },
-    { muscles: ['czworogłowe'], type: 'isolation', sets: 3 },
-    { muscles: ['dwugłowe uda'], type: 'isolation', sets: 3 },
-    { muscles: ['łydki'], sets: 4 },
-  ];
-  const UPPER = [
-    { muscles: ['klatka'], type: 'compound', sets: 4 },
-    { muscles: ['plecy'], type: 'compound', sets: 4 },
-    { muscles: ['barki'], type: 'compound', sets: 3 },
-    { muscles: ['plecy'], sets: 3 },
-    { muscles: ['biceps'], sets: 3 },
-    { muscles: ['triceps'], sets: 3 },
-  ];
-  const LOWER = [
-    { muscles: ['czworogłowe'], type: 'compound', sets: 4 },
-    { muscles: ['dwugłowe uda'], type: 'compound', sets: 3 },
-    { muscles: ['czworogłowe'], type: 'isolation', sets: 3 },
-    { muscles: ['dwugłowe uda'], type: 'isolation', sets: 3 },
-    { muscles: ['łydki'], sets: 4 },
-    { muscles: ['core'], sets: 3 },
-  ];
-  const FBA = [
-    { muscles: ['czworogłowe'], type: 'compound', sets: 4 },
-    { muscles: ['klatka'], type: 'compound', sets: 4 },
-    { muscles: ['plecy'], type: 'compound', sets: 4 },
-    { muscles: ['barki'], type: 'isolation', sets: 3 },
-    { muscles: ['biceps'], sets: 3 },
-  ];
-  const FBB = [
-    { muscles: ['dwugłowe uda'], type: 'compound', sets: 4 },
-    { muscles: ['barki'], type: 'compound', sets: 4 },
-    { muscles: ['plecy'], type: 'compound', sets: 4 },
-    { muscles: ['klatka'], sets: 3 },
-    { muscles: ['triceps'], sets: 3 },
-  ];
+  const PUSH = [ { muscles: ['klatka'], type: 'compound', sets: 4 }, { muscles: ['barki'], type: 'compound', sets: 3 }, { muscles: ['klatka'], sets: 3 }, { muscles: ['barki'], type: 'isolation', sets: 3 }, { muscles: ['triceps'], sets: 3 } ];
+  const PULL = [ { muscles: ['plecy'], type: 'compound', sets: 4 }, { muscles: ['plecy'], type: 'compound', sets: 3 }, { muscles: ['plecy'], sets: 3 }, { muscles: ['barki'], type: 'isolation', sets: 3 }, { muscles: ['biceps'], sets: 3 } ];
+  const LEGS = [ { muscles: ['czworogłowe'], type: 'compound', sets: 4 }, { muscles: ['dwugłowe uda'], type: 'compound', sets: 3 }, { muscles: ['pośladki', 'czworogłowe'], sets: 3 }, { muscles: ['czworogłowe'], type: 'isolation', sets: 3 }, { muscles: ['łydki'], sets: 4 } ];
+  const UPPER = [ { muscles: ['klatka'], type: 'compound', sets: 4 }, { muscles: ['plecy'], type: 'compound', sets: 4 }, { muscles: ['barki'], type: 'compound', sets: 3 }, { muscles: ['biceps'], sets: 3 }, { muscles: ['triceps'], sets: 3 } ];
+  const LOWER = [ { muscles: ['czworogłowe'], type: 'compound', sets: 4 }, { muscles: ['dwugłowe uda'], type: 'compound', sets: 3 }, { muscles: ['łydki'], sets: 4 }, { muscles: ['core'], sets: 3 } ];
+  const FBA = [ { muscles: ['czworogłowe'], type: 'compound', sets: 4 }, { muscles: ['klatka'], type: 'compound', sets: 4 }, { muscles: ['plecy'], type: 'compound', sets: 4 }, { muscles: ['barki'], type: 'isolation', sets: 3 }, { muscles: ['biceps'], sets: 3 } ];
+  const FBB = [ { muscles: ['dwugłowe uda'], type: 'compound', sets: 4 }, { muscles: ['barki'], type: 'compound', sets: 4 }, { muscles: ['plecy'], type: 'compound', sets: 4 }, { muscles: ['klatka'], sets: 3 }, { muscles: ['triceps'], sets: 3 } ];
 
   const splits = {
     2: [['Trening A — Full Body', FBA], ['Trening B — Full Body', FBB]],
@@ -388,14 +168,11 @@ function generatePlan(profile) {
   };
 
   const layout = splits[days] || splits[3];
-  return layout.map(([label, recipe]) => {
-    const localSeen = new Set();
-    return buildWorkout(label, recipe, eq, localSeen);
-  });
+  return layout.map(([label, recipe]) => buildWorkout(label, recipe, eq, new Set()));
 }
 
 // ============================================================
-// PROGRESSIVE OVERLOAD ALGORITHM
+// PROGRESSION ALGORITHM
 // ============================================================
 function getRecommendation(exercise, history) {
   const isBW = exercise.eq === 'bodyweight';
@@ -405,60 +182,24 @@ function getRecommendation(exercise, history) {
 
   if (!history || history.length === 0) {
     const startWeight = isBW ? 0 : (isCompound ? (exercise.eq === 'barbell' ? 40 : 10) : (exercise.eq === 'barbell' ? 20 : 5));
-    return {
-      weight: startWeight,
-      reps: minR + Math.floor((maxR - minR) / 2),
-      note: 'Pierwszy raz — dobierz ciężar tak, by zostawić 2-3 RIR.',
-    };
+    return { weight: startWeight, reps: minR + Math.floor((maxR - minR) / 2), note: 'Pierwszy raz — zostaw 2-3 powtórzenia w zapasie (RIR).' };
   }
 
   const last = history[history.length - 1];
   const valid = last.sets.filter(s => s.completed && s.reps > 0);
-  if (valid.length === 0) {
-    return {
-      weight: last.sets[0]?.weight || 0,
-      reps: minR,
-      note: 'Powtórz ostatnie wartości.',
-    };
-  }
+  if (valid.length === 0) return { weight: last.sets[0]?.weight || 0, reps: minR, note: 'Powtórz ostatnie wartości.' };
 
   const avgRIR = valid.reduce((a, s) => a + (s.rir ?? 2), 0) / valid.length;
   const topReps = Math.max(...valid.map(s => s.reps));
   const lastWeight = valid[0].weight;
 
-  if (avgRIR >= 3) {
-    return {
-      weight: isBW ? lastWeight : lastWeight + increment * 2,
-      reps: minR,
-      note: 'Ostatnio za łatwo (RIR 3+). Skok ciężaru.',
-    };
-  }
+  if (avgRIR >= 3) return { weight: isBW ? lastWeight : lastWeight + increment * 2, reps: minR, note: 'Ostatnio za łatwo. Skok ciężaru.' };
   if (avgRIR >= 1.5) {
-    if (topReps >= maxR) {
-      return {
-        weight: isBW ? lastWeight : lastWeight + increment,
-        reps: minR,
-        note: `Górny zakres osiągnięty. +${increment} kg, restart powtórzeń.`,
-      };
-    }
-    return {
-      weight: lastWeight,
-      reps: Math.min(topReps + 1, maxR),
-      note: 'Spróbuj dorzucić 1 powtórzenie.',
-    };
+    if (topReps >= maxR) return { weight: isBW ? lastWeight : lastWeight + increment, reps: minR, note: `Górny zakres osiągnięty. +${increment} kg.` };
+    return { weight: lastWeight, reps: Math.min(topReps + 1, maxR), note: 'Spróbuj dorzucić 1 powtórzenie.' };
   }
-  if (avgRIR >= 0.5) {
-    return {
-      weight: lastWeight,
-      reps: topReps,
-      note: 'Konsoliduj — ten sam ciężar i powtórzenia.',
-    };
-  }
-  return {
-    weight: isBW ? lastWeight : Math.max(0, lastWeight - increment * 2),
-    reps: minR,
-    note: 'Zostawiłeś wszystko (RIR 0). Lekki deload.',
-  };
+  if (avgRIR >= 0.5) return { weight: lastWeight, reps: topReps, note: 'Ten sam ciężar i powtórzenia.' };
+  return { weight: isBW ? lastWeight : Math.max(0, lastWeight - increment * 2), reps: minR, note: 'Lekki deload (RIR 0 ostatnio).' };
 }
 
 // ============================================================
@@ -472,10 +213,7 @@ const KEY_ACTIVE = 'progres:active';
 async function loadAll() {
   const out = { profile: null, plan: null, history: {}, active: null };
   for (const [field, key] of [['profile', KEY_PROFILE], ['plan', KEY_PLAN], ['history', KEY_HISTORY], ['active', KEY_ACTIVE]]) {
-    try {
-      const v = localStorage.getItem(key);
-      if (v) out[field] = JSON.parse(v);
-    } catch (e) {}
+    try { const v = localStorage.getItem(key); if (v) out[field] = JSON.parse(v); } catch (e) {}
   }
   if (!out.history || typeof out.history !== 'object') out.history = {};
   return out;
@@ -488,7 +226,7 @@ async function saveOne(key, val) {
 }
 
 // ============================================================
-// UI HELPERS
+// UI HELPERS & ONBOARDING
 // ============================================================
 const FONT_IMPORT = `
 @import url('https://fonts.googleapis.com/css2?family=Anton&family=Sora:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap');
@@ -498,104 +236,49 @@ body, html, #root { background: #0a0a0a; }
 .font-body { font-family: 'Sora', sans-serif; }
 .font-mono { font-family: 'JetBrains Mono', monospace; }
 input[type="number"] { -moz-appearance: textfield; }
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
 .scroll-hide::-webkit-scrollbar { display: none; }
 .scroll-hide { -ms-overflow-style: none; scrollbar-width: none; }
-@keyframes pulse-lime { 0%,100% { box-shadow: 0 0 0 0 rgba(212,255,0,0.4); } 50% { box-shadow: 0 0 0 8px rgba(212,255,0,0); } }
-.pulse-lime { animation: pulse-lime 2s infinite; }
 `;
 
 const Btn = ({ children, onClick, variant = 'primary', className = '', ...rest }) => {
   const base = 'font-display uppercase tracking-wider text-base py-3 px-5 transition-all active:scale-[0.97] flex items-center justify-center gap-2';
   const styles = {
     primary: 'bg-[#d4ff00] text-black hover:bg-[#c0e800]',
-    ghost: 'bg-transparent text-white border border-neutral-800 hover:border-neutral-600',
+    ghost: 'bg-transparent text-white border border-neutral-800',
     dark: 'bg-neutral-900 text-white border border-neutral-800',
     danger: 'bg-transparent text-red-400 border border-red-900/60',
   };
   return <button onClick={onClick} className={`${base} ${styles[variant]} ${className}`} {...rest}>{children}</button>;
 };
 
-// ============================================================
-// ONBOARDING
-// ============================================================
 function Onboarding({ onDone }) {
   const [step, setStep] = useState(0);
   const [data, setData] = useState({ goal: null, experience: null, days: null, equipment: null });
-
   const steps = [
-    {
-      key: 'goal', q: 'Jaki jest Twój cel?',
-      opts: [
-        { v: 'muscle', l: 'Budowa masy', d: 'Hipertrofia, średnie zakresy' },
-        { v: 'strength', l: 'Siła', d: 'Niskie powtórzenia, większy ciężar' },
-        { v: 'both', l: 'Siła + masa', d: 'Mieszane podejście' },
-      ],
-    },
-    {
-      key: 'experience', q: 'Twoje doświadczenie',
-      opts: [
-        { v: 'beginner', l: 'Początkujący', d: 'Mniej niż 6 miesięcy' },
-        { v: 'intermediate', l: 'Średniozaawansowany', d: '6 mies. – 2 lata' },
-        { v: 'advanced', l: 'Zaawansowany', d: 'Ponad 2 lata' },
-      ],
-    },
-    {
-      key: 'days', q: 'Ile dni w tygodniu trenujesz?',
-      opts: [
-        { v: 2, l: '2 dni', d: 'Full Body × 2' },
-        { v: 3, l: '3 dni', d: 'Push / Pull / Legs' },
-        { v: 4, l: '4 dni', d: 'Upper / Lower × 2' },
-        { v: 5, l: '5 dni', d: 'PPL + Upper/Lower' },
-        { v: 6, l: '6 dni', d: 'Push/Pull/Legs × 2' },
-      ],
-    },
-    {
-      key: 'equipment', q: 'Jaki masz sprzęt?',
-      opts: [
-        { v: 'full_gym', l: 'Pełna siłownia', d: 'Sztanga, hantle, wyciągi, maszyny' },
-        { v: 'home_full', l: 'Dom: sztanga + hantle', d: 'Bez wyciągów i maszyn' },
-        { v: 'dumbbell', l: 'Tylko hantle', d: 'Hantle + masa ciała' },
-        { v: 'bodyweight', l: 'Masa ciała', d: 'Bez sprzętu' },
-      ],
-    },
+    { key: 'goal', q: 'Jaki jest Twój cel?', opts: [{ v: 'muscle', l: 'Budowa masy', d: 'Hipertrofia' }, { v: 'strength', l: 'Siła', d: 'Niskie powtórzenia' }, { v: 'both', l: 'Siła + masa', d: 'Mieszane' }] },
+    { key: 'experience', q: 'Twoje doświadczenie', opts: [{ v: 'beginner', l: 'Początkujący', d: '< 6 miesięcy' }, { v: 'intermediate', l: 'Średniozaawansowany', d: '6m – 2 lata' }, { v: 'advanced', l: 'Zaawansowany', d: '> 2 lata' }] },
+    { key: 'days', q: 'Dni w tygodniu?', opts: [{ v: 3, l: '3 dni', d: 'PPL' }, { v: 4, l: '4 dni', d: 'Upper/Lower' }, { v: 5, l: '5 dni', d: 'PPL + UL' }] },
+    { key: 'equipment', q: 'Jaki masz sprzęt?', opts: [{ v: 'full_gym', l: 'Pełna siłownia', d: 'Wszystko' }, { v: 'home_full', l: 'Dom: sztanga + hantle', d: 'Brak maszyn' }, { v: 'dumbbell', l: 'Tylko hantle', d: 'Hantle + BW' }, { v: 'bodyweight', l: 'Masa ciała', d: 'Bez sprzętu' }] },
   ];
-
   const cur = steps[step];
 
   const choose = (val) => {
     const next = { ...data, [cur.key]: val };
     setData(next);
-    if (step < steps.length - 1) {
-      setTimeout(() => setStep(step + 1), 150);
-    } else {
-      onDone(next);
-    }
+    if (step < steps.length - 1) setTimeout(() => setStep(step + 1), 150);
+    else onDone(next);
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white font-body flex flex-col">
-      <div className="px-5 pt-12 pb-6">
-        <div className="flex gap-1.5 mb-8">
-          {steps.map((_, i) => (
-            <div key={i} className={`h-1 flex-1 rounded-full ${i <= step ? 'bg-[#d4ff00]' : 'bg-neutral-800'}`} />
-          ))}
-        </div>
-        <div className="text-neutral-500 text-xs uppercase tracking-widest mb-2">Krok {step + 1} z {steps.length}</div>
-        <h1 className="font-display text-4xl uppercase leading-tight">{cur.q}</h1>
-      </div>
-      <div className="flex-1 px-5 pb-8 space-y-3">
+    <div className="min-h-screen bg-[#0a0a0a] text-white flex flex-col p-5 pt-12">
+      <div className="flex gap-1.5 mb-8">{steps.map((_, i) => <div key={i} className={`h-1 flex-1 rounded-full ${i <= step ? 'bg-[#d4ff00]' : 'bg-neutral-800'}`} />)}</div>
+      <h1 className="font-display text-4xl uppercase mb-8">{cur.q}</h1>
+      <div className="space-y-3">
         {cur.opts.map(opt => (
-          <button
-            key={opt.v}
-            onClick={() => choose(opt.v)}
-            className={`w-full text-left p-5 border transition-all active:scale-[0.99] ${
-              data[cur.key] === opt.v ? 'border-[#d4ff00] bg-[#d4ff00]/5' : 'border-neutral-800 hover:border-neutral-700'
-            }`}
-          >
+          <button key={opt.v} onClick={() => choose(opt.v)} className={`w-full text-left p-5 border ${data[cur.key] === opt.v ? 'border-[#d4ff00] bg-[#d4ff00]/5' : 'border-neutral-800'}`}>
             <div className="font-display text-2xl uppercase">{opt.l}</div>
-            <div className="text-sm text-neutral-500 mt-1">{opt.d}</div>
+            <div className="text-sm text-neutral-500">{opt.d}</div>
           </button>
         ))}
       </div>
@@ -604,88 +287,38 @@ function Onboarding({ onDone }) {
 }
 
 // ============================================================
-// HOME
+// WIDOKI GŁÓWNE
 // ============================================================
-function HomeView({ profile, plan, history, onStart, onPickWorkout }) {
-  const totalSessions = Object.values(history).reduce((a, h) => a + (h?.length || 0), 0);
-  const lastDate = useMemo(() => {
-    let max = 0;
-    for (const sessions of Object.values(history)) {
-      for (const s of sessions || []) {
-        if (s.date > max) max = s.date;
-      }
-    }
-    return max;
-  }, [history]);
-
-  // Suggest next workout: cycle through plan based on last completed
+function HomeView({ plan, history, onStart }) {
   const todayIdx = useMemo(() => {
     if (!plan || plan.length === 0) return 0;
-    const sessionsMap = {};
-    for (const [exId, sessions] of Object.entries(history)) {
-      for (const s of sessions || []) {
-        if (!sessionsMap[s.sessionId]) {
-          sessionsMap[s.sessionId] = {
-            sessionId: s.sessionId,
-            workoutName: s.workoutName,
-            date: s.date,
-          };
-        }
-      }
-    }
-    const sessionsList = Object.values(sessionsMap).sort((a, b) => b.date - a.date);
-    if (sessionsList.length === 0) return 0;
-    const lastName = sessionsList[0]?.workoutName;
-    const idx = plan.findIndex(w => w.name === lastName);
+    const sessions = Object.values(history).flat().sort((a, b) => b.date - a.date);
+    if (sessions.length === 0) return 0;
+    const idx = plan.findIndex(w => w.name === sessions[0]?.workoutName);
     return idx === -1 ? 0 : (idx + 1) % plan.length;
   }, [plan, history]);
 
   const next = plan?.[todayIdx];
-  const daysSince = lastDate ? Math.floor((Date.now() - lastDate) / 86400000) : null;
 
   return (
     <div className="px-5 pt-10 pb-24">
-      <div className="flex items-baseline justify-between mb-1">
-        <h1 className="font-display text-5xl uppercase">PROGRES</h1>
-        <span className="font-mono text-xs text-neutral-600">v1.0</span>
-      </div>
-      <p className="text-neutral-500 text-sm uppercase tracking-widest mb-8">Trener siłowy</p>
-
-      <div className="grid grid-cols-2 gap-3 mb-8">
-        <div className="border border-neutral-800 p-4">
-          <div className="text-xs text-neutral-500 uppercase tracking-wider mb-1">Sesje</div>
-          <div className="font-mono text-3xl text-[#d4ff00]">{totalSessions}</div>
-        </div>
-        <div className="border border-neutral-800 p-4">
-          <div className="text-xs text-neutral-500 uppercase tracking-wider mb-1">Ostatnio</div>
-          <div className="font-mono text-3xl text-white">
-            {daysSince === null ? '—' : daysSince === 0 ? 'dziś' : `${daysSince}d`}
-          </div>
-        </div>
-      </div>
+      <h1 className="font-display text-5xl uppercase text-[#d4ff00]">PROGRES</h1>
+      <p className="text-neutral-500 text-sm uppercase mb-8">Gotowy na trening?</p>
 
       {next && (
-        <div className="border-2 border-[#d4ff00] p-5 mb-6 relative overflow-hidden">
-          <div className="absolute top-2 right-2 text-xs font-mono text-[#d4ff00] uppercase">Dziś</div>
-          <div className="text-xs uppercase tracking-widest text-neutral-400 mb-2">Następny trening</div>
-          <h2 className="font-display text-3xl uppercase mb-1">{next.name}</h2>
-          <div className="text-sm text-neutral-400 mb-5">{next.exercises.length} ćwiczeń · {next.exercises.reduce((a, e) => a + e.sets, 0)} serii</div>
-          <Btn onClick={() => onStart(todayIdx)} className="w-full pulse-lime"><Play size={18} strokeWidth={3}/>Rozpocznij</Btn>
+        <div className="border border-[#d4ff00] p-5 mb-6">
+          <div className="text-xs uppercase text-neutral-400 mb-2">Następny w planie</div>
+          <h2 className="font-display text-3xl uppercase mb-4">{next.name}</h2>
+          <Btn onClick={() => onStart(todayIdx)} className="w-full"><Play size={18} strokeWidth={3}/>Rozpocznij</Btn>
         </div>
       )}
 
-      <div className="text-xs text-neutral-500 uppercase tracking-widest mb-3">Tygodniowy plan</div>
       <div className="space-y-2">
         {plan?.map((w, i) => (
-          <button
-            key={i}
-            onClick={() => onPickWorkout(i)}
-            className={`w-full text-left p-4 border ${i === todayIdx ? 'border-[#d4ff00]/40 bg-[#d4ff00]/5' : 'border-neutral-800'} flex items-center justify-between active:scale-[0.99] transition`}
-          >
+          <button key={i} onClick={() => onStart(i)} className={`w-full text-left p-4 border ${i === todayIdx ? 'border-[#d4ff00]/40' : 'border-neutral-800'} flex items-center justify-between`}>
             <div>
-              <div className="font-mono text-xs text-neutral-500 mb-0.5">DZIEŃ {i + 1}</div>
+              <div className="font-mono text-xs text-neutral-500">DZIEŃ {i + 1}</div>
               <div className="font-display text-xl uppercase">{w.name}</div>
-              <div className="text-xs text-neutral-500 mt-1">{w.exercises.length} ćwiczeń</div>
             </div>
             <ChevronRight className="text-neutral-600" />
           </button>
@@ -695,72 +328,39 @@ function HomeView({ profile, plan, history, onStart, onPickWorkout }) {
   );
 }
 
-<div className="space-y-2">
-        {filtered.map(e => {
-          return (
-            <button
-              key={e.id}
-              onClick={() => setSelected(e)}
-              className="w-full text-left border border-neutral-800 p-3 hover:border-[#d4ff00]/40 active:scale-[0.99] transition-all"
-            >
-              <div className="flex items-baseline justify-between gap-2">
-                <h3 className="font-body text-sm text-white truncate flex-1">{e.name}</h3>
-                <div className="flex items-center gap-1.5 shrink-0">
-                  <span className="text-[10px] font-mono text-[#d4ff00] uppercase">wideo</span>
-                  <span className="text-[10px] font-mono text-neutral-500 uppercase">{e.t === 'compound' ? 'Wielost.' : 'Izol.'}</span>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 mt-1">
-                <span className="text-[10px] text-[#d4ff00] uppercase tracking-widest">{e.m}</span>
-                <span className="text-[10px] text-neutral-600">·</span>
-                <span className="text-[10px] text-neutral-500">{eqLabel(e.eq)}</span>
-                <span className="text-[10px] text-neutral-600">·</span>
-                <span className="text-[10px] font-mono text-neutral-500">{e.rr[0]}–{e.rr[1]} {e.unit || 'powt'}</span>
-              </div>
-            </button>
-          );
-        })}
-      </div>
-
-// ============================================================
-// SWAP EXERCISE MODAL
-// ============================================================
-function SwapModal({ currentExercise, profile, onSelect, onClose }) {
-  const eq = EQUIPMENT_AVAILABILITY[profile.equipment];
-  const alternatives = EX.filter(e =>
-    e.m === currentExercise.m &&
-    e.id !== currentExercise.id &&
-    eq.includes(e.eq)
-  );
+function ExerciseDetail({ exercise, history, onClose, onSwap, swapMode }) {
+  const exHistory = history?.[exercise.id] || [];
+  const allSets = exHistory.flatMap(s => s.sets.filter(st => st.completed));
+  const pr = allSets.reduce((a, s) => Math.max(a, s.weight || 0), 0);
+  const vUrl = exercise.url || ytUrl(exercise.name);
 
   return (
-    <div className="fixed inset-0 z-[60] bg-black/80 flex items-end sm:items-center justify-center" onClick={onClose}>
-      <div className="bg-[#0a0a0a] border-t-2 sm:border-2 border-[#d4ff00] w-full max-w-lg max-h-[80vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
-        <div className="sticky top-0 bg-[#0a0a0a] border-b border-neutral-900 px-5 py-4 flex items-start justify-between">
+    <div className="fixed inset-0 z-50 bg-black/80 flex items-end sm:items-center justify-center" onClick={onClose}>
+      <div className="bg-[#0a0a0a] border-t-2 sm:border-2 border-[#d4ff00] w-full max-w-lg max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+        <div className="p-5 flex justify-between items-start border-b border-neutral-900">
           <div>
-            <div className="text-[10px] uppercase tracking-widest text-[#d4ff00] mb-1">Wymień ćwiczenie</div>
-            <h2 className="font-display text-xl uppercase">{currentExercise.m}</h2>
-            <div className="text-xs text-neutral-500 mt-1">{alternatives.length} alternatyw</div>
+            <div className="text-[10px] uppercase text-[#d4ff00] mb-1">{exercise.m}</div>
+            <h2 className="font-display text-2xl uppercase leading-tight">{exercise.name}</h2>
           </div>
-          <button onClick={onClose} className="text-neutral-500 hover:text-white"><X size={20}/></button>
+          <button onClick={onClose}><X size={24} className="text-neutral-500"/></button>
         </div>
-        <div className="p-3 space-y-2">
-          {alternatives.map(e => (
-            <button
-              key={e.id}
-              onClick={() => onSelect(e)}
-              className="w-full text-left p-3 border border-neutral-800 hover:border-[#d4ff00] active:scale-[0.99] transition-all"
-            >
-              <div className="text-sm text-white">{e.name}</div>
-              <div className="flex items-center gap-2 mt-1">
-                <span className="text-[10px] text-neutral-500 uppercase">{eqLabel(e.eq)}</span>
-                <span className="text-[10px] text-neutral-700">·</span>
-                <span className="text-[10px] text-neutral-500 uppercase">{e.t === 'compound' ? 'Wielost.' : 'Izol.'}</span>
-                <span className="text-[10px] text-neutral-700">·</span>
-                <span className="text-[10px] font-mono text-neutral-500">{e.rr[0]}–{e.rr[1]}</span>
+        <div className="p-5 space-y-5">
+          {pr > 0 && <div className="border border-neutral-800 p-3 flex items-center gap-3"><Award className="text-[#d4ff00]"/><div><div className="text-[10px] text-neutral-500 uppercase">Rekord</div><div className="font-mono text-lg">{pr} kg</div></div></div>}
+          <div className="border border-neutral-800 p-3">
+            <div className="text-xs uppercase text-neutral-500 mb-1">Zakres</div>
+            <div className="font-mono">{exercise.rr[0]}–{exercise.rr[1]} {exercise.unit || 'powt'}</div>
+          </div>
+          <a href={vUrl} target="_blank" rel="noopener noreferrer" className="bg-neutral-900 border border-neutral-800 p-4 flex items-center justify-between hover:border-red-500 transition-colors">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-7 bg-red-600 flex items-center justify-center rounded-sm"><Play size={14} fill="white" stroke="white"/></div>
+              <div>
+                <div className="font-display uppercase text-base">Zobacz instruktaż</div>
+                <div className="text-[10px] text-neutral-500 uppercase">{exercise.url ? 'Wideo FS' : 'Wyszukaj na YT'}</div>
               </div>
-            </button>
-          ))}
+            </div>
+            <ExternalLink size={16} className="text-neutral-500"/>
+          </a>
+          {onSwap && <Btn variant="ghost" onClick={onSwap} className="w-full"><Repeat size={16}/>{swapMode ? 'Wymień to ćwiczenie' : 'Alternatywy'}</Btn>}
         </div>
       </div>
     </div>
@@ -768,956 +368,220 @@ function SwapModal({ currentExercise, profile, onSelect, onClose }) {
 }
 
 // ============================================================
-// REST TIMER
+// WORKOUT VIEW
 // ============================================================
-function RestTimer({ secondsLeft, totalSeconds, onSkip, onAdjust }) {
-  const pct = (secondsLeft / totalSeconds) * 100;
-  const min = Math.floor(secondsLeft / 60);
-  const sec = secondsLeft % 60;
-
-  return (
-    <div className="fixed left-0 right-0 bottom-[140px] z-30 px-5">
-      <div className="max-w-lg mx-auto bg-[#d4ff00] text-black p-3 flex items-center gap-3 shadow-2xl">
-        <Timer size={20} strokeWidth={2.5}/>
-        <div className="flex-1">
-          <div className="font-mono text-2xl font-bold leading-none">
-            {min}:{sec.toString().padStart(2, '0')}
-          </div>
-          <div className="h-1 bg-black/20 mt-1 overflow-hidden">
-            <div className="h-full bg-black transition-all" style={{ width: `${pct}%` }} />
-          </div>
-        </div>
-        <button onClick={() => onAdjust(-15)} className="w-9 h-9 flex items-center justify-center bg-black/10 font-mono text-xs font-bold">-15s</button>
-        <button onClick={() => onAdjust(15)} className="w-9 h-9 flex items-center justify-center bg-black/10 font-mono text-xs font-bold">+15s</button>
-        <button onClick={onSkip} className="w-9 h-9 flex items-center justify-center bg-black text-[#d4ff00]"><X size={18}/></button>
-      </div>
-    </div>
-  );
-}
-
-
 function WorkoutView({ workout, history, onFinish, onCancel, active, setActive, profile, onSwapExercise }) {
   const [currentEx, setCurrentEx] = useState(active?.currentEx ?? 0);
   const [showDetail, setShowDetail] = useState(false);
   const [showSwap, setShowSwap] = useState(false);
-  const [showNotes, setShowNotes] = useState(false);
-  const [showPlates, setShowPlates] = useState(false);
-  const [restSecs, setRestSecs] = useState(0);
-  const [restTotal, setRestTotal] = useState(0);
 
   useEffect(() => { setCurrentEx(active?.currentEx ?? 0); }, [active?.workoutName]);
 
-  // Rest timer countdown
-  useEffect(() => {
-    if (restSecs <= 0) return;
-    const id = setInterval(() => {
-      setRestSecs(s => {
-        if (s <= 1) {
-          try {
-            const ctx = new (window.AudioContext || window.webkitAudioContext)();
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.connect(gain); gain.connect(ctx.destination);
-            osc.frequency.value = 800; gain.gain.value = 0.2;
-            osc.start(); osc.stop(ctx.currentTime + 0.15);
-            if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
-          } catch (e) {}
-          return 0;
-        }
-        return s - 1;
-      });
-    }, 1000);
-    return () => clearInterval(id);
-  }, [restSecs]);
-
   if (!active) return null;
+  
+  if (workout.exercises.length === 0) {
+    return (
+      <div className="min-h-screen bg-[#0a0a0a] text-white p-5 flex flex-col items-center justify-center text-center">
+        <h2 className="font-display text-2xl mb-4 text-red-500">Pusty trening!</h2>
+        <p className="text-neutral-500 mb-8">Generator nie znalazł odpowiednich ćwiczeń dla Twojego dostępnego sprzętu (np. masz wybrane tylko "Masa ciała").</p>
+        <Btn onClick={onCancel}>Wróć do menu</Btn>
+      </div>
+    );
+  }
 
   const ex = workout.exercises[currentEx];
-  const exHistory = history[ex.id] || [];
-  const recommendation = getRecommendation(ex, exHistory);
-  const allTimeBest = exHistory.flatMap(s => s.sets.filter(st => st.completed)).reduce((a, s) => Math.max(a, s.weight || 0), 0);
+  const exHistory = history[ex?.id] || [];
+  const recommendation = ex ? getRecommendation(ex, exHistory) : { weight: 0, reps: 0 };
   const setData = active.exercises[currentEx];
-  const warmups = ex.eq !== 'bodyweight' && ex.eq !== 'machine' ? warmupSets(recommendation.weight, ex.t === 'compound') : [];
-  const plates = ex.eq === 'barbell' ? calcPlates(recommendation.weight) : [];
 
   const updateSet = (setIdx, patch) => {
-    const wasCompleted = active.exercises[currentEx].sets[setIdx].completed;
     const newActive = { ...active };
-    newActive.exercises = active.exercises.map((e, i) => {
-      if (i !== currentEx) return e;
-      return { ...e, sets: e.sets.map((s, j) => j === setIdx ? { ...s, ...patch } : s) };
-    });
-    newActive.currentEx = currentEx;
+    newActive.exercises = active.exercises.map((e, i) => i === currentEx ? { ...e, sets: e.sets.map((s, j) => j === setIdx ? { ...s, ...patch } : s) } : e);
     setActive(newActive);
-
-    if (patch.completed === true && !wasCompleted) {
-      const rest = ex.t === 'compound' ? 180 : 90;
-      setRestTotal(rest);
-      setRestSecs(rest);
-    }
-  };
-
-  const updateNotes = (notes) => {
-    setActive({ ...active, notes });
   };
 
   const swapCurrentExercise = (newEx) => {
     const newActive = { ...active };
-    const sameNumberOfSets = newActive.exercises[currentEx].sets.length;
-    newActive.exercises = newActive.exercises.map((e, i) => {
-      if (i !== currentEx) return e;
-      return {
-        exerciseId: newEx.id,
-        sets: Array.from({ length: sameNumberOfSets }, () => ({ weight: null, reps: null, rir: null, completed: false })),
-      };
-    });
+    newActive.exercises = newActive.exercises.map((e, i) => i === currentEx ? { exerciseId: newEx.id, sets: Array.from({ length: e.sets.length }, () => ({ weight: null, reps: null, rir: null, completed: false })) } : e);
     setActive(newActive);
     onSwapExercise(currentEx, newEx);
-    setShowSwap(false);
-    setShowDetail(false);
+    setShowSwap(false); setShowDetail(false);
   };
 
   const totalCompleted = active.exercises.reduce((a, e) => a + e.sets.filter(s => s.completed).length, 0);
   const totalSets = active.exercises.reduce((a, e) => a + e.sets.length, 0);
   const isLast = currentEx === workout.exercises.length - 1;
 
-  const goNext = () => {
-    if (isLast) onFinish();
-    else { setCurrentEx(currentEx + 1); setActive({ ...active, currentEx: currentEx + 1 }); setRestSecs(0); }
-  };
-  const goPrev = () => {
-    if (currentEx === 0) return;
-    setCurrentEx(currentEx - 1); setActive({ ...active, currentEx: currentEx - 1 }); setRestSecs(0);
-  };
-
-  const elapsed = Math.floor((Date.now() - active.date) / 60000);
-
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white font-body pb-32">
-      <div className="px-5 pt-6 pb-4 sticky top-0 bg-[#0a0a0a] z-10 border-b border-neutral-900">
-        <div className="flex items-center justify-between mb-3">
-          <button onClick={onCancel} className="text-neutral-500 text-sm uppercase tracking-wider flex items-center gap-1"><X size={16}/>Anuluj</button>
-          <div className="flex items-center gap-3">
-            <span className="font-mono text-xs text-neutral-500"><Timer size={11} className="inline mr-1"/>{elapsed}min</span>
-            <span className="font-mono text-xs text-neutral-500">{totalCompleted}/{totalSets} serii</span>
-          </div>
+    <div className="min-h-screen bg-[#0a0a0a] text-white pb-32">
+      <div className="sticky top-0 bg-[#0a0a0a] z-10 px-5 pt-6 pb-4 border-b border-neutral-900">
+        <div className="flex justify-between items-center mb-3">
+          <button onClick={onCancel} className="text-neutral-500 text-xs uppercase"><X size={14} className="inline mr-1"/>Anuluj</button>
+          <span className="font-mono text-xs text-neutral-500">{totalCompleted}/{totalSets} serii</span>
         </div>
-        <div className="h-1 bg-neutral-900 rounded-full overflow-hidden">
-          <div className="h-full bg-[#d4ff00] transition-all" style={{ width: `${(totalCompleted / totalSets) * 100}%` }} />
-        </div>
+        <div className="h-1 bg-neutral-900"><div className="h-full bg-[#d4ff00]" style={{ width: `${(totalCompleted / totalSets) * 100}%` }}/></div>
       </div>
 
-      <div className="flex gap-2 px-5 pt-4 pb-2 overflow-x-auto scroll-hide">
-        {workout.exercises.map((e, i) => {
-          const done = active.exercises[i].sets.every(s => s.completed);
-          const isCurrent = i === currentEx;
-          return (
-            <button
-              key={i}
-              onClick={() => { setCurrentEx(i); setActive({ ...active, currentEx: i }); setRestSecs(0); }}
-              className={`shrink-0 w-9 h-9 flex items-center justify-center font-mono text-sm border ${
-                isCurrent ? 'border-[#d4ff00] text-[#d4ff00] bg-[#d4ff00]/10' :
-                done ? 'border-neutral-700 text-neutral-400 bg-neutral-900' :
-                'border-neutral-800 text-neutral-600'
-              }`}
-            >
-              {done ? <Check size={14} strokeWidth={3}/> : i + 1}
-            </button>
-          );
-        })}
-      </div>
-
-      <div className="px-5 pt-4">
-        <div className="flex items-center justify-between text-xs text-neutral-500 uppercase tracking-widest mb-1">
-          <span>Ćwiczenie {currentEx + 1} z {workout.exercises.length} · {ex.m}</span>
-        </div>
-        <div className="flex items-start justify-between gap-3 mb-3">
-          <h2 className="font-display text-3xl uppercase leading-tight flex-1">{ex.name}</h2>
-          <div className="flex gap-1 shrink-0 mt-1">
-            <button onClick={() => setShowDetail(true)} className="w-9 h-9 flex items-center justify-center border border-neutral-800 text-neutral-400 hover:border-[#d4ff00]/60"><Info size={16}/></button>
-            <button onClick={() => setShowSwap(true)} className="w-9 h-9 flex items-center justify-center border border-neutral-800 text-neutral-400 hover:border-[#d4ff00]/60"><Repeat size={16}/></button>
+      <div className="px-5 pt-6">
+        <div className="flex justify-between items-start mb-4">
+          <h2 className="font-display text-3xl uppercase leading-tight">{ex.name}</h2>
+          <div className="flex gap-2 shrink-0">
+            <button onClick={() => setShowDetail(true)} className="w-10 h-10 border border-neutral-800 flex items-center justify-center text-neutral-400"><Info size={18}/></button>
+            <button onClick={() => setShowSwap(true)} className="w-10 h-10 border border-neutral-800 flex items-center justify-center text-neutral-400"><Repeat size={18}/></button>
           </div>
         </div>
 
-        <div className="border border-neutral-800 bg-neutral-950 p-4 mb-2">
-          <div className="flex items-center gap-2 text-xs text-[#d4ff00] uppercase tracking-widest mb-2">
-            <Target size={12}/>Rekomendacja na dziś
-          </div>
-          <div className="flex items-baseline gap-3 font-mono mb-2">
-            <span className="text-3xl text-white">{recommendation.weight}</span>
-            <span className="text-sm text-neutral-500">{ex.eq === 'bodyweight' ? 'm.c.' : 'kg'}</span>
-            <span className="text-3xl text-white">×</span>
-            <span className="text-3xl text-white">{recommendation.reps}</span>
-            <span className="text-sm text-neutral-500">{ex.unit || 'powt.'}</span>
-          </div>
-          <div className="text-xs text-neutral-400">{recommendation.note}</div>
-
-          {warmups.length > 0 && (
-            <div className="mt-3 pt-3 border-t border-neutral-900">
-              <div className="flex items-center gap-1.5 text-[10px] text-orange-400 uppercase tracking-widest mb-1.5">
-                <Flame size={10}/>Rozgrzewka
-              </div>
-              <div className="font-mono text-xs text-neutral-400">
-                {warmups.map((w, i) => `${w.weight}×${w.reps}`).join('  →  ')}
-              </div>
-            </div>
-          )}
-
-          {plates.length > 0 && (
-            <button onClick={() => setShowPlates(!showPlates)} className="mt-3 pt-3 border-t border-neutral-900 w-full text-left">
-              <div className="flex items-center justify-between">
-                <div className="text-[10px] text-neutral-500 uppercase tracking-widest">Talerze (sztanga 20kg)</div>
-                <ChevronRight size={12} className={`text-neutral-600 transition-transform ${showPlates ? 'rotate-90' : ''}`}/>
-              </div>
-              {showPlates && (
-                <div className="mt-2 flex flex-wrap gap-1.5">
-                  <span className="text-[10px] text-neutral-500 mr-1 self-center">na stronę:</span>
-                  {plates.map((p, i) => (
-                    <span key={i} className="px-2 py-1 text-xs font-mono bg-[#d4ff00]/10 border border-[#d4ff00]/30 text-[#d4ff00]">{p}</span>
-                  ))}
-                </div>
-              )}
-            </button>
-          )}
+        <div className="bg-neutral-950 border border-neutral-800 p-4 mb-6">
+          <div className="text-xs text-[#d4ff00] uppercase mb-2">Cel na dziś</div>
+          <div className="font-mono text-2xl">{recommendation.weight} <span className="text-sm">kg</span> × {recommendation.reps}</div>
+          <div className="text-xs text-neutral-500 mt-1">{recommendation.note}</div>
         </div>
 
-        {exHistory.length > 0 && (
-          <div className="border border-neutral-800/50 px-4 py-2 mb-4 text-xs text-neutral-500 font-mono flex items-center justify-between">
-            <span>Ostatnio: {exHistory[exHistory.length - 1].sets.filter(s => s.completed).map(s => `${s.weight}×${s.reps}`).join(' · ') || '—'}</span>
-            {allTimeBest > 0 && <span className="text-[#d4ff00]">PR: {allTimeBest}kg</span>}
-          </div>
-        )}
-
-        <div className="space-y-2 mt-5">
-          <div className="grid grid-cols-12 gap-2 px-1 text-[10px] text-neutral-600 uppercase tracking-widest mb-1">
-            <div className="col-span-1">#</div>
-            <div className="col-span-3">Ciężar</div>
-            <div className="col-span-2">Powt.</div>
-            <div className="col-span-4">RIR</div>
-            <div className="col-span-2 text-right">OK</div>
-          </div>
+        <div className="space-y-2">
           {setData.sets.map((s, i) => (
-            <SetRow key={i} idx={i} set={s} ex={ex} recommended={recommendation} allTimeBest={allTimeBest} onUpdate={(patch) => updateSet(i, patch)} />
+            <div key={i} className={`flex items-center gap-2 p-2 border ${s.completed ? 'border-[#d4ff00] bg-[#d4ff00]/5' : 'border-neutral-800'}`}>
+              <div className="w-6 text-center font-mono text-xs text-neutral-500">{i + 1}</div>
+              <input type="number" placeholder={String(recommendation.weight)} value={s.weight || ''} onChange={(e) => updateSet(i, { weight: Number(e.target.value) })} className="flex-1 bg-transparent border-b border-neutral-800 font-mono p-1 outline-none text-white focus:border-[#d4ff00]"/>
+              <input type="number" placeholder={String(recommendation.reps)} value={s.reps || ''} onChange={(e) => updateSet(i, { reps: Number(e.target.value) })} className="w-16 bg-transparent border-b border-neutral-800 font-mono p-1 outline-none text-white focus:border-[#d4ff00]"/>
+              <button onClick={() => updateSet(i, { completed: !s.completed, weight: s.weight || recommendation.weight, reps: s.reps || recommendation.reps })} className={`w-10 h-10 flex items-center justify-center border ${s.completed ? 'bg-[#d4ff00] text-black border-[#d4ff00]' : 'border-neutral-700 text-neutral-500'}`}><Check size={18}/></button>
+            </div>
           ))}
         </div>
-
-        <div className="mt-5">
-          <button onClick={() => setShowNotes(!showNotes)} className="w-full flex items-center justify-between p-3 border border-neutral-800 text-sm text-neutral-400">
-            <span className="flex items-center gap-2"><FileText size={14}/>Notatki do treningu</span>
-            <ChevronRight size={14} className={`transition-transform ${showNotes ? 'rotate-90' : ''}`}/>
-          </button>
-          {showNotes && (
-            <textarea
-              value={active.notes || ''}
-              onChange={(e) => updateNotes(e.target.value)}
-              placeholder="np. Lewe kolano dawało znać na 4. serii."
-              className="w-full mt-2 p-3 bg-neutral-950 border border-neutral-800 text-sm text-white placeholder:text-neutral-600 focus:border-[#d4ff00] outline-none min-h-[80px] resize-none"
-            />
-          )}
-        </div>
       </div>
 
-      {restSecs > 0 && (
-        <RestTimer secondsLeft={restSecs} totalSeconds={restTotal} onSkip={() => setRestSecs(0)} onAdjust={(d) => setRestSecs(s => Math.max(0, s + d))} />
-      )}
-
-      <div className="fixed bottom-0 left-0 right-0 bg-[#0a0a0a] border-t border-neutral-900 px-5 py-4 flex gap-2 z-20">
-        <Btn variant="ghost" onClick={goPrev} className="flex-1" disabled={currentEx === 0}>Wstecz</Btn>
-        <Btn onClick={goNext} className="flex-1">
-          {isLast ? <>Zakończ<Check size={16} strokeWidth={3}/></> : <>Dalej<ChevronRight size={16}/></>}
-        </Btn>
+      <div className="fixed bottom-0 left-0 right-0 p-5 bg-[#0a0a0a] border-t border-neutral-900 flex gap-2">
+        <Btn variant="ghost" onClick={() => setCurrentEx(Math.max(0, currentEx - 1))} className="flex-1" disabled={currentEx === 0}>Wstecz</Btn>
+        <Btn onClick={() => isLast ? onFinish() : setCurrentEx(currentEx + 1)} className="flex-1">{isLast ? 'Zakończ' : 'Dalej'}</Btn>
       </div>
 
-      {showDetail && (
-        <ExerciseDetail exercise={ex} history={history} onClose={() => setShowDetail(false)} onSwap={() => { setShowDetail(false); setShowSwap(true); }} swapMode={true} />
-      )}
+      {showDetail && <ExerciseDetail exercise={ex} history={history} onClose={() => setShowDetail(false)} onSwap={() => { setShowDetail(false); setShowSwap(true); }} swapMode={true}/>}
       {showSwap && (
-        <SwapModal currentExercise={ex} profile={profile} onSelect={swapCurrentExercise} onClose={() => setShowSwap(false)} />
-      )}
-    </div>
-  );
-}
-
-function SetRow({ idx, set, ex, recommended, allTimeBest, onUpdate }) {
-  const isBW = ex.eq === 'bodyweight';
-  const isPR = set.completed && set.weight && set.weight > allTimeBest && allTimeBest > 0;
-  return (
-    <div className={`grid grid-cols-12 gap-2 items-center p-2 border ${set.completed ? 'border-[#d4ff00]/40 bg-[#d4ff00]/5' : 'border-neutral-800'} relative`}>
-      {isPR && (
-        <div className="absolute -top-2 left-2 px-1.5 py-0.5 bg-[#d4ff00] text-black text-[9px] font-mono font-bold uppercase tracking-widest flex items-center gap-1">
-          <Sparkles size={9} strokeWidth={3}/>PR
+        <div className="fixed inset-0 z-[60] bg-black/90 p-5 overflow-y-auto">
+          <div className="flex justify-between items-center mb-6 mt-10"><h2 className="font-display text-2xl uppercase">Wymień na:</h2><button onClick={() => setShowSwap(false)}><X size={24}/></button></div>
+          <div className="space-y-2">
+            {EX.filter(e => e.m === ex.m && EQUIPMENT_AVAILABILITY[profile.equipment].includes(e.eq) && e.id !== ex.id).map(e => (
+              <button key={e.id} onClick={() => swapCurrentExercise(e)} className="w-full text-left p-4 border border-neutral-800 hover:border-[#d4ff00]"><div className="text-sm">{e.name}</div></button>
+            ))}
+          </div>
         </div>
       )}
-      <div className="col-span-1 font-mono text-sm text-neutral-500">{idx + 1}</div>
-      <div className="col-span-3">
-        <input type="number" inputMode="decimal" value={set.weight ?? ''} placeholder={String(recommended.weight)} onChange={(e) => onUpdate({ weight: e.target.value === '' ? null : Number(e.target.value) })} className="w-full bg-transparent border-b border-neutral-800 focus:border-[#d4ff00] outline-none font-mono text-base px-1 py-1.5 text-white" disabled={isBW} />
-      </div>
-      <div className="col-span-2">
-        <input type="number" inputMode="numeric" value={set.reps ?? ''} placeholder={String(recommended.reps)} onChange={(e) => onUpdate({ reps: e.target.value === '' ? null : Number(e.target.value) })} className="w-full bg-transparent border-b border-neutral-800 focus:border-[#d4ff00] outline-none font-mono text-base px-1 py-1.5 text-white" />
-      </div>
-      <div className="col-span-4 flex gap-1">
-        {[0, 1, 2, 3].map(r => (
-          <button key={r} onClick={() => onUpdate({ rir: r })} className={`flex-1 py-1.5 text-xs font-mono border ${set.rir === r ? 'border-[#d4ff00] bg-[#d4ff00] text-black' : 'border-neutral-800 text-neutral-500'}`}>
-            {r === 3 ? '3+' : r}
-          </button>
-        ))}
-      </div>
-      <div className="col-span-2 flex justify-end">
-        <button onClick={() => onUpdate({ completed: !set.completed, weight: set.weight ?? recommended.weight, reps: set.reps ?? recommended.reps, rir: set.rir ?? 2 })} className={`w-9 h-9 flex items-center justify-center border ${set.completed ? 'bg-[#d4ff00] border-[#d4ff00] text-black' : 'border-neutral-700 text-neutral-600'}`}>
-          <Check size={16} strokeWidth={3}/>
-        </button>
-      </div>
     </div>
   );
 }
 
 // ============================================================
-// HISTORY VIEW
+// RESZTA WIDOKÓW
 // ============================================================
 function HistoryView({ history }) {
-  const allSessions = useMemo(() => {
-    const sessionsMap = {};
-    
-    for (const [exId, sessions] of Object.entries(history)) {
-      for (const s of sessions || []) {
-        if (!sessionsMap[s.sessionId]) {
-          sessionsMap[s.sessionId] = {
-            sessionId: s.sessionId,
-            workoutName: s.workoutName,
-            date: s.date,
-            exercises: []
-          };
-        }
-        sessionsMap[s.sessionId].exercises.push({
-          exerciseId: exId,
-          sets: s.sets
-        });
-      }
-    }
-    
-    return Object.values(sessionsMap).sort((a, b) => b.date - a.date);
+  const sessions = useMemo(() => {
+    const map = {};
+    Object.entries(history).forEach(([exId, setsList]) => {
+      setsList.forEach(s => {
+        if (!map[s.sessionId]) map[s.sessionId] = { date: s.date, name: s.workoutName, exs: [] };
+        map[s.sessionId].exs.push({ exId, sets: s.sets });
+      });
+    });
+    return Object.values(map).sort((a, b) => b.date - a.date);
   }, [history]);
 
   return (
     <div className="px-5 pt-10 pb-24">
-      <h1 className="font-display text-4xl uppercase mb-1">Historia</h1>
-      <p className="text-neutral-500 text-xs uppercase tracking-widest mb-8">{allSessions.length} ukończonych sesji</p>
-      {allSessions.length === 0 ? (
-        <div className="border border-dashed border-neutral-800 p-8 text-center text-neutral-500">
-          Brak sesji. Rozpocznij pierwszy trening, żeby zobaczyć tu postępy.
-        </div>
-      ) : (
-        <div className="space-y-3">
-          {allSessions.map(s => (
-            <div key={s.sessionId} className="border border-neutral-800 p-4">
-              <div className="flex items-baseline justify-between mb-2">
-                <h3 className="font-display text-xl uppercase">{s.workoutName}</h3>
-                <span className="text-xs font-mono text-neutral-500">
-                  {new Date(s.date).toLocaleDateString('pl-PL', { day: '2-digit', month: 'short' })}
-                </span>
-              </div>
-              <div className="space-y-1">
-                {s.exercises.map((e, i) => {
-                  const ex = EX.find(x => x.id === e.exerciseId);
-                  const completed = e.sets.filter(st => st.completed);
-                  if (completed.length === 0) return null;
-                  return (
-                    <div key={i} className="flex items-center justify-between text-sm">
-                      <span className="text-neutral-300 truncate pr-2">{ex?.name || e.exerciseId}</span>
-                      <span className="font-mono text-xs text-neutral-500 shrink-0">
-                        {completed.map(st => `${st.weight}×${st.reps}`).join(' · ')}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ============================================================
-// PROGRESS VIEW (per-exercise charts)
-// ============================================================
-function ProgressView({ history }) {
-  const exerciseList = Object.entries(history)
-    .map(([id, sessions]) => ({ id, sessions: sessions || [] }))
-    .filter(e => e.sessions.length > 0)
-    .map(e => ({ ...e, exercise: EX.find(x => x.id === e.id) }))
-    .filter(e => e.exercise);
-
-  return (
-    <div className="px-5 pt-10 pb-24">
-      <h1 className="font-display text-4xl uppercase mb-1">Postępy</h1>
-      <p className="text-neutral-500 text-xs uppercase tracking-widest mb-8">Rekordy i trendy</p>
-      {exerciseList.length === 0 ? (
-        <div className="border border-dashed border-neutral-800 p-8 text-center text-neutral-500">
-          Trenuj, by zobaczyć tu wykresy progresji.
-        </div>
-      ) : (
-        <div className="space-y-4">
-          {exerciseList.map(({ id, sessions, exercise }) => {
-            const allSets = sessions.flatMap(s => s.sets.filter(st => st.completed));
-            if (allSets.length === 0) return null;
-            const maxWeight = Math.max(...allSets.map(s => s.weight || 0));
-            const e1rm = Math.max(...allSets.map(s => Math.round((s.weight || 0) * (1 + (s.reps || 0) / 30))));
-            const lastSession = sessions[sessions.length - 1];
-            const topSetLast = lastSession.sets.filter(s => s.completed).reduce((a, s) => (s.weight > (a?.weight || 0) ? s : a), null);
-
-            return (
-              <div key={id} className="border border-neutral-800 p-4">
-                <h3 className="font-display text-lg uppercase mb-3">{exercise.name}</h3>
-                <div className="grid grid-cols-3 gap-3 mb-3">
-                  <div>
-                    <div className="text-[10px] text-neutral-600 uppercase tracking-widest">Rekord</div>
-                    <div className="font-mono text-lg text-[#d4ff00]">{maxWeight}<span className="text-xs text-neutral-500"> kg</span></div>
-                  </div>
-                  <div>
-                    <div className="text-[10px] text-neutral-600 uppercase tracking-widest">e1RM</div>
-                    <div className="font-mono text-lg text-white">{e1rm}<span className="text-xs text-neutral-500"> kg</span></div>
-                  </div>
-                  <div>
-                    <div className="text-[10px] text-neutral-600 uppercase tracking-widest">Ostatnio</div>
-                    <div className="font-mono text-lg text-white">{topSetLast ? `${topSetLast.weight}×${topSetLast.reps}` : '—'}</div>
-                  </div>
-                </div>
-                <MiniChart sessions={sessions} />
-              </div>
-            );
+      <h1 className="font-display text-4xl uppercase mb-6">Historia</h1>
+      {sessions.map((s, i) => (
+        <div key={i} className="border border-neutral-800 p-4 mb-3">
+          <div className="flex justify-between items-baseline mb-3"><div className="font-display text-xl uppercase">{s.name}</div><div className="font-mono text-xs text-neutral-500">{new Date(s.date).toLocaleDateString()}</div></div>
+          {s.exs.map((e, j) => {
+            const completed = e.sets.filter(x => x.completed);
+            if (completed.length === 0) return null;
+            return <div key={j} className="text-sm text-neutral-300 flex justify-between py-1 border-t border-neutral-900"><span className="truncate pr-2">{EX.find(x => x.id === e.exId)?.name}</span><span className="font-mono text-neutral-500">{completed.map(x => `${x.weight}×${x.reps}`).join(' · ')}</span></div>;
           })}
         </div>
-      )}
-    </div>
-  );
-}
-
-function MiniChart({ sessions }) {
-  // Plot top set weight per session
-  const data = sessions.map(s => {
-    const top = s.sets.filter(st => st.completed).reduce((a, st) => (st.weight > (a?.weight || 0) ? st : a), null);
-    return top?.weight || 0;
-  });
-  if (data.length < 2) return <div className="text-xs text-neutral-600 italic">Mało danych — kontynuuj treningi</div>;
-  const max = Math.max(...data, 1);
-  const min = Math.min(...data);
-  const range = max - min || 1;
-  return (
-    <div className="flex items-end gap-1 h-16">
-      {data.slice(-12).map((v, i) => (
-        <div key={i} className="flex-1 bg-[#d4ff00]/30 hover:bg-[#d4ff00] transition-colors" style={{ height: `${((v - min) / range) * 80 + 20}%` }} />
       ))}
     </div>
   );
 }
 
-// ============================================================
-// LIBRARY VIEW
-// ============================================================
-<div className="space-y-2">
-        {filtered.map(e => {
-          return (
-            <button
-              key={e.id}
-              onClick={() => setSelected(e)}
-              className="w-full text-left border border-neutral-800 p-3 hover:border-[#d4ff00]/40 active:scale-[0.99] transition-all"
-            >
-              <div className="flex items-baseline justify-between gap-2">
-                <h3 className="font-body text-sm text-white truncate flex-1">{e.name}</h3>
-                <div className="flex items-center gap-1.5 shrink-0">
-                  <span className="text-[10px] font-mono text-[#d4ff00] uppercase">wideo</span>
-                  <span className="text-[10px] font-mono text-neutral-500 uppercase">{e.t === 'compound' ? 'Wielost.' : 'Izol.'}</span>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 mt-1">
-                <span className="text-[10px] text-[#d4ff00] uppercase tracking-widest">{e.m}</span>
-                <span className="text-[10px] text-neutral-600">·</span>
-                <span className="text-[10px] text-neutral-500">{eqLabel(e.eq)}</span>
-                <span className="text-[10px] text-neutral-600">·</span>
-                <span className="text-[10px] font-mono text-neutral-500">{e.rr[0]}–{e.rr[1]} {e.unit || 'powt'}</span>
-              </div>
-            </button>
-          );
-        })}
-      </div>
-
-// ============================================================
-// PLAN EDITOR
-// ============================================================
-function eqLabel(eq) {
-  return { barbell: 'Sztanga', dumbbell: 'Hantle', cable: 'Wyciąg', machine: 'Maszyna', bodyweight: 'Masa ciała' }[eq] || eq;
-}
-
-function PlanEditor({ plan, profile, onSave, onCancel }) {
-  const [workouts, setWorkouts] = useState(JSON.parse(JSON.stringify(plan)));
-  const [addingTo, setAddingTo] = useState(null);
-
-  const renameWorkout = (idx) => {
-    const newName = window.prompt('Nazwa treningu:', workouts[idx].name);
-    if (newName?.trim()) {
-      setWorkouts(workouts.map((w, i) => i === idx ? { ...w, name: newName.trim() } : w));
-    }
-  };
-
-  const deleteWorkout = (idx) => {
-    if (!window.confirm(`Usunąć trening "${workouts[idx].name}"?`)) return;
-    setWorkouts(workouts.filter((_, i) => i !== idx));
-  };
-
-  const addWorkout = () => {
-    const name = window.prompt('Nazwa nowego treningu:', `Trening ${workouts.length + 1}`);
-    if (name?.trim()) {
-      setWorkouts([...workouts, { name: name.trim(), exercises: [] }]);
-    }
-  };
-
-  const moveWorkout = (idx, dir) => {
-    const newIdx = idx + dir;
-    if (newIdx < 0 || newIdx >= workouts.length) return;
-    const next = [...workouts];
-    [next[idx], next[newIdx]] = [next[newIdx], next[idx]];
-    setWorkouts(next);
-  };
-
-  const updateExercise = (wIdx, eIdx, patch) => {
-    setWorkouts(workouts.map((w, i) => {
-      if (i !== wIdx) return w;
-      return { ...w, exercises: w.exercises.map((e, j) => j === eIdx ? { ...e, ...patch } : e) };
-    }));
-  };
-
-  const removeExercise = (wIdx, eIdx) => {
-    setWorkouts(workouts.map((w, i) => {
-      if (i !== wIdx) return w;
-      return { ...w, exercises: w.exercises.filter((_, j) => j !== eIdx) };
-    }));
-  };
-
-  const moveExercise = (wIdx, eIdx, dir) => {
-    const newIdx = eIdx + dir;
-    const w = workouts[wIdx];
-    if (newIdx < 0 || newIdx >= w.exercises.length) return;
-    const exs = [...w.exercises];
-    [exs[eIdx], exs[newIdx]] = [exs[newIdx], exs[eIdx]];
-    setWorkouts(workouts.map((wo, i) => i === wIdx ? { ...wo, exercises: exs } : wo));
-  };
-
-  const addExerciseToWorkout = (wIdx, exercise) => {
-    setWorkouts(workouts.map((w, i) => {
-      if (i !== wIdx) return w;
-      return { ...w, exercises: [...w.exercises, { ...exercise, sets: 3 }] };
-    }));
-    setAddingTo(null);
-  };
-
-  return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white font-body pb-24">
-      <div className="px-5 pt-6 pb-4 sticky top-0 bg-[#0a0a0a] z-20 border-b border-neutral-900">
-        <div className="flex items-center justify-between">
-          <button onClick={onCancel} className="text-neutral-500 text-sm uppercase tracking-wider flex items-center gap-1">
-            <X size={16}/>Anuluj
-          </button>
-          <button onClick={() => onSave(workouts)} className="bg-[#d4ff00] text-black px-4 py-2 text-sm uppercase tracking-wider font-bold flex items-center gap-1.5">
-            <Check size={16} strokeWidth={3}/>Zapisz
-          </button>
-        </div>
-      </div>
-
-      <div className="px-5 pt-4">
-        <h1 className="font-display text-3xl uppercase mb-1">Edytor planu</h1>
-        <p className="text-neutral-500 text-xs uppercase tracking-widest mb-6">Dostosuj swoje treningi</p>
-
-        <div className="space-y-4">
-          {workouts.map((w, wIdx) => (
-            <div key={wIdx} className="border border-neutral-800">
-              <div className="flex items-center gap-2 p-3 border-b border-neutral-900 bg-neutral-950">
-                <div className="flex flex-col gap-0.5">
-                  <button onClick={() => moveWorkout(wIdx, -1)} disabled={wIdx === 0} className="w-6 h-5 flex items-center justify-center text-neutral-600 disabled:opacity-30">▲</button>
-                  <button onClick={() => moveWorkout(wIdx, 1)} disabled={wIdx === workouts.length - 1} className="w-6 h-5 flex items-center justify-center text-neutral-600 disabled:opacity-30">▼</button>
-                </div>
-                <button onClick={() => renameWorkout(wIdx)} className="flex-1 text-left">
-                  <div className="font-mono text-[10px] text-neutral-500 uppercase">DZIEŃ {wIdx + 1}</div>
-                  <div className="font-display text-lg uppercase">{w.name}</div>
-                  <div className="text-[10px] text-neutral-600 uppercase tracking-widest">{w.exercises.length} ćwiczeń · tap aby zmienić nazwę</div>
-                </button>
-                <button onClick={() => deleteWorkout(wIdx)} className="w-9 h-9 flex items-center justify-center text-neutral-500 hover:text-red-400">
-                  <Trash2 size={16}/>
-                </button>
-              </div>
-
-              <div className="divide-y divide-neutral-900">
-                {w.exercises.map((e, eIdx) => (
-                  <div key={eIdx} className="flex items-center gap-2 p-2">
-                    <div className="flex flex-col gap-0.5">
-                      <button onClick={() => moveExercise(wIdx, eIdx, -1)} disabled={eIdx === 0} className="w-5 h-4 flex items-center justify-center text-neutral-600 text-[10px] disabled:opacity-30">▲</button>
-                      <button onClick={() => moveExercise(wIdx, eIdx, 1)} disabled={eIdx === w.exercises.length - 1} className="w-5 h-4 flex items-center justify-center text-neutral-600 text-[10px] disabled:opacity-30">▼</button>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="text-sm text-white truncate">{e.name}</div>
-                      <div className="flex items-center gap-1.5 mt-0.5">
-                        <span className="text-[9px] text-[#d4ff00] uppercase tracking-widest">{e.m}</span>
-                        <span className="text-[9px] text-neutral-600">·</span>
-                        <span className="text-[9px] text-neutral-500">{eqLabel(e.eq)}</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center border border-neutral-800 shrink-0">
-                      <button onClick={() => updateExercise(wIdx, eIdx, { sets: Math.max(1, e.sets - 1) })} className="w-7 h-7 flex items-center justify-center text-neutral-500"><Minus size={12}/></button>
-                      <span className="font-mono text-xs text-white w-7 text-center">{e.sets}</span>
-                      <button onClick={() => updateExercise(wIdx, eIdx, { sets: Math.min(8, e.sets + 1) })} className="w-7 h-7 flex items-center justify-center text-neutral-500"><Plus size={12}/></button>
-                    </div>
-                    <button onClick={() => removeExercise(wIdx, eIdx)} className="w-7 h-7 flex items-center justify-center text-neutral-500 shrink-0"><X size={14}/></button>
-                  </div>
-                ))}
-                {w.exercises.length === 0 && (
-                  <div className="p-4 text-center text-xs text-neutral-600 italic">Brak ćwiczeń. Dodaj poniżej.</div>
-                )}
-              </div>
-
-              <button onClick={() => setAddingTo(wIdx)} className="w-full p-3 text-sm text-[#d4ff00] uppercase tracking-wider flex items-center justify-center gap-2 border-t border-neutral-900 hover:bg-[#d4ff00]/5">
-                <Plus size={14}/>Dodaj ćwiczenie
-              </button>
-            </div>
-          ))}
-
-          <button onClick={addWorkout} className="w-full p-4 border border-dashed border-neutral-700 text-sm text-neutral-400 uppercase tracking-wider flex items-center justify-center gap-2 hover:border-[#d4ff00]">
-            <Plus size={16}/>Dodaj nowy trening
-          </button>
-        </div>
-      </div>
-
-      {addingTo !== null && (
-        <ExercisePicker
-          profile={profile}
-          onSelect={(ex) => addExerciseToWorkout(addingTo, ex)}
-          onClose={() => setAddingTo(null)}
-        />
-      )}
-    </div>
-  );
-}
-
-function ExercisePicker({ profile, onSelect, onClose }) {
-  const [filter, setFilter] = useState('all');
-  const [search, setSearch] = useState('');
-  const eq = EQUIPMENT_AVAILABILITY[profile.equipment];
-  const muscles = ['all', ...Array.from(new Set(EX.map(e => e.m)))];
-
-  let filtered = EX.filter(e => eq.includes(e.eq));
-  if (filter !== 'all') filtered = filtered.filter(e => e.m === filter);
-  if (search.trim()) {
-    const s = search.trim().toLowerCase();
-    filtered = filtered.filter(e => e.name.toLowerCase().includes(s));
-  }
-
-  return (
-    <div className="fixed inset-0 z-50 bg-black/80 flex items-end sm:items-center justify-center" onClick={onClose}>
-      <div className="bg-[#0a0a0a] border-t-2 sm:border-2 border-[#d4ff00] w-full max-w-lg max-h-[85vh] overflow-hidden flex flex-col" onClick={e => e.stopPropagation()}>
-        <div className="bg-[#0a0a0a] border-b border-neutral-900 p-3">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="font-display text-xl uppercase">Wybierz ćwiczenie</h2>
-            <button onClick={onClose}><X size={20} className="text-neutral-500"/></button>
-          </div>
-          <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Szukaj..." className="w-full p-2 bg-neutral-950 border border-neutral-800 text-sm text-white placeholder:text-neutral-600 focus:border-[#d4ff00] outline-none mb-2"/>
-          <div className="flex gap-1.5 overflow-x-auto scroll-hide">
-            {muscles.map(m => (
-              <button key={m} onClick={() => setFilter(m)} className={`shrink-0 px-2 py-1 text-[10px] uppercase tracking-wider border ${filter === m ? 'border-[#d4ff00] bg-[#d4ff00] text-black' : 'border-neutral-800 text-neutral-400'}`}>
-                {m === 'all' ? 'Wszystkie' : m}
-              </button>
-            ))}
-          </div>
-        </div>
-        <div className="overflow-y-auto p-2 space-y-1 flex-1">
-          {filtered.map(e => (
-            <button key={e.id} onClick={() => onSelect(e)} className="w-full text-left p-3 border border-neutral-800 hover:border-[#d4ff00] active:scale-[0.99] transition-all">
-              <div className="text-sm text-white">{e.name}</div>
-              <div className="flex items-center gap-2 mt-0.5">
-                <span className="text-[10px] text-[#d4ff00] uppercase">{e.m}</span>
-                <span className="text-[10px] text-neutral-600">·</span>
-                <span className="text-[10px] text-neutral-500">{eqLabel(e.eq)}</span>
-                <span className="text-[10px] text-neutral-600">·</span>
-                <span className="text-[10px] font-mono text-neutral-500">{e.rr[0]}–{e.rr[1]}</span>
-              </div>
-            </button>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-
-// ============================================================
-// SETTINGS VIEW
-// ============================================================
-function SettingsView({ profile, onRegenerate, onReset, onEditPlan }) {
-  const [confirming, setConfirming] = useState(false);
+function LibraryView({ history }) {
+  const [sel, setSel] = useState(null);
   return (
     <div className="px-5 pt-10 pb-24">
-      <h1 className="font-display text-4xl uppercase mb-1">Ustawienia</h1>
-      <p className="text-neutral-500 text-xs uppercase tracking-widest mb-8">Profil i dane</p>
-
-      <div className="border border-neutral-800 p-4 mb-3">
-        <div className="text-xs text-neutral-500 uppercase tracking-widest mb-3">Profil</div>
-        <Row label="Cel" value={{ muscle: 'Budowa masy', strength: 'Siła', both: 'Siła + masa' }[profile.goal]} />
-        <Row label="Doświadczenie" value={{ beginner: 'Początkujący', intermediate: 'Średnio', advanced: 'Zaawansowany' }[profile.experience]} />
-        <Row label="Dni / tydzień" value={profile.days} />
-        <Row label="Sprzęt" value={{ full_gym: 'Pełna siłownia', home_full: 'Sztanga + hantle', dumbbell: 'Hantle', bodyweight: 'Masa ciała' }[profile.equipment]} />
+      <h1 className="font-display text-4xl uppercase mb-6">Biblioteka</h1>
+      <div className="space-y-2">
+        {EX.map(e => (
+          <button key={e.id} onClick={() => setSel(e)} className="w-full text-left border border-neutral-800 p-4 flex flex-col gap-2">
+            <div className="flex justify-between items-start gap-2">
+              <span className="text-sm font-body">{e.name}</span>
+              <span className="text-[10px] font-mono text-[#d4ff00] border border-[#d4ff00]/40 px-1 py-0.5 rounded-sm">{e.url ? 'WIDEO FS' : 'WIDEO YT'}</span>
+            </div>
+            <div className="text-[10px] text-neutral-500 uppercase tracking-widest">{e.m} · {e.eq}</div>
+          </button>
+        ))}
       </div>
-
-      <Btn onClick={onEditPlan} className="w-full mb-3"><FileText size={16}/>Edytuj plan</Btn>
-      <Btn variant="ghost" onClick={onRegenerate} className="w-full mb-3"><RotateCcw size={16}/>Wygeneruj nowy plan (auto)</Btn>
-
-      {confirming ? (
-        <div className="border border-red-900/60 p-4">
-          <div className="text-sm text-red-300 mb-3">Skasować wszystkie dane (profil, plan, historię)?</div>
-          <div className="flex gap-2">
-            <Btn variant="ghost" onClick={() => setConfirming(false)} className="flex-1">Anuluj</Btn>
-            <Btn variant="danger" onClick={onReset} className="flex-1">Skasuj</Btn>
-          </div>
-        </div>
-      ) : (
-        <Btn variant="danger" onClick={() => setConfirming(true)} className="w-full"><Trash2 size={16}/>Resetuj aplikację</Btn>
-      )}
-
-      <div className="mt-10 text-center text-xs text-neutral-700 font-mono">
-        PROGRES · Lokalny tracker progresji<br/>
-        Auto-regulacja oparta o RIR
-      </div>
+      {sel && <ExerciseDetail exercise={sel} history={history} onClose={() => setSel(null)} />}
     </div>
   );
 }
 
-const Row = ({ label, value }) => (
-  <div className="flex items-baseline justify-between py-2 border-b border-neutral-900 last:border-0">
-    <span className="text-sm text-neutral-400">{label}</span>
-    <span className="font-mono text-sm text-white">{value}</span>
-  </div>
-);
-
-// ============================================================
-// BOTTOM NAV
-// ============================================================
 function BottomNav({ view, setView }) {
-  const items = [
-    { id: 'home', icon: Home, label: 'Dziś' },
-    { id: 'progress', icon: TrendingUp, label: 'Postępy' },
-    { id: 'history', icon: History, label: 'Historia' },
-    { id: 'library', icon: Library, label: 'Ćwicz.' },
-    { id: 'settings', icon: Settings, label: 'Ust.' },
-  ];
+  const items = [ { id: 'home', i: Home, l: 'Dziś' }, { id: 'history', i: History, l: 'Historia' }, { id: 'library', i: Library, l: 'Ćwicz.' }, { id: 'settings', i: Settings, l: 'Ust.' } ];
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-[#0a0a0a] border-t border-neutral-900 z-30">
-      <div className="grid grid-cols-5">
-        {items.map(it => {
-          const Icon = it.icon;
-          const active = view === it.id;
-          return (
-            <button
-              key={it.id}
-              onClick={() => setView(it.id)}
-              className={`py-3 flex flex-col items-center gap-0.5 ${active ? 'text-[#d4ff00]' : 'text-neutral-600'}`}
-            >
-              <Icon size={20} strokeWidth={active ? 2.5 : 2}/>
-              <span className="text-[10px] uppercase tracking-wider font-mono">{it.label}</span>
-            </button>
-          );
-        })}
-      </div>
+    <div className="fixed bottom-0 left-0 right-0 bg-[#0a0a0a] border-t border-neutral-900 grid grid-cols-4 z-40">
+      {items.map(it => (
+        <button key={it.id} onClick={() => setView(it.id)} className={`py-4 flex flex-col items-center gap-1 ${view === it.id ? 'text-[#d4ff00]' : 'text-neutral-600'}`}>
+          <it.i size={20} strokeWidth={view === it.id ? 2.5 : 2}/>
+          <span className="text-[10px] uppercase font-mono">{it.l}</span>
+        </button>
+      ))}
     </div>
   );
 }
 
-// ============================================================
-// MAIN APP
-// ============================================================
 export default function App() {
-  const [loading, setLoading] = useState(true);
+  const [l, setL] = useState(true);
   const [profile, setProfile] = useState(null);
   const [plan, setPlan] = useState(null);
   const [history, setHistory] = useState({});
   const [active, setActive] = useState(null);
   const [view, setView] = useState('home');
 
-  useEffect(() => {
-    loadAll().then(d => {
-      setProfile(d.profile);
-      setPlan(d.plan);
-      setHistory(d.history);
-      setActive(d.active);
-      setLoading(false);
-    });
-  }, []);
+  useEffect(() => { loadAll().then(d => { setProfile(d.profile); setPlan(d.plan); setHistory(d.history); setActive(d.active); setL(false); }); }, []);
 
-  const handleOnboarding = (data) => {
-    setProfile(data);
-    saveOne(KEY_PROFILE, data);
-    const newPlan = generatePlan(data);
-    setPlan(newPlan);
-    saveOne(KEY_PLAN, newPlan);
-  };
-
-  const startWorkout = (idx) => {
-    const w = plan[idx];
-    const newActive = {
-      sessionId: `s_${Date.now()}`,
-      workoutName: w.name,
-      workoutIdx: idx,
-      date: Date.now(),
-      currentEx: 0,
-      exercises: w.exercises.map(e => ({
-        exerciseId: e.id,
-        sets: Array.from({ length: e.sets }, () => ({ weight: null, reps: null, rir: null, completed: false })),
-      })),
-    };
-    setActive(newActive);
-    saveOne(KEY_ACTIVE, newActive);
-  };
-
-  const updateActive = (newActive) => {
-    setActive(newActive);
-    saveOne(KEY_ACTIVE, newActive);
-  };
-
-  const handleSwapExercise = (exIdx, newEx) => {
+  const handleSwap = (exIdx, newEx) => {
     if (!active || !plan) return;
-    
-    const workoutIdx = active.workoutIdx;
-    
-    const updatedPlan = [...plan];
-    const updatedWorkout = { ...updatedPlan[workoutIdx] };
-    const updatedExercises = [...updatedWorkout.exercises];
-    
-    const oldSetsCount = updatedExercises[exIdx]?.sets || 3;
-    updatedExercises[exIdx] = { ...newEx, sets: oldSetsCount };
-    
-    updatedWorkout.exercises = updatedExercises;
-    updatedPlan[workoutIdx] = updatedWorkout;
-    
-    setPlan(updatedPlan);
-    saveOne(KEY_PLAN, updatedPlan);
+    const wIdx = active.workoutIdx;
+    const newPlan = [...plan];
+    newPlan[wIdx] = { ...newPlan[wIdx], exercises: newPlan[wIdx].exercises.map((e, i) => i === exIdx ? { ...newEx, sets: e.sets } : e) };
+    setPlan(newPlan); saveOne(KEY_PLAN, newPlan);
   };
 
-  const finishWorkout = () => {
+  const finish = () => {
     if (!active) return;
-    const session = {
-      sessionId: active.sessionId,
-      workoutName: active.workoutName,
-      date: active.date,
-      exercises: active.exercises,
-    };
-    
-    const newHistory = { ...history };
-    active.exercises.forEach((e) => {
-      if (!newHistory[e.exerciseId]) newHistory[e.exerciseId] = [];
-      newHistory[e.exerciseId] = [...newHistory[e.exerciseId], { date: session.date, sessionId: session.sessionId, workoutName: session.workoutName, sets: e.sets }];
+    const newHist = { ...history };
+    active.exercises.forEach(e => {
+      if (!newHist[e.exerciseId]) newHist[e.exerciseId] = [];
+      newHist[e.exerciseId] = [...newHist[e.exerciseId], { date: active.date, sessionId: active.sessionId, workoutName: active.workoutName, sets: e.sets }];
     });
-    
-    setHistory(newHistory);
-    saveOne(KEY_HISTORY, newHistory);
-    setActive(null);
-    saveOne(KEY_ACTIVE, null);
-    setView('home');
+    setHistory(newHist); saveOne(KEY_HISTORY, newHist);
+    setActive(null); saveOne(KEY_ACTIVE, null); setView('home');
   };
 
-  const cancelWorkout = () => {
-    setActive(null);
-    saveOne(KEY_ACTIVE, null);
-  };
-
-  const regeneratePlan = () => {
-    const newPlan = generatePlan(profile);
-    setPlan(newPlan);
-    saveOne(KEY_PLAN, newPlan);
-    setView('home');
-  };
-
-  const savePlan = (newPlan) => {
-    setPlan(newPlan);
-    saveOne(KEY_PLAN, newPlan);
-    setView('home');
-  };
-
-  const resetAll = async () => {
-    try {
-      localStorage.removeItem(KEY_PROFILE);
-      localStorage.removeItem(KEY_PLAN);
-      localStorage.removeItem(KEY_HISTORY);
-      localStorage.removeItem(KEY_ACTIVE);
-    } catch (e) {}
-    setProfile(null); setPlan(null); setHistory({}); setActive(null);
-  };
-
-  if (loading) {
-    return (
-      <>
-        <style>{FONT_IMPORT}</style>
-        <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
-          <div className="font-display text-3xl text-[#d4ff00] uppercase tracking-widest">Progres</div>
-        </div>
-      </>
-    );
-  }
-
-  if (!profile) {
-    return (
-      <>
-        <style>{FONT_IMPORT}</style>
-        <Onboarding onDone={handleOnboarding} />
-      </>
-    );
-  }
+  if (l) return <div className="min-h-screen bg-[#0a0a0a]"/>;
+  if (!profile) return <><style>{FONT_IMPORT}</style><Onboarding onDone={d => { setProfile(d); saveOne(KEY_PROFILE, d); const p = generatePlan(d); setPlan(p); saveOne(KEY_PLAN, p); }}/></>;
 
   if (active) {
-    const w = plan[active.workoutIdx];
-    // Build a workout view that reflects swapped exercises in active
-    const liveWorkout = {
-      ...w,
-      exercises: active.exercises.map((ae, i) => {
-        const original = w.exercises[i];
-        const found = EX.find(x => x.id === ae.exerciseId);
-        return found ? { ...found, sets: original?.sets || ae.sets.length } : original;
-      }),
-    };
-    return (
-      <>
-        <style>{FONT_IMPORT}</style>
-        <WorkoutView
-          workout={liveWorkout}
-          history={history}
-          active={active}
-          setActive={updateActive}
-          onFinish={finishWorkout}
-          onCancel={cancelWorkout}
-          profile={profile}
-          onSwapExercise={handleSwapExercise}
-        />
-      </>
-    );
+    const liveWorkout = { ...plan[active.workoutIdx], exercises: active.exercises.map((ae, i) => ({ ...(EX.find(x => x.id === ae.exerciseId) || plan[active.workoutIdx].exercises[i]), sets: ae.sets.length })) };
+    return <><style>{FONT_IMPORT}</style><WorkoutView workout={liveWorkout} history={history} active={active} setActive={a => { setActive(a); saveOne(KEY_ACTIVE, a); }} onFinish={finish} onCancel={() => { setActive(null); saveOne(KEY_ACTIVE, null); }} profile={profile} onSwapExercise={handleSwap}/></>;
   }
 
   return (
     <>
       <style>{FONT_IMPORT}</style>
       <div className="min-h-screen bg-[#0a0a0a] text-white font-body">
-        {view === 'editor' ? (
-          <PlanEditor
-            plan={plan}
-            profile={profile}
-            onSave={savePlan}
-            onCancel={() => setView('home')}
-          />
-        ) : (
-          <>
-            {view === 'home' && <HomeView profile={profile} plan={plan} history={history} onStart={startWorkout} onPickWorkout={startWorkout} />}
-            {view === 'history' && <HistoryView history={history} />}
-            {view === 'progress' && <ProgressView history={history} />}
-            {view === 'library' && <LibraryView history={history} />}
-            {view === 'settings' && <SettingsView profile={profile} onRegenerate={regeneratePlan} onReset={resetAll} onEditPlan={() => setView('editor')} />}
-            <BottomNav view={view} setView={setView} />
-          </>
-        )}
+        {view === 'home' && <HomeView plan={plan} history={history} onStart={i => { const w = plan[i]; const a = { sessionId: `s_${Date.now()}`, workoutName: w.name, workoutIdx: i, date: Date.now(), currentEx: 0, exercises: w.exercises.map(e => ({ exerciseId: e.id, sets: Array(e.sets).fill({ weight: null, reps: null, rir: null, completed: false }) })) }; setActive(a); saveOne(KEY_ACTIVE, a); }} />}
+        {view === 'history' && <HistoryView history={history}/>}
+        {view === 'library' && <LibraryView history={history}/>}
+        {view === 'settings' && <div className="p-5 pt-10"><h1 className="font-display text-4xl uppercase mb-8">Ustawienia</h1><Btn variant="danger" onClick={() => { localStorage.clear(); window.location.reload(); }} className="w-full"><Trash2 size={18}/>Resetuj apkę</Btn></div>}
+        <BottomNav view={view} setView={setView}/>
       </div>
     </>
   );
