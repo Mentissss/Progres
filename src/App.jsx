@@ -2,308 +2,471 @@ import { useState, useEffect, useMemo } from 'react';
 import { ChevronRight, Plus, Minus, Check, X, Dumbbell, History, Library, Home, Settings, TrendingUp, Trash2, RotateCcw, Play, Award, Target, Info, Timer, Repeat, FileText, Pause, ExternalLink, Flame, Sparkles } from 'lucide-react';
 
 // ============================================================
-// BAZA ĆWICZEŃ: FABRYKA SIŁY
+// EXERCISE DATABASE
 // ============================================================
 const fsRaw = [
-  // NOGI / POŚLADKI
+  // ============ CZWOROGŁOWE UDA ============
   ['Zakroki Zerchera', 'czworogłowe', 'barbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/zakroki-zerchera'],
   ['Wyprosty kolan na maszynie jednonóż', 'czworogłowe', 'machine', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/wyprosty-kolan-na-maszynie-jednonoz'],
-  ['Przysiad ze sztangą ze stojaków', 'czworogłowe', 'barbell', 'compound', 5, 10, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/przysiad-ze-sztagna-ze-stojakow'],
+  ['Syzyfki z asekuracją', 'czworogłowe', 'bodyweight', 'compound', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/syzyfki-z-asekuracja'],
+  ['Przysiad ze sztangą ze stojaków (Anderson squat)', 'czworogłowe', 'barbell', 'compound', 5, 10, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/przysiad-ze-sztagna-ze-stojakow'],
+  ['Przysiad kolarski ze sztangą na plecach', 'czworogłowe', 'barbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/przysiad-kolarski-ze-sztanga-na-plecach'],
+  ['Przysiad kolarski z ciężarem przed klatką', 'czworogłowe', 'dumbbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/przysiad-kolarski-z-ciezarem-przed-klatka'],
+  ['Przysiad kolarski', 'czworogłowe', 'bodyweight', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/przysiad-kolarski'],
+  ['Odwrócone nordyckie opady z pomocą gumy', 'czworogłowe', 'bodyweight', 'isolation', 8, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/odwrocone-nordyckie-opady-z-pomoca-gumy'],
+  ['Odwrócone nordyckie opady z obciążeniem', 'czworogłowe', 'bodyweight', 'isolation', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/odwrocone-nordyckie-opady-z-obciazeniem'],
+  ['Odwrócone nordyckie opady', 'czworogłowe', 'bodyweight', 'isolation', 8, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/odwrocone-nordyckie-opady'],
   ['Pistolet na podwyższeniu', 'czworogłowe', 'bodyweight', 'compound', 4, 8, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/pistolet-na-podwyzszeniu'],
   ['Zakroki ze sztangą na plecach', 'czworogłowe', 'barbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/zakroki-ze-sztanga-na-plecach'],
-  ['Wykroki chodzone z hantlami', 'czworogłowe', 'dumbbell', 'compound', 10, 16, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/wykroki-chodzone-z-hantlami-w-dloniach'],
-  ['Przysiad bułgarski z hantlami', 'czworogłowe', 'dumbbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/przysiad-bulgarski-z-hantlami-wersja-dla-miesnia-czworoglowego-uda'],
-  ['Wypychanie nogami na suwnicy', 'czworogłowe', 'machine', 'compound', 8, 15, 'https://www.fabrykasily.pl/cwiczenia/czworoglowe-uda/wypychanie-nogami-na-suwnicy'],
-  ['Przysiad ze sztangą na plecach', 'czworogłowe', 'barbell', 'compound', 5, 10, 'https://www.fabrykasily.pl/cwiczenia/czworoglowe-uda/przysiad-ze-sztanga-trzymana-na-plecach'],
-  ['Rumuński martwy ciąg (RDL)', 'dwugłowe uda', 'barbell', 'compound', 6, 10, 'https://www.fabrykasily.pl/cwiczenia/dwuglowe-uda/martwy-ciag-na-prostych-nogach-barbell'],
-  ['Hip thrust ze sztangą', 'pośladki', 'barbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda/unoszenie-bioder-ze-sztanga-w-oparciu-o-laweczke'],
-  ['Zginanie nóg na maszynie', 'dwugłowe uda', 'machine', 'isolation', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/dwuglowe-uda/zginanie-nog-na-maszynie-siedzac-seated'],
+  ['Zakroki', 'czworogłowe', 'bodyweight', 'compound', 10, 16, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/zakroki'],
+  ['Wykroki długie chodzone z dłońmi na klatce piersiowej', 'czworogłowe', 'bodyweight', 'compound', 10, 16, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/wykroki-dlugie-chodzone-z-dlonmi-trzymanymi-na-klatce-piersiowej'],
+  ['Wykroki chodzone', 'czworogłowe', 'bodyweight', 'compound', 10, 16, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/wykroki-chodzone'],
+  ['Wchodzenie na podwyższenie', 'czworogłowe', 'bodyweight', 'compound', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/wchodzenie-na-podwyzszenie'],
+  ['Przysiad sumo z kettlem/hantlą na stepach', 'czworogłowe', 'dumbbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/przysiad-sumo-z-kettlem-hantla-na-stepach'],
+  ['Wykroki w bok z TRX', 'czworogłowe', 'bodyweight', 'compound', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/wykroki-w-bok-z-trx'],
+  ['Przysiad z hantlami w pozycji front rack', 'czworogłowe', 'dumbbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/przysiad-z-hantlami-w-pozycji-front-rack'],
+  ['Przysiad bułgarski z gumą', 'czworogłowe', 'bodyweight', 'compound', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/przysiad-bulgarski-z-guma'],
+  ['Przysiad łyżwiarski', 'czworogłowe', 'bodyweight', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/przysiad-lyzwiarski'],
+  ['Przysiad wykroczny', 'czworogłowe', 'bodyweight', 'compound', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/przysiad-wykroczny'],
+  ['Przysiad wykroczny z hantlami', 'czworogłowe', 'dumbbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/przysiad-wykroczny-z-hantlami'],
+  ['Przysiad bułgarski – wersja pośladkowa z hantlami', 'czworogłowe', 'dumbbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/przysiad-bulgarski-wersja-posladkowa-z-hantlami'],
+  ['Przysiad wykroczny z nogą wykroczną na podwyższeniu z hantlami', 'czworogłowe', 'dumbbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/przysiad-wykroczny-z-noga-wykroczna-na-podwyzszeniu-z-hantlami'],
+  ['Przysiad bułgarski (1 i 1/2)', 'czworogłowe', 'bodyweight', 'compound', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/przysiad-bulgarski-1-i-1-2'],
+  ['Zercher squat', 'czworogłowe', 'barbell', 'compound', 6, 10, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/zercher-squat'],
+  ['Wykroki skośne', 'czworogłowe', 'bodyweight', 'compound', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/wykroki-skosne'],
+  ['Spanish squat', 'czworogłowe', 'bodyweight', 'compound', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/spanish-squat'],
+  ['Landmine reverse lunges', 'czworogłowe', 'barbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/landmine-reverse-lunges'],
+  ['Przysiad do podwyższenia (Box squat)', 'czworogłowe', 'barbell', 'compound', 5, 8, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/przysiad-do-podwyzszenia'],
+  ['Goblet box squat', 'czworogłowe', 'dumbbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/goblet-box-squat'],
+  ['Reverse drop lunges with dumbbell', 'czworogłowe', 'dumbbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/reverse-drop-lunges-with-dumbbell'],
+  ['Reverse drop lunges', 'czworogłowe', 'bodyweight', 'compound', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/reverse-drop-lunges'],
+  ['Przysiad przedni z paskami', 'czworogłowe', 'barbell', 'compound', 5, 8, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/przysiad-przedni-z-paskami'],
+  ['Landmine squat', 'czworogłowe', 'barbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/landmine-squat'],
+  ['Przysiad z gumą', 'czworogłowe', 'bodyweight', 'compound', 15, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/przysiad-z-guma'],
+  ['Pistols squat na TRX', 'czworogłowe', 'bodyweight', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/pistol-squat-na-trx'],
+  ['Przysiad z wyskokiem na TRX', 'czworogłowe', 'bodyweight', 'compound', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/przysiad-z-wyskokiem-na-trx'],
+  ['Wykroki z ramionami w górze na TRX', 'czworogłowe', 'bodyweight', 'compound', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/wykroki-z-ramionami-w-gorze-na-trx'],
+  ['Zakroki na TRX', 'czworogłowe', 'bodyweight', 'compound', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/zakroki-na-trx'],
+  ['Wypychanie suwnicy jednonóż', 'czworogłowe', 'machine', 'compound', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/wypychanie-suwnicy-jednonoz'],
+  ['Kozak squat z ciężarem', 'czworogłowe', 'dumbbell', 'compound', 6, 10, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/kozak-squat-z-ciezarem'],
+  ['Kozak squat bez ciężaru', 'czworogłowe', 'bodyweight', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/kozak-squat-bez-ciezaru'],
+  ['Pistolet', 'czworogłowe', 'bodyweight', 'compound', 4, 8, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/pistolet'],
+  ['Pistolet z ciężarem', 'czworogłowe', 'bodyweight', 'compound', 3, 6, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/pistolet-z-ciezarem'],
+  ['Przysiad sumo', 'czworogłowe', 'bodyweight', 'compound', 15, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/przysiad-sumo'],
+  ['Przysiad z TRX', 'czworogłowe', 'bodyweight', 'compound', 15, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/przysiad-z-trx'],
+  ['Przysiad bułgarski z TRX', 'czworogłowe', 'bodyweight', 'compound', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/przysiad-bulgarski-z-trx'],
+  ['Przysiad bułgarski – wersja dla mięśnia czworogłowego uda', 'czworogłowe', 'bodyweight', 'compound', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/przysiad-bulgarski-wersja-dla-miesnia-czworoglowego-uda'],
+  ['Przysiad bułgarski z hantlami – wersja dla m. czworogłowego', 'czworogłowe', 'dumbbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/przysiad-bulgarski-z-hantlami-wersja-dla-miesnia-czworoglowego-uda'],
+  ['Przysiad wykroczny z nogą zakroczną na podwyższeniu z hantlami', 'czworogłowe', 'dumbbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/przysiad-wykroczny-z-noga-zakroczna-na-podwyzszeniu-z-hantlami'],
+  ['Przysiad do skrzyni jednonóż', 'czworogłowe', 'bodyweight', 'compound', 6, 10, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/przysiad-do-skrzyni-jednonoz'],
+  ['Wchodzenie na podwyższenie z hantlami', 'czworogłowe', 'dumbbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/wchodzenie-na-podwyzszenie-z-hantlami'],
+  ['Zakroki z hantlami', 'czworogłowe', 'dumbbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/zakroki-z-hantlami'],
+  ['Wykroki chodzone z hantlami w dłoniach', 'czworogłowe', 'dumbbell', 'compound', 10, 16, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/wykroki-chodzone-z-hantlami-w-dloniach'],
+  ['Przysiad bułgarski – wersja pośladkowa', 'czworogłowe', 'bodyweight', 'compound', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/przysiad-bulgarski-wersja-posladkowa'],
+  ['Side step up – wejście bokiem', 'czworogłowe', 'bodyweight', 'compound', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/side-step-up-wejscie-bokiem'],
+  ['Przysiad wykroczny z nogą wykroczną na podwyższeniu', 'czworogłowe', 'bodyweight', 'compound', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/przysiad-wykroczny-z-noga-wykroczna-na-podwyzszeniu'],
+  ['Przysiad wykroczny z nogą zakroczną na podwyższeniu', 'czworogłowe', 'bodyweight', 'compound', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/przysiad-wykroczny-z-noga-zakroczna-na-podwyzszeniu'],
+  ['Poliquin step-up', 'czworogłowe', 'bodyweight', 'compound', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/poliquin-stepup'],
+  ['Poliquin step-up z hantlami', 'czworogłowe', 'dumbbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/czworoglowe-uda/poliquin-stepup-z-hantlami'],
+  ['Przysiad z dłońmi trzymanymi za głową (Air squat)', 'czworogłowe', 'bodyweight', 'compound', 15, 20, 'https://www.fabrykasily.pl/cwiczenia/czworoglowe-uda/przysiad-z-dlonmi-trzymanymi-za-glowa'],
+  ['Wykroki chodzone z dłońmi trzymanymi na klatce piersiowej', 'czworogłowe', 'bodyweight', 'compound', 10, 16, 'https://www.fabrykasily.pl/cwiczenia/czworoglowe-uda/wykroki-chodzone-z-dlonmi-trzymanymi'],
+  ['Wchodzenie na podwyższenie ze sztangą na plecach', 'czworogłowe', 'barbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/czworoglowe-uda/wchodzenie-na-podwyzszenie-ze-sztanga-trzymana'],
+  ['Przysiad z kettlami', 'czworogłowe', 'dumbbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/czworoglowe-uda/przysiad-z-kettlami'],
+  ['Przysiad ze sztangą trzymaną na plecach (Back squat)', 'czworogłowe', 'barbell', 'compound', 5, 10, 'https://www.fabrykasily.pl/cwiczenia/czworoglowe-uda/przysiad-ze-sztanga-trzymana-na-plecach'],
+  ['Wykroki w miejscu ze sztangą na plecach', 'czworogłowe', 'barbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/czworoglowe-uda/wykroki-w-miejscu-ze-sztanga-trzymana'],
+  ['Wykroki chodzone ze sztangą na plecach', 'czworogłowe', 'barbell', 'compound', 10, 16, 'https://www.fabrykasily.pl/cwiczenia/czworoglowe-uda/wykroki-chodzone-ze-sztanga-trzymana'],
+  ['Przysiad z użyciem linek wyciągu dolnego', 'czworogłowe', 'cable', 'compound', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/czworoglowe-uda/przysiad-z-uzyciem-linek-wyciagu-dolnego'],
+  ['Przysiad na maszynie Smitha', 'czworogłowe', 'machine', 'compound', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/czworoglowe-uda/przysiad-na-maszynie-smitha'],
+  ['Wykroki w miejscu z hantelkami', 'czworogłowe', 'dumbbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/czworoglowe-uda/zakroki-w-miejscu-z-hantelkami'],
+  ['Przysiad z hantelkami', 'czworogłowe', 'dumbbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/czworoglowe-uda/przysiad-z-hantelkami'],
+  ['Przysiad ze sztangą trzymaną na barkach (Front squat)', 'czworogłowe', 'barbell', 'compound', 5, 10, 'https://www.fabrykasily.pl/cwiczenia/czworoglowe-uda/przysiad-ze-sztanga-trzymana-na-barkach'],
+  ['Goblet squat – przysiad z kettlem lub hantelką', 'czworogłowe', 'dumbbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/czworoglowe-uda/goblet-squat-przysiad-z-kettlem'],
+  ['Wyprosty kolan na maszynie siedząc', 'czworogłowe', 'machine', 'isolation', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/czworoglowe-uda/wyprosty-kolan-na-maszynie-siedzac'],
+  ['Wypychanie nogami na suwnicy (Leg press)', 'czworogłowe', 'machine', 'compound', 8, 15, 'https://www.fabrykasily.pl/cwiczenia/czworoglowe-uda/wypychanie-nogami-na-suwnicy'],
+  ['Przysiad w wykroku na maszynie Smitha', 'czworogłowe', 'machine', 'compound', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/czworoglowe-uda/przysiad-w-wykroku-na-maszynie-smitha'],
+
+  // ============ DWUGŁOWE UDA / POŚLADKI ============
+  ['Żuraw z pomocą gumy', 'dwugłowe uda', 'bodyweight', 'isolation', 6, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/zuraw-z-pomoca-gumy'],
+  ['Martwy ciąg jednonóż z półsztangą', 'dwugłowe uda', 'barbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/martwy-ciag-jednonoz-z-polsztanga'],
+  ['Unoszenie bioder z hantlą na jednej nodze w oparciu o ławeczkę', 'pośladki', 'dumbbell', 'compound', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/unoszenie-bioder-z-hantla-na-jednej-nodze-w-oparciu-o-laweczke'],
+  ['Unoszenie nogi w klęku podpartym z gumą', 'pośladki', 'bodyweight', 'isolation', 15, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/unoszenie-nogi-w-kleku-podpartym-z-guma'],
+  ['Pull through', 'dwugłowe uda', 'cable', 'compound', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/pull-through'],
+  ['Przywodzenie nogi w bok z linką wyciągu dolnego', 'pośladki', 'cable', 'isolation', 12, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/przywodzenie-nogi-w-bok-z-wykorzystaniem-linki-wyciagu-dolnego'],
+  ['Przywodzenie nóg na maszynie', 'pośladki', 'machine', 'isolation', 12, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/przywodzenie-nog-na-maszynie'],
+  ['Przyciąganie pięt do pośladków na TRX (łatwiejsza wersja)', 'dwugłowe uda', 'bodyweight', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/przyciaganie-piet-do-posladkow-na-trx-latwiejsza-wersja'],
+  ['Unoszenie bioder na jednej nodze w oparciu o ławeczkę', 'pośladki', 'bodyweight', 'compound', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/unoszenie-bioder-na-jednej-nodze-w-oparciu-o-laweczke'],
+  ['Unoszenie bioder na jednej nodze z hantlą', 'pośladki', 'dumbbell', 'compound', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/unoszenie-bioder-na-jednej-nodze-z-hantla'],
+  ['Unoszenie bioder w górę (Glute bridge)', 'pośladki', 'bodyweight', 'isolation', 15, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/unoszenie-bioder-w-gore'],
+  ['Odwodzenie nogi w tył z linką wyciągu dolnego', 'pośladki', 'cable', 'isolation', 12, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/odwodzenie-nogi-w-tyl-z-wykorzystaniem-linki-wyciagu-dolnego'],
+  ['Odwodzenie nogi w tył na maszynie', 'pośladki', 'machine', 'isolation', 12, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/odwodzenie-nogi-w-tyl-na-maszynie'],
+  ['Odwodzenie nogi w klęku podpartym', 'pośladki', 'bodyweight', 'isolation', 15, 25, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/odwodzenie-nogi-w-kleku-podpartym'],
+  ['Odwodzenie nogi w bok z linką wyciągu dolnego', 'pośladki', 'cable', 'isolation', 12, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/odwodzenie-nogi-w-bok-z-wykorzystaniem-linki-wyciagu-dolnego'],
+  ['Odwodzenie nóg na maszynie', 'pośladki', 'machine', 'isolation', 12, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/odwodzenie-nog-na-maszynie'],
+  ['Zginanie nóg z gumą miniband', 'dwugłowe uda', 'bodyweight', 'isolation', 15, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/zginanie-nog-z-guma-miniband'],
+  ['Zginanie nóg na maszynie jednonóż', 'dwugłowe uda', 'machine', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/zginanie-nog-na-maszynie-jednonoz'],
+  ['Unoszenie nóg na ławce skośnej', 'pośladki', 'bodyweight', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/unoszenie-nog-na-lawce-skosnej'],
+  ['Frog hip thrust z hantlą', 'pośladki', 'dumbbell', 'isolation', 15, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/frog-hip-thrust-z-hantla'],
+  ['Odwodzenie nogi w pozycji side plank', 'pośladki', 'bodyweight', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/odwodzenie-nogi-w-pozycji-side-plank'],
+  ['Unoszenie nóg na ławce rzymskiej', 'pośladki', 'bodyweight', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/unoszenie-nog-na-lawce-rzymskiej'],
+  ['Unoszenie nóg na ławce poziomej', 'pośladki', 'bodyweight', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/unoszenie-nog-na-lawce-poziomej'],
+  ['Stiff leg deadlift z podwyższenia', 'dwugłowe uda', 'barbell', 'compound', 6, 10, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/stiff-leg-deadlift-z-podwyzszenia'],
+  ['Side walk', 'pośladki', 'bodyweight', 'isolation', 15, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/side-walk'],
+  ['Rumuński martwy ciąg z hantlami kickstand', 'dwugłowe uda', 'dumbbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/rumunski-martwy-ciag-z-hantlami-kickstand'],
+  ['Rumuński martwy ciąg kickstand', 'dwugłowe uda', 'barbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/rumunski-martwy-ciag-kickstand'],
+  ['Pull through z gumą', 'dwugłowe uda', 'bodyweight', 'compound', 15, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/pull-through-z-guma'],
+  ['Odwodzenie nogi w leżeniu bokiem (Clamshell)', 'pośladki', 'bodyweight', 'isolation', 15, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/odwodzenie-nogi-w-lezeniu-bokiem'],
+  ['Martwy ciąg na jednej nodze z asekuracją', 'dwugłowe uda', 'bodyweight', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/martwy-ciag-na-jednej-nodze-z-asekuracja'],
+  ['Hamstring walkout', 'dwugłowe uda', 'bodyweight', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/hamstring-walkout'],
+  ['Dzień dobry ze sztangą', 'dwugłowe uda', 'barbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/dzien-dobry-ze-sztanga'],
+  ['Unoszenie bioder z uniesionymi palcami stóp', 'pośladki', 'bodyweight', 'isolation', 15, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/unoszenie-bioder-z-uniesionymi-palcami-stop'],
+  ['Przywodzenie kopenhaskie', 'pośladki', 'bodyweight', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/przywodzenie-kopenhaskie'],
+  ['Martwy ciąg sumo z podwyższenia', 'dwugłowe uda', 'barbell', 'compound', 6, 10, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/martwy-ciag-sumo-z-podwyzszenia'],
+  ['Martwy ciąg z kettlem z podwyższenia', 'dwugłowe uda', 'dumbbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/martwy-ciag-z-kettlem-z-podwyzszenia'],
+  ['Mostek biodrowy z hantlą', 'pośladki', 'dumbbell', 'isolation', 15, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/mostek-biodrowy-z-hantla'],
+  ['Hip drop', 'pośladki', 'bodyweight', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/hip-drop'],
+  ['Klasyczny martwy ciąg z podwyższenia', 'plecy', 'barbell', 'compound', 3, 6, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/klasyczny-martwy-ciag-z-podwyzszenia'],
+  ['Dzień dobry z gumą', 'dwugłowe uda', 'bodyweight', 'compound', 15, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/dzien-dobry-z-guma'],
+  ['Landmine RDL', 'dwugłowe uda', 'barbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/landmine-rdl'],
+  ['Landmine deadlift', 'plecy', 'barbell', 'compound', 6, 10, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/landmine-deadlift'],
+  ['Przyciąganie pięt do pośladków z gumą', 'dwugłowe uda', 'bodyweight', 'isolation', 15, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/przyciaganie-piet-do-posladkow-z-guma'],
+  ['Martwy ciąg na jednej nodze z gumą', 'dwugłowe uda', 'bodyweight', 'compound', 12, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/martwy-ciag-na-jednej-nodze-z-guma'],
+  ['Martwy ciąg na prostych nogach z gumą', 'dwugłowe uda', 'bodyweight', 'compound', 15, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/martwy-ciag-na-prostych-nogach-z-guma'],
+  ['Martwy ciąg z gumą', 'plecy', 'bodyweight', 'compound', 15, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/martwy-ciag-z-guma'],
+  ['Unoszenie bioder z gumą', 'pośladki', 'bodyweight', 'isolation', 15, 25, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/unoszenie-bioder-z-guma'],
+  ['X walk', 'pośladki', 'bodyweight', 'isolation', 15, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/x-walk'],
+  ['Stiff leg deadlift', 'dwugłowe uda', 'barbell', 'compound', 6, 10, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/stiff-leg-deadlift'],
+  ['Unoszenie tułowia na ławce rzymskiej jednonóż', 'dwugłowe uda', 'bodyweight', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/unoszenie-tulowia-na-lawce-rzymskiej-jednonoz'],
+  ['Zginanie nóg na piłce gimnastycznej leżąc (łatwiejsza wersja)', 'dwugłowe uda', 'bodyweight', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/zginanie-nog-na-pilce-gimnastycznej-lezac'],
+  ['Żuraw (łatwiejsza wersja)', 'dwugłowe uda', 'bodyweight', 'isolation', 6, 10, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/zuraw-latwiejsza-wersja'],
+  ['Unoszenie bioder z hantlą w oparciu o ławeczkę (Hip thrust)', 'pośladki', 'dumbbell', 'compound', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda/unoszenie-bioder-z-hantla-w-oparciu-o-laweczke'],
+  ['Frog hip thrust', 'pośladki', 'bodyweight', 'isolation', 15, 25, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/frog-hip-thrust'],
+  ['Przyciąganie pięt do pośladków na TRX', 'dwugłowe uda', 'bodyweight', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/przyciaganie-piet-do-posladkow-na-trx'],
+  ['Uginanie nóg z hantlą w leżeniu', 'dwugłowe uda', 'dumbbell', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/uginanie-nog-z-hantla-w-lezeniu'],
+  ['Unoszenie bioder na jednej nodze', 'pośladki', 'bodyweight', 'isolation', 15, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda-posladki/unoszenie-bioder-na-jednej-nodze'],
+  ['Martwy ciąg na jednej nodze z hantlami', 'dwugłowe uda', 'dumbbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda/martwy-ciag-na-jednej-nodze-z-hantlami'],
+  ['Martwy ciąg sumo', 'plecy', 'barbell', 'compound', 3, 6, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda/martwy-ciag-sumo'],
+  ['Unoszenie bioder ze sztangą', 'pośladki', 'barbell', 'isolation', 8, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda/unoszenie-bioder-ze-sztanga'],
+  ['Unoszenie bioder ze sztangą w oparciu o ławeczkę (Hip thrust)', 'pośladki', 'barbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda/unoszenie-bioder-ze-sztanga-w-oparciu-o-laweczke'],
   ['Żuraw (Nordic curl)', 'dwugłowe uda', 'bodyweight', 'isolation', 4, 8, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda/zuraw'],
-  
-  // PLECY
-  ['Klasyczny martwy ciąg', 'plecy', 'barbell', 'compound', 3, 6, 'https://www.fabrykasily.pl/cwiczenia/na-plecy/klasyczny-martwy-ciag-barbell-deadlift'],
-  ['Podciąganie na drążku nachwytem', 'plecy', 'bodyweight', 'compound', 5, 12, 'https://www.fabrykasily.pl/cwiczenia/na-plecy/podciaganie-na-drazku-trzymanym-nachwytem-pullups'],
-  ['Wiosłowanie sztangą podchwytem', 'plecy', 'barbell', 'compound', 6, 10, 'https://www.fabrykasily.pl/cwiczenia/na-plecy/wioslowanie-sztanga-trzymana-podchwytem-w-opadzie'],
-  ['Wiosłowanie hantlami w opadzie', 'plecy', 'dumbbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/na-plecy/wioslowanie-hantlami-w-opadzie-tulowia-bentover'],
-  ['Ściąganie drążka wyciągu do klatki', 'plecy', 'cable', 'compound', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/na-plecy/sciaganie-drazka-wyciagu-gornego-do-klatki'],
-  ['Przyciąganie linki wyciągu siedząc', 'plecy', 'cable', 'compound', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/na-plecy/przyciaganie-linki-wyciagu-dolnego-siedzac-seated'],
+  ['Żuraw z piłką', 'dwugłowe uda', 'bodyweight', 'isolation', 6, 10, 'https://www.fabrykasily.pl/atlas-cwiczen/dwuglowe-uda/zuraw-z-pilka'],
+  ['Martwy ciąg na prostych nogach z hantlami', 'dwugłowe uda', 'dumbbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/dwuglowe-uda/martwy-ciag-na-prostych-nogach'],
+  ['Martwy ciąg na prostych nogach (Romanian deadlift)', 'dwugłowe uda', 'barbell', 'compound', 6, 10, 'https://www.fabrykasily.pl/cwiczenia/dwuglowe-uda/martwy-ciag-na-prostych-nogach-barbell'],
+  ['Zginanie nóg na maszynie leżąc lub siedząc', 'dwugłowe uda', 'machine', 'isolation', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/dwuglowe-uda/zginanie-nog-na-maszynie-siedzac-seated'],
+  ['Zginanie nóg na piłce gimnastycznej leżąc', 'dwugłowe uda', 'bodyweight', 'isolation', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/dwuglowe-uda/zginanie-nog-na-pilce-gimnastycznej-lezac'],
 
-  // KLATKA
-  ['Wyciskanie sztangi na ławce płaskiej', 'klatka', 'barbell', 'compound', 5, 10, 'https://www.fabrykasily.pl/cwiczenia/na-klatke-piersiowa/wyciskanie-sztangi-na-lawce-plaskiej-barbell'],
-  ['Wyciskanie sztangi na skosie dodatnim', 'klatka', 'barbell', 'compound', 6, 12, 'https://www.fabrykasily.pl/cwiczenia/na-klatke-piersiowa/wyciskanie-sztangi-na-lawce-dodatniej-incline'],
-  ['Wyciskanie sztangielek na ławce płaskiej', 'klatka', 'dumbbell', 'compound', 6, 12, 'https://www.fabrykasily.pl/cwiczenia/na-klatke-piersiowa/wyciskanie-sztangielek-na-lawce-plaskiej-dumbbell'],
-  ['Wyciskanie sztangielek na skosie dodatnim', 'klatka', 'dumbbell', 'compound', 6, 12, 'https://www.fabrykasily.pl/cwiczenia/na-klatke-piersiowa/wyciskanie-sztangielek-na-lawce-dodatniej-incline'],
-  ['Rozpiętki z hantlami na ławce płaskiej', 'klatka', 'dumbbell', 'isolation', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/na-klatke-piersiowa/rozpietki-z-hantlami-na-lawce-plaskiej'],
-  ['Pompki na poręczach (Dips)', 'klatka', 'bodyweight', 'compound', 6, 15, 'https://www.fabrykasily.pl/cwiczenia/na-klatke-piersiowa/pompki-na-poreczach-dips-chest'],
+  // ============ PLECY ============
+  ['Wiosłowanie gumą w opadzie tułowia', 'plecy', 'bodyweight', 'compound', 15, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/plecy/wioslowanie-guma-w-opadzie-tulowia'],
+  ['Ściąganie gumy jednorącz z nad głowy', 'plecy', 'bodyweight', 'isolation', 15, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/plecy/sciaganie-gumy-jednoracz-z-nad-glowy'],
+  ['Ściąganie chwytu wyciągu górnego po skosie', 'plecy', 'cable', 'compound', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/plecy/sciaganie-chwytu-wyciagu-gornego-po-skosie'],
+  ['Ściąganie chwytu wyciągu górnego jednorącz', 'plecy', 'cable', 'compound', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/plecy/sciaganie-chwytu-wyciagu-gornego-jednoracz'],
+  ['Podciąganie podchwytem z martwego punktu', 'plecy', 'bodyweight', 'compound', 5, 8, 'https://www.fabrykasily.pl/atlas-cwiczen/plecy/podciaganie-podchwytem-z-martwego-punktu'],
+  ['Podciąganie nachwytem z martwego punktu', 'plecy', 'bodyweight', 'compound', 5, 8, 'https://www.fabrykasily.pl/atlas-cwiczen/plecy/podciaganie-nachwytem-z-martwego-punktu'],
+  ['Podciąganie chwytem neutralnym na pojedynczym drążku', 'plecy', 'bodyweight', 'compound', 5, 10, 'https://www.fabrykasily.pl/atlas-cwiczen/plecy/podciaganie-chwytem-neutralnym-na-pojedynczym-drazku'],
+  ['Podciąganie australijskie jednorącz', 'plecy', 'bodyweight', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/plecy/podciaganie-australijskie-jednoracz'],
+  ['Podciąganie australijskie podchwytem', 'plecy', 'bodyweight', 'compound', 8, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/plecy/podciaganie-australijskie-podchwytem'],
+  ['Y raise z hantlami w opadzie tułowia', 'plecy', 'dumbbell', 'isolation', 12, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/plecy/y-raise-z-hantlami-w-opadzie-tulowia'],
+  ['Wiosłowanie kettlebell z podłogi', 'plecy', 'dumbbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/plecy/wioslowanie-kettlebell-z-podlogi'],
+  ['Wiosłowanie hantlami z podłogi', 'plecy', 'dumbbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/plecy/wioslowanie-hantlami-z-podlogi'],
+  ['Wiosłowanie w podporze na kolanach', 'plecy', 'bodyweight', 'compound', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/plecy/wioslowanie-w-podporze-na-kolanach'],
+  ['Wiosłowanie w podporze z gumą miniband', 'plecy', 'bodyweight', 'compound', 15, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/plecy/wioslowanie-w-podporze-z-guma-miniband'],
+  ['Wiosłowanie w klęku jednonóż z gumą miniband', 'plecy', 'bodyweight', 'compound', 15, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/plecy/wioslowanie-w-kleku-jednonoz-z-guma-miniband'],
+  ['TRX Y raise', 'plecy', 'bodyweight', 'isolation', 12, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/plecy/trx-y-raise'],
+  ['TRX wiosłowanie jednorącz z rotacją', 'plecy', 'bodyweight', 'compound', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/plecy/trx-wioslowanie-jednoracz-z-rotacja'],
+  ['Szrugsy ze sztangą', 'plecy', 'barbell', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/plecy/szrugsy-ze-sztanga'],
+  ['Wiosłowanie na TRX', 'plecy', 'bodyweight', 'compound', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/plecy/wioslowanie-na-trx'],
+  ['Szrugsy z linkami wyciągu dolnego', 'plecy', 'cable', 'isolation', 12, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/plecy/szrugsy-z-linkami-wyciagu-dolnego'],
+  ['Szrugsy z hantlami', 'plecy', 'dumbbell', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/plecy/szrugsy-z-hantlami'],
+  ['Seal row', 'plecy', 'barbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/plecy/seal-row'],
+  ['Podciąganie z pomocą nóg', 'plecy', 'bodyweight', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/plecy/podciaganie-z-pomoca-nog'],
+  ['Opuszczanie na drążku – podchwyt', 'plecy', 'bodyweight', 'compound', 5, 8, 'https://www.fabrykasily.pl/atlas-cwiczen/plecy/opuszczanie-na-drazku-podchwyt'],
+  ['Opuszczanie na drążku – nachwyt', 'plecy', 'bodyweight', 'compound', 5, 8, 'https://www.fabrykasily.pl/atlas-cwiczen/plecy/opuszczanie-na-drazku-nachwyt'],
+  ['Back widow', 'plecy', 'bodyweight', 'compound', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/plecy/back-widow'],
+  ['Wiosłowanie półsztangą', 'plecy', 'barbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/plecy/wioslowanie-polsztanga'],
+  ['Zwis aktywny', 'plecy', 'bodyweight', 'isolation', 30, 60, 'https://www.fabrykasily.pl/atlas-cwiczen/plecy/zwis-aktywny'],
+  ['Scap pull up', 'plecy', 'bodyweight', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/plecy/scap-pull-up'],
+  ['Kayak row', 'plecy', 'cable', 'compound', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/plecy/kayak-row'],
+  ['Prostopadłe ściąganie gumy do bioder leżąc', 'plecy', 'bodyweight', 'isolation', 15, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/plecy/prostopadle-sciaganie-gumy-do-bioder-lezac'],
+  ['Prostopadłe ściąganie gumy do bioder stojąc', 'plecy', 'bodyweight', 'isolation', 15, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/plecy/prostopadle-sciaganie-gumy-do-bioder-stojac'],
+  ['Ściąganie gumy do klatki piersiowej', 'plecy', 'bodyweight', 'compound', 15, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/plecy/sciaganie-gumy-do-klatki-piersiowej'],
+  ['Ściąganie gumy za kark', 'plecy', 'bodyweight', 'compound', 15, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/plecy/sciaganie-gumy-za-kark'],
+  ['Wiosłowanie gumą', 'plecy', 'bodyweight', 'compound', 15, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/plecy/wioslowanie-guma'],
+  ['Ściąganie chwytem neutralnym z wyciągu górnego', 'plecy', 'cable', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/plecy/sciaganie-chwytem-neutralnym-z-wyciagu-gornego'],
+  ['Ściąganie drążka nachwytem na szerokość barków', 'plecy', 'cable', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/plecy/sciaganie-drazka-nachwytem-na-szerokosc-barkow'],
+  ['Wiosłowanie w oparciu o kolano', 'plecy', 'dumbbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/plecy/wioslowanie-w-oparciu-o-kolano'],
+  ['Wiosłowanie hantlą w oparciu ręką o ławeczkę', 'plecy', 'dumbbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/plecy/wioslowanie-w-oparciu-reka-o-laweczke'],
+  ['Podciąganie chwytem młotkowym', 'plecy', 'bodyweight', 'compound', 5, 10, 'https://www.fabrykasily.pl/atlas-cwiczen/plecy/podciaganie-chwytem-mlotkowym'],
+  ['Podciąganie nachwytem z pomocą gumy oporowej', 'plecy', 'bodyweight', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/plecy/podciaganie-nachwytem-z-pomoca-gumy-oporowej'],
+  ['Wiosłowanie sztangą nachwytem w pełnym opadzie tułowia', 'plecy', 'barbell', 'compound', 6, 10, 'https://www.fabrykasily.pl/atlas-cwiczen/plecy/wioslowanie-sztanga-nachwytem-w-pelnym-opadzie-tulowia'],
+  ['Wiosło Pendlaya', 'plecy', 'barbell', 'compound', 5, 8, 'https://www.fabrykasily.pl/atlas-cwiczen/plecy/wioslo-pendleya'],
+  ['Trap Y raise', 'plecy', 'dumbbell', 'isolation', 12, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/plecy/trap-y-raise'],
+  ['Wiosłowanie w podporze – row renegade', 'plecy', 'dumbbell', 'compound', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/plecy/wioslowanie-w-podporze-row-renegate'],
+  ['Wiosłowanie hantlą w klęku podpartym na ławeczce', 'plecy', 'dumbbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/na-plecy/wioslowanie-hantla-w-kleku-podpartym'],
+  ['Wiosłowanie hantlami w oparciu o ławkę skośną', 'plecy', 'dumbbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/na-plecy/wioslowanie-hantlami-w-oparciu-o-lawke'],
+  ['Wiosłowanie sztangą nachwytem do klatki w opadzie', 'plecy', 'barbell', 'compound', 6, 10, 'https://www.fabrykasily.pl/cwiczenia/na-plecy/wioslowanie-sztanga-trzymana-nachwytem-do-klatki'],
+  ['Klasyczny martwy ciąg (Deadlift)', 'plecy', 'barbell', 'compound', 3, 6, 'https://www.fabrykasily.pl/cwiczenia/na-plecy/klasyczny-martwy-ciag-barbell-deadlift'],
+  ['Wiosłowanie z kółkami gimnastycznymi, TRX lub sztangą (Inverted row)', 'plecy', 'bodyweight', 'compound', 8, 15, 'https://www.fabrykasily.pl/cwiczenia/na-plecy/wioslowanie-z-wykorzystaniem-kolek-gimnastycznych-trx'],
+  ['Podciąganie na drążku nachwytem (Pull ups)', 'plecy', 'bodyweight', 'compound', 5, 12, 'https://www.fabrykasily.pl/cwiczenia/na-plecy/podciaganie-na-drazku-trzymanym-nachwytem-pullups'],
+  ['Podciąganie na drążku podchwytem (Chin ups)', 'plecy', 'bodyweight', 'compound', 5, 12, 'https://www.fabrykasily.pl/cwiczenia/na-plecy/podciaganie-na-drazku-trzymanym-podchwytem-chinup'],
+  ['Podciąganie na drążku szeroko do karku', 'plecy', 'bodyweight', 'compound', 5, 12, 'https://www.fabrykasily.pl/cwiczenia/na-plecy/podciaganie-na-drazku-trzymanym-szeroko'],
+  ['Przyciąganie drążka wyciągu górnego do klatki podchwytem wąsko', 'plecy', 'cable', 'compound', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/na-plecy/przyciaganie-drazka-wyciagu-gornego-do-klatki'],
+  ['Prostopadłe przyciąganie drążka wyciągu górnego do bioder', 'plecy', 'cable', 'isolation', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/na-plecy/prostopadle-przyciaganie-drazka-wyciagu-gornego'],
+  ['Wiosłowanie końcem sztangi chwytem neutralnym', 'plecy', 'barbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/na-plecy/wioslowanie-koncem-sztangi-chwytem-neutralnym'],
+  ['Przyciąganie końca sztangi jednorącz w opadzie tułowia', 'plecy', 'barbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/na-plecy/przyciaganie-konca-sztangi-jednoracz-w-opadzie'],
+  ['Przyciąganie linki wyciągu dolnego jednorącz', 'plecy', 'cable', 'compound', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/na-plecy/przyciaganie-linki-wyciagu-dolnego-jednoracz'],
+  ['Przyciąganie linki wyciągu dolnego siedząc', 'plecy', 'cable', 'compound', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/na-plecy/przyciaganie-linki-wyciagu-dolnego-siedzac-seated'],
+  ['Ściąganie drążka wyciągu górnego do klatki nachwytem szeroko', 'plecy', 'cable', 'compound', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/na-plecy/sciaganie-drazka-wyciagu-gornego-do-klatki'],
+  ['Ściąganie drążka wyciągu górnego nachwytem za kark', 'plecy', 'cable', 'compound', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/na-plecy/sciaganie-drazka-wyciagu-gornego-trzymanego-nachwytem'],
+  ['Unoszenie tułowia na ławce rzymskiej (Hyperextension)', 'plecy', 'bodyweight', 'isolation', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/na-plecy/unoszenie-tulowia-na-lawce-rzymskiej-hyperextensions'],
+  ['Wiosłowanie hantlami w opadzie tułowia', 'plecy', 'dumbbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/na-plecy/wioslowanie-hantlami-w-opadzie-tulowia-bentover'],
+  ['Wiosłowanie na suwnicy Smitha w opadzie tułowia', 'plecy', 'machine', 'compound', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/na-plecy/wioslowanie-na-suwnicy-smitha-w-opadzie'],
+  ['Wiosłowanie sztangą podchwytem w opadzie tułowia', 'plecy', 'barbell', 'compound', 6, 10, 'https://www.fabrykasily.pl/cwiczenia/na-plecy/wioslowanie-sztanga-trzymana-podchwytem-w-opadzie'],
+
+  // ============ KLATKA PIERSIOWA ============
+  ['Wyciskanie stojąc z wykorzystaniem wyciągu lub bramy', 'klatka', 'cable', 'compound', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/klatka-piersiowa/wyciskanie-stojac-z-wykorzystaniem-wyciagu-lub-bramy'],
+  ['Wyciskanie hantli wąskim chwytem neutralnym na ławeczce płaskiej', 'klatka', 'dumbbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/klatka-piersiowa/wyciskanie-hantli-waskim-chwytem-neutralnym-na-laweczce-plaskiej'],
+  ['Rozpiętki z gumą za plecami', 'klatka', 'bodyweight', 'isolation', 15, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/klatka-piersiowa/rozpietki-z-guma-za-plecami'],
+  ['Wyciskanie sztangi na ławce poziomej ze stojaków (Pin bench press)', 'klatka', 'barbell', 'compound', 5, 8, 'https://www.fabrykasily.pl/atlas-cwiczen/klatka-piersiowa/wyciskanie-sztangi-na-lawce-poziomej-ze-stojakow'],
+  ['Wyciskanie z gumą za plecami', 'klatka', 'bodyweight', 'compound', 15, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/klatka-piersiowa/wyciskanie-z-guma-za-plecami'],
+  ['Wyciskanie sztangi na podłodze w domu', 'klatka', 'barbell', 'compound', 6, 10, 'https://www.fabrykasily.pl/atlas-cwiczen/klatka-piersiowa/wyciskanie-sztangi-na-podlodze-w-domu'],
+  ['Wyciskanie sztangi na podłodze (Barbell floor press)', 'klatka', 'barbell', 'compound', 6, 10, 'https://www.fabrykasily.pl/atlas-cwiczen/klatka-piersiowa/wyciskanie-sztangi-na-podlodze'],
+  ['Wyciskanie na podłodze jednorącz', 'klatka', 'dumbbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/klatka-piersiowa/wyciskanie-na-podlodze-jednoracz'],
+  ['Rozpiętki z hantlami w leżeniu na podłodze (Floor chest fly)', 'klatka', 'dumbbell', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/klatka-piersiowa/rozpietki-z-hantlami-w-lezeniu-na-podlodze'],
+  ['Rozpiętki na TRX', 'klatka', 'bodyweight', 'isolation', 12, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/klatka-piersiowa/rozpietki-na-trx'],
+  ['Pompki podwieszane na TRX', 'klatka', 'bodyweight', 'compound', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/klatka-piersiowa/pompki-podwieszane-na-trx'],
+  ['Wyciskanie sztangi na ławce skośnej głową w dół', 'klatka', 'barbell', 'compound', 6, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/klatka-piersiowa/wyciskanie-sztangi-na-lawce-skosnej-glowa-w-dol'],
+  ['Pompki na TRX', 'klatka', 'bodyweight', 'compound', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/klatka-piersiowa/pompki-na-trx'],
+  ['Floor press (Dumbbell floor press)', 'klatka', 'dumbbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/klatka-piersiowa/floor-press'],
+  ['Rozpiętki z wykorzystaniem wyciągu dolnego', 'klatka', 'cable', 'isolation', 12, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/klatka-piersiowa/rozpietki-z-wykorzystaniem-wyciagu-dolnego'],
+  ['Przenoszenie sztangielki za głowę (Dumbbell pullover)', 'klatka', 'dumbbell', 'isolation', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/na-klatke-piersiowa/przenoszenie-sztangielki-za-glowe-bentarm-dumbbell'],
+  ['Wyciskanie na suwnicy Smitha na ławce skośnej głową w dół', 'klatka', 'machine', 'compound', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/na-klatke-piersiowa/wyciskanie-na-suwnicy-smitha-lezac-2'],
+  ['Wyciskanie sztangielek na ławce skośnej głową w dół', 'klatka', 'dumbbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/na-klatke-piersiowa/wyciskanie-sztangielek-na-lawce-skosnej-glowa'],
   ['Pompki (wersja klasyczna)', 'klatka', 'bodyweight', 'compound', 10, 25, 'https://www.fabrykasily.pl/cwiczenia/klatka-piersiowa/pompki-wersja-klasyczna'],
+  ['Rozpiętki z hantlami na ławce płaskiej', 'klatka', 'dumbbell', 'isolation', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/na-klatke-piersiowa/rozpietki-z-hantlami-na-lawce-plaskiej'],
+  ['Rozpiętki z wykorzystaniem wyciągów (Cable crossover)', 'klatka', 'cable', 'isolation', 12, 15, 'https://www.fabrykasily.pl/cwiczenia/na-klatke-piersiowa/rozpietki-z-wykorzystaniem-wyciagow-cable-crossover'],
+  ['Rozpiętki na maszynie butterfly', 'klatka', 'machine', 'isolation', 12, 15, 'https://www.fabrykasily.pl/cwiczenia/na-klatke-piersiowa/rozpietki-na-maszynie-butterfly-butterfly'],
+  ['Pompki na poręczach (Dips – chest version)', 'klatka', 'bodyweight', 'compound', 6, 15, 'https://www.fabrykasily.pl/cwiczenia/na-klatke-piersiowa/pompki-na-poreczach-dips-chest'],
+  ['Wyciskanie sztangi na ławce płaskiej do brody (Guillotine press)', 'klatka', 'barbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/na-klatke-piersiowa/wyciskanie-sztangi-na-lawce-plaskiej'],
+  ['Rozpiętki z wyciągu na ławce dodatniej', 'klatka', 'cable', 'isolation', 12, 15, 'https://www.fabrykasily.pl/cwiczenia/na-klatke-piersiowa/rozpietki-z-wykorzystaniem-wyciagu-na-lawce'],
+  ['Wyciskanie na suwnicy Smitha na ławce płaskiej', 'klatka', 'machine', 'compound', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/na-klatke-piersiowa/wyciskanie-na-suwnicy-smitha-lezac'],
+  ['Rozpiętki z wyciągu na ławce płaskiej', 'klatka', 'cable', 'isolation', 12, 15, 'https://www.fabrykasily.pl/cwiczenia/na-klatke-piersiowa/rozpietki-z-wykorzystaniem-wyciagu-na-lawce-2'],
+  ['Wyciskanie sztangielek na ławce dodatniej (Incline dumbbell bench press)', 'klatka', 'dumbbell', 'compound', 6, 12, 'https://www.fabrykasily.pl/cwiczenia/na-klatke-piersiowa/wyciskanie-sztangielek-na-lawce-dodatniej-incline'],
+  ['Wyciskanie sztangielek chwytem neutralnym na ławce ze skosem dodatnim', 'klatka', 'dumbbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/na-klatke-piersiowa/wyciskanie-sztangielek-chwytem-neutralnym-na-lawce'],
+  ['Rozpiętki z hantlami na ławce dodatniej', 'klatka', 'dumbbell', 'isolation', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/na-klatke-piersiowa/rozpietki-z-hantlami-na-lawce-dodatniej'],
+  ['Wznosy ramion z wyciągu dolnego (wersja na klatkę)', 'klatka', 'cable', 'isolation', 12, 15, 'https://www.fabrykasily.pl/cwiczenia/na-klatke-piersiowa/wznosy-ramion-z-wykorzystaniem-dolnego-wyciagu'],
+  ['Wyciskanie na maszynie hammer', 'klatka', 'machine', 'compound', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/na-klatke-piersiowa/wyciskanie-na-maszynie-hammer-leverage-chest'],
+  ['Wyciskanie sztangi na ławce płaskiej (Barbell bench press)', 'klatka', 'barbell', 'compound', 5, 10, 'https://www.fabrykasily.pl/cwiczenia/na-klatke-piersiowa/wyciskanie-sztangi-na-lawce-plaskiej-barbell'],
+  ['Wyciskanie sztangi na ławce dodatniej (Incline barbell bench press)', 'klatka', 'barbell', 'compound', 6, 12, 'https://www.fabrykasily.pl/cwiczenia/na-klatke-piersiowa/wyciskanie-sztangi-na-lawce-dodatniej-incline'],
+  ['Wyciskanie sztangielek na ławce płaskiej (Dumbbells bench press)', 'klatka', 'dumbbell', 'compound', 6, 12, 'https://www.fabrykasily.pl/cwiczenia/na-klatke-piersiowa/wyciskanie-sztangielek-na-lawce-plaskiej-dumbbell'],
 
-  // BARKI
-  ['Wyciskanie sztangi nad głowę (OHP)', 'barki', 'barbell', 'compound', 5, 10, 'https://www.fabrykasily.pl/cwiczenia/na-barki/wyciskanie-sztangi-nad-glowe-standing-front'],
+  // ============ BARKI ============
+  ['TRX odwrócone rozpiętki', 'barki', 'bodyweight', 'isolation', 12, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/barki/trx-odwrocone-rozpietki'],
+  ['TRX face pull', 'barki', 'bodyweight', 'isolation', 12, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/barki/trx-face-pull'],
+  ['Przenoszenie ramion z gumą miniband', 'barki', 'bodyweight', 'isolation', 15, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/barki/przenoszenie-ramion-z-guma-miniband'],
+  ['Powell raise', 'barki', 'dumbbell', 'isolation', 12, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/barki/powell-raise'],
+  ['T raise z hantlami w opadzie tułowia', 'barki', 'dumbbell', 'isolation', 12, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/barki/t-raise-z-hantlami-w-opadzie-tulowia'],
+  ['Rotacja wewnętrzna na wyciągu', 'barki', 'cable', 'isolation', 15, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/barki/rotacja-wewnetrzna-na-wyciagu'],
+  ['Rotacja zewnętrzna na wyciągu', 'barki', 'cable', 'isolation', 15, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/barki/rotacja-zewnetrzna-na-wyciagu'],
+  ['Z-press', 'barki', 'barbell', 'compound', 6, 10, 'https://www.fabrykasily.pl/atlas-cwiczen/barki/zpress'],
+  ['Face pull z gumą', 'barki', 'bodyweight', 'isolation', 15, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/barki/face-pull-guma'],
+  ['Landmine press', 'barki', 'barbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/barki/landmine-press'],
+  ['Landmine press half kneeling', 'barki', 'barbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/barki/landmine-press-half-kneeling'],
+  ['Wyciskanie jednorącz nad głowę z gumą', 'barki', 'bodyweight', 'compound', 12, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/barki/cuban-press/wyciskanie-jednoracz-nad-glowe-z-guma'],
+  ['Wyciskanie ramion z gumą nad głowę', 'barki', 'bodyweight', 'compound', 15, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/barki/wyciskanie-ramion-z-guma-nad-glowe'],
+  ['Wznosy ramion w bok z gumą', 'barki', 'bodyweight', 'isolation', 15, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/barki/cuban-press/wznosy-ramion-w-bok-z-guma'],
+  ['Wznosy ramion w przód z gumą', 'barki', 'bodyweight', 'isolation', 15, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/barki/wznosy-ramion-w-przod-z-guma'],
+  ['Unoszenie ramion z hantlami w przód z przenoszeniem na boki', 'barki', 'dumbbell', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/barki/unoszenie-ramion-z-hantlami-w-przod-z-przenoszeniem-na-boki'],
+  ['Cuban press', 'barki', 'dumbbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/barki/cuban-press'],
+  ['Wyciskanie hantli w klęku jednonóż', 'barki', 'dumbbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/barki/wyciskanie-hantli-w-kleku-jednonoz'],
+  ['Unoszenie ramienia z linką wyciągu dolnego', 'barki', 'cable', 'isolation', 12, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/barki/unoszenie-ramienia-z-wykorzystaniem-linki-wyciagu-dolnego'],
+  ['Rotacja zewnętrzna w leżeniu bokiem', 'barki', 'bodyweight', 'isolation', 15, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/barki/rotacja-zewnetrzna-w-lezeniu-bokiem'],
+  ['Rotacje kubańskie z hantlami', 'barki', 'dumbbell', 'isolation', 12, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/barki/rotacje-kubanskie-z-hantlami'],
+  ['Rotacje zewnętrzne ramienia hantlą siedząc', 'barki', 'dumbbell', 'isolation', 15, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/barki/rotacje-zewnetrzne-ramienia-hantla-siedzac'],
+  ['Przyciąganie liny z wyciągu do twarzy (Face pull)', 'barki', 'cable', 'isolation', 12, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/barki/przyciaganie-liny-z-wyciagu-do-twarzy-face-pull'],
+  ['T raise na ławeczce', 'barki', 'dumbbell', 'isolation', 12, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/barki/t-raise-na-laweczce'],
+  ['Wyciskanie sztangi zza głowy stojąc', 'barki', 'barbell', 'compound', 6, 10, 'https://www.fabrykasily.pl/cwiczenia/na-barki/wyciskanie-sztangi-zza-glowy-stojac-standing'],
+  ['Wyciskanie sztangi nad głowę siedząc', 'barki', 'barbell', 'compound', 6, 10, 'https://www.fabrykasily.pl/cwiczenia/na-barki/wyciskanie-sztangi-nad-glowe-barbell-shoulder'],
+  ['Wyciskanie sztangi na maszynie Smitha siedząc', 'barki', 'machine', 'compound', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/na-barki/wyciskanie-sztangi-na-maszynie-smith-siedzac'],
+  ['Unoszenie ramion w przód ze sztangą w oparciu o ławkę dodatnią', 'barki', 'barbell', 'isolation', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/na-barki/unoszenie-ramion-w-przod-ze-sztanga'],
+  ['Arnoldki – wyciskanie hantli nad głowę z rotacją (Arnold press)', 'barki', 'dumbbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/na-barki/arnoldki-wyciskanie-hantli-nad-glowe'],
+  ['Odwodzenie linek w tył wyciągu stojąc', 'barki', 'cable', 'isolation', 12, 20, 'https://www.fabrykasily.pl/cwiczenia/na-barki/odwodzenie-linek-w-tyl-wyciagu-stojac'],
+  ['Naprzemianstronne unoszenie ramion w przód z wyciągu dolnego', 'barki', 'cable', 'isolation', 12, 15, 'https://www.fabrykasily.pl/cwiczenia/na-barki/naprzemianstronne-unoszenie-ramion-w-przod'],
+  ['Naprzemianstronne unoszenie ramion w przód ze sztangielkami', 'barki', 'dumbbell', 'isolation', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/na-barki/naprzemianstronne-unoszenie-ramion-w-przod-2'],
+  ['Naprzemienne wyciskanie hantli nad głowę stojąc', 'barki', 'dumbbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/na-barki/naprzemienne-wyciskanie-hantli-nad-glowe-stojac'],
+  ['Podciąganie sztangi pod brodę', 'barki', 'barbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/na-barki/podciaganie-sztangi-pod-brode-upright-barbell'],
+  ['Przyciąganie liny z wyciągu górnego do klatki piersiowej', 'barki', 'cable', 'compound', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/na-barki/przyciaganie-liny-z-wyciagu-gornego'],
+  ['Wyciskanie ramion nad głowę siedząc z wyciągu', 'barki', 'cable', 'compound', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/na-barki/wyciskanie-ramion-nad-glowe-siedzac'],
+  ['Unoszenie ramion w bok ze sztangielkami siedząc', 'barki', 'dumbbell', 'isolation', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/na-barki/unoszenie-ramion-w-bok-ze-sztangielkami'],
+  ['Odwodzenie ramion w bok ze sztangielkami (Lateral raise)', 'barki', 'dumbbell', 'isolation', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/na-barki/odwodzenie-ramion-w-bok-ze-sztangielkami'],
+  ['Unoszenie ramion w przód ze sztangielkami (Front raise)', 'barki', 'dumbbell', 'isolation', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/na-barki/unoszenie-ramion-w-przod-ze-sztangielkami'],
+  ['Unoszenie ramion w przód ze sztangielką trzymaną oburącz', 'barki', 'dumbbell', 'isolation', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/na-barki/unoszenie-ramion-w-przod-ze-sztangielka'],
+  ['Wyciskanie sztangi nad głowę (Military press)', 'barki', 'barbell', 'compound', 5, 10, 'https://www.fabrykasily.pl/cwiczenia/na-barki/wyciskanie-sztangi-nad-glowe-standing-front'],
   ['Wyciskanie hantli nad głowę siedząc', 'barki', 'dumbbell', 'compound', 6, 12, 'https://www.fabrykasily.pl/cwiczenia/na-barki/wyciskanie-hantli-nad-glowe-siedzac-seated'],
-  ['Odwodzenie ramion w bok ze sztangielkami', 'barki', 'dumbbell', 'isolation', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/na-barki/odwodzenie-ramion-w-bok-ze-sztangielkami'],
-  ['Przyciąganie liny wyciągu (Face pull)', 'barki', 'cable', 'isolation', 12, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/barki/przyciaganie-liny-z-wyciagu-do-twarzy-face-pull'],
+  ['Wyciskanie hantli nad głowę stojąc', 'barki', 'dumbbell', 'compound', 6, 12, 'https://www.fabrykasily.pl/cwiczenia/na-barki/wyciskanie-hantli-nad-glowe-stojac-standing'],
+  ['Wyciskanie nad głowę na maszynie chwytem neutralnym', 'barki', 'machine', 'compound', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/na-barki/wyciskanie-nad-glowe-na-maszynie-chwytem'],
+  ['Wyciskanie nad głowę z linkami wyciągu dolnego', 'barki', 'cable', 'compound', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/na-barki/wyciskanie-nad-glowe-z-linkami-wyciagu'],
+  ['Wyciskanie sztangielki jednorącz nad głowę stojąc', 'barki', 'dumbbell', 'compound', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/na-barki/wyciskanie-sztangielki-jednoracz-nad-glowe-stojac'],
+  ['Wznosy ramion w bok w opadzie tułowia siedząc', 'barki', 'dumbbell', 'isolation', 12, 15, 'https://www.fabrykasily.pl/cwiczenia/na-barki/wznosy-ramion-w-bok-w-opadzie'],
+  ['Wznosy ramion w bok w opadzie tułowia', 'barki', 'dumbbell', 'isolation', 12, 15, 'https://www.fabrykasily.pl/cwiczenia/na-barki/wznosy-ramion-w-bok-w-opadzie-2'],
 
-  // BICEPS / TRICEPS
-  ['Zginanie przedramion ze sztangą', 'biceps', 'barbell', 'isolation', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/na-biceps/zginanie-przedramion-ze-sztanga-stojac-barbell'],
-  ['Zginanie przedramion w chwycie młotkowym', 'biceps', 'dumbbell', 'isolation', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/na-biceps/zginanie-przedramion-z-hantlami-w-chwycie'],
-  ['Wyciskanie wąskim chwytem na płaskiej', 'triceps', 'barbell', 'compound', 6, 10, 'https://www.fabrykasily.pl/cwiczenia/na-triceps/wyciskanie-sztangi-lamanej-waskim-chwytem'],
-  ['Francuskie wyciskanie leżąc', 'triceps', 'barbell', 'isolation', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/na-triceps/prostowanie-przedramion-ze-sztanga-lamana-lezac'],
-  ['Prostowanie przedramion z linką wyciągu', 'triceps', 'cable', 'isolation', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/na-triceps/prostowanie-przedramion-z-lina-z-wyciagu'],
+  // ============ BRZUCH ============
+  ['TRX superman na kolanach', 'core', 'bodyweight', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/trx-superman-na-kolanach'],
+  ['TRX body saw', 'core', 'bodyweight', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/trx-body-saw'],
+  ['Rotacje w pozycji podporu bokiem', 'core', 'bodyweight', 'isolation', 12, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/rotacje-w-pozycji-podporu-bokiem'],
+  ['Rotacje w pozycji deski bokiem', 'core', 'bodyweight', 'isolation', 12, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/rotacje-w-pozycji-deski-bokiem'],
+  ['Dotykanie przeciwnych barków w podporze', 'core', 'bodyweight', 'isolation', 16, 30, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/dotykanie-przeciwnych-barkow-w-podporze'],
+  ['Deska na kolanach', 'core', 'bodyweight', 'isolation', 30, 60, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/deska-na-kolanach'],
+  ['Pallof press w pozycji wykrocznej', 'core', 'cable', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/pallof-press-w-pozycji-wykrocznej'],
+  ['Pallof press w pozycji wykrocznej na wyciągu', 'core', 'cable', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/pallof-press-w-pozycji-wykrocznej-na-wyciagu'],
+  ['Deska bokiem na kolanach', 'core', 'bodyweight', 'isolation', 30, 45, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/deska-bokiem-na-kolanach'],
+  ['Chaos pallof press', 'core', 'cable', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/chaos-pallof-press'],
+  ['Przyciąganie ręki do przeciwnej nogi (Alternating toe touch)', 'core', 'bodyweight', 'isolation', 16, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/przyciaganie-reki-do-przeciwnej-nogi'],
+  ['Nożyce nogami', 'core', 'bodyweight', 'isolation', 20, 40, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/nozyce-nogami'],
+  ['Deska na TRX', 'core', 'bodyweight', 'isolation', 30, 60, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/deska-na-trx'],
+  ['Deska na piłce', 'core', 'bodyweight', 'isolation', 30, 60, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/deska-na-pilce'],
+  ['Brzuszki z rękami na klatce piersiowej', 'core', 'bodyweight', 'isolation', 15, 25, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/brzuszki-z-rekami-na-klatce-piersiowej'],
+  ['Wycieraczki – nogi ugięte', 'core', 'bodyweight', 'isolation', 10, 16, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/wycieraczki-nogi-ugiete'],
+  ['Wycieraczki – nogi proste', 'core', 'bodyweight', 'isolation', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/wycieraczki-nogi-proste'],
+  ['Unoszenie prostych nóg na stojaku', 'core', 'bodyweight', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/unoszenie-prostych-nog-na-stojaku'],
+  ['Unoszenie kolan na skos w zwisie na drążku', 'core', 'bodyweight', 'isolation', 10, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/unoszenie-kolan-na-skos-w-zwisie-na-drazku'],
+  ['Spięcia brzucha z linkami wyciągu górnego (Cable crunch)', 'core', 'cable', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/spiecia-brzucha-z-linkami-wyciagu-gornego'],
+  ['Rotacje w klęku jednonóż z hantlą', 'core', 'dumbbell', 'isolation', 12, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/rotacje-w-kleku-jednonoz-z-hantla'],
+  ['Przyciąganie kolan do klatki na stojaku', 'core', 'bodyweight', 'isolation', 12, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/przyciaganie-kolan-do-klatki-na-stojaku'],
+  ['Naprzemienne przyciąganie kolan z gumą miniband', 'core', 'bodyweight', 'isolation', 16, 30, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/naprzemienne-przyciaganie-kolan-z-guma-miniband'],
+  ['Krążenia ramion w podporze na piłce (Stir the pot)', 'core', 'bodyweight', 'isolation', 10, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/krazenia-ramion-w-podporze-na-pilce'],
+  ['Spacer farmera (Farmer walk)', 'core', 'dumbbell', 'compound', 30, 60, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/spacer-farmera'],
+  ['Spacer farmera z ciężarem po jednej stronie nad klatką', 'core', 'dumbbell', 'compound', 20, 40, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/spacer-farmera-z-ciezarem-po-jednej-stronie-nad-klatka-piersiowa'],
+  ['Spacer farmera z ciężarem nad klatką piersiową', 'core', 'dumbbell', 'compound', 30, 60, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/spacer-farmera-z-ciezarem-nad-klatka-piersiowa'],
+  ['Suitcase walk', 'core', 'dumbbell', 'compound', 30, 60, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/suitcase-walk'],
+  ['Pallof press na wyciągu', 'core', 'cable', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/pallof-press-na-wyciagu'],
+  ['Landmine twist', 'core', 'barbell', 'isolation', 12, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/landmine-twist'],
+  ['Janda sit up', 'core', 'bodyweight', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/janda-sit-up'],
+  ['Body saw', 'core', 'bodyweight', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/body-saw'],
+  ['Ab roller na kolanach z przedramionami na piłce', 'core', 'bodyweight', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/ab-roller-na-kolanach-z-przedramionami-na-pilce'],
+  ['Unoszenie prostych nóg do drążka (Hanging leg raise)', 'core', 'bodyweight', 'isolation', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/unoszenie-prostych-nog-do-drazka'],
+  ['Mountain climbers na TRX', 'core', 'bodyweight', 'isolation', 20, 40, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/mountain-climbers-na-trx'],
+  ['Pike TRX', 'core', 'bodyweight', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/pike-trx'],
+  ['Superman na TRX', 'core', 'bodyweight', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/superman-na-na-trx'],
+  ['Deska bokiem na TRX', 'core', 'bodyweight', 'isolation', 30, 45, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/deska-bokiem-na-trx'],
+  ['Rewersy (Reverse crunch)', 'core', 'bodyweight', 'isolation', 15, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/rewersy'],
+  ['Scyzoryk (Jackknife sit up)', 'core', 'bodyweight', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/scyzoryk'],
+  ['Dead bug – nogi proste', 'core', 'bodyweight', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/dead-bug-nogi-proste'],
+  ['Dead bug – nogi ugięte', 'core', 'bodyweight', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/dead-bug-nogi-ugiete'],
+  ['Hollow body', 'core', 'bodyweight', 'isolation', 30, 60, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/hollow-body'],
+  ['Semi hollow body', 'core', 'bodyweight', 'isolation', 30, 60, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/semi-hollow-body'],
+  ['Przyciąganie kolan pod klatkę na piłce', 'core', 'bodyweight', 'isolation', 12, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/przyciaganie-kolan-pod-klatke-na-pilce'],
+  ['Przyciąganie kolan pod klatkę na TRX', 'core', 'bodyweight', 'isolation', 12, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/przyciaganie-kolan-pod-klatke-na-trx'],
+  ['Ab roller na kolanach', 'core', 'bodyweight', 'isolation', 8, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/ab-roller-na-kolanach'],
+  ['Ab roller na kolanach z piłką (Ball rollout)', 'core', 'bodyweight', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/ab-roller-na-kolanach-z-pilka'],
+  ['Rotacje z gumą', 'core', 'bodyweight', 'isolation', 15, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/rotacje-z-guma'],
+  ['Pallof press (Banded)', 'core', 'bodyweight', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/pallof-press'],
+  ['Rotacja boczna na wyciągu', 'core', 'cable', 'isolation', 12, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/rotacja-boczna-na-wyciagu'],
+  ['Rotacje boczne po skosie – woodchoper', 'core', 'cable', 'isolation', 12, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/rotacje-boczne-po-skosie-woodchoper'],
+  ['Deska / Plank (izometryczny skurcz w podporze przodem)', 'core', 'bodyweight', 'isolation', 30, 60, 'https://www.fabrykasily.pl/cwiczenia/na-brzuch/izometryczny-skurcz-miesni-brzucha-w-podporze'],
+  ['Naprzemienne przyciąganie łokci do kolan leżąc', 'core', 'bodyweight', 'isolation', 20, 40, 'https://www.fabrykasily.pl/cwiczenia/na-brzuch/naprzemienne-przyciaganie-lokci-do-kolan-lezac'],
+  ['Naprzemienne sięganie do kostek leżąc', 'core', 'bodyweight', 'isolation', 20, 40, 'https://www.fabrykasily.pl/cwiczenia/na-brzuch/naprzemienne-sieganie-do-kostek-lezac-alternate'],
+  ['Przyciąganie kolan do klatki w zwisie na drążku', 'core', 'bodyweight', 'isolation', 10, 20, 'https://www.fabrykasily.pl/cwiczenia/na-brzuch/przyciaganie-kolan-do-klatki-w-zwisie-2'],
+  ['Rowerek (Bicycle crunch)', 'core', 'bodyweight', 'isolation', 20, 40, 'https://www.fabrykasily.pl/cwiczenia/na-brzuch/rowerek-air-bike'],
+  ['Spięcia brzucha leżąc na macie ze złączonymi stopami (Frog crunch)', 'core', 'bodyweight', 'isolation', 15, 25, 'https://www.fabrykasily.pl/cwiczenia/na-brzuch/spiecia-brzucha-lezac-macie-ze-zlaczonymi'],
+  ['Spięcia brzucha z nogami na piłce gimnastycznej', 'core', 'bodyweight', 'isolation', 15, 25, 'https://www.fabrykasily.pl/cwiczenia/na-brzuch/spiecia-brzucha-z-nogami-opartymi'],
+  ['Świeca z prostowaniem nóg leżąc', 'core', 'bodyweight', 'isolation', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/na-brzuch/swieca-z-prostowaniem-nog-lezac-bottoms'],
+  ['Zginanie tułowia na maszynie siedząc (AB crunch machine)', 'core', 'machine', 'isolation', 12, 20, 'https://www.fabrykasily.pl/cwiczenia/na-brzuch/zginanie-tulowia-na-maszynie-siedzac-spiecia'],
+  ['Unoszenie tułowia z podłoża (AB crunch)', 'core', 'bodyweight', 'isolation', 15, 25, 'https://www.fabrykasily.pl/cwiczenia/na-brzuch/unoszenie-tulowia-z-podloza-spiecia-brzucha'],
 
-  // BRZUCH / ŁYDKI
-  ['Deska (Plank przodem)', 'core', 'bodyweight', 'isolation', 30, 60, 'https://www.fabrykasily.pl/cwiczenia/na-brzuch/izometryczny-skurcz-miesni-brzucha-w-podporze'],
-  ['Spięcia brzucha z linkami (Allahy)', 'core', 'cable', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/brzuch/spiecia-brzucha-z-linkami-wyciagu-gornego'],
-  ['Wspięcia na palcach siedząc (maszyna)', 'łydki', 'machine', 'isolation', 12, 20, 'https://www.fabrykasily.pl/cwiczenia/na-lydki/wspiecia-na-palcach-siedzac-na-maszynie'],
-  ['Wspięcia na palcach stojąc z hantlą', 'łydki', 'dumbbell', 'isolation', 12, 20, 'https://www.fabrykasily.pl/cwiczenia/na-lydki/wspiecia-na-palcach-stojac-z-hantlami']
+  // ============ TRICEPS ============
+  ['Prostowanie ramienia jednorącz w klęku podpartym na ławce płaskiej', 'triceps', 'dumbbell', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/triceps/prostowanie-ramienia-jednoracz-w-kleku-podpartym-na-lawce-plaskiej'],
+  ['Prostowanie ramion z gumą pod stopami', 'triceps', 'bodyweight', 'isolation', 15, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/triceps/prostowanie-ramion-z-guma-pod-stopami'],
+  ['Prostowanie ramion w oparciu o ławeczkę', 'triceps', 'bodyweight', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/triceps/prostowanie-ramion-w-oparciu-o-laweczke'],
+  ['Wyciskanie francuskie w leżeniu na podłodze', 'triceps', 'barbell', 'isolation', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/triceps/wyciskanie-francuskie-w-lezeniu-na-podlodze'],
+  ['Pompki w podporze tyłem z ugiętymi nogami', 'triceps', 'bodyweight', 'compound', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/triceps/pompki-w-podporze-tylem-z-ugietymi-nogami'],
+  ['Pompki w podporze tyłem z nogami na podwyższeniu', 'triceps', 'bodyweight', 'compound', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/triceps/pompki-w-podporze-tylem-z-nogami-na-podwyzszeniu'],
+  ['Pompki na poręczach – samo opuszczanie', 'triceps', 'bodyweight', 'compound', 5, 8, 'https://www.fabrykasily.pl/atlas-cwiczen/triceps/pompki-na-poreczach-samo-opuszczanie'],
+  ['Triceps rollback extension', 'triceps', 'dumbbell', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/triceps/tricpes-rollback-extension'],
+  ['Prostowanie ramion z gumą', 'triceps', 'bodyweight', 'isolation', 15, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/triceps/prostowanie-ramion-z-guma'],
+  ['Prostowanie ramion na TRX', 'triceps', 'bodyweight', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/triceps/prostowanie-ramion-na-trx'],
+  ['Prostowanie ramion z linką wyciągu dolnego w opadzie tułowia', 'triceps', 'cable', 'isolation', 12, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/triceps/prostowanie-ramion-z-linka-wyciagu-dolnego-w-opadzie-tulowia'],
+  ['Prostowanie ramion z linkami wyciągu górnego', 'triceps', 'cable', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/triceps/prostowanie-ramion-z-linkami-wyciagu-gornego'],
+  ['Wyciskanie francuskie z przenoszeniem ramion za głowę', 'triceps', 'barbell', 'isolation', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/triceps/wyciskanie-francuskie-z-przenoszeniem-ramion-za-glowe'],
+  ['Wyciskanie sztangi wąskim chwytem', 'triceps', 'barbell', 'compound', 6, 10, 'https://www.fabrykasily.pl/atlas-cwiczen/triceps/wyciskanie-sztangi-waskim-chwytem'],
+  ['Wyciskanie francuskie hantlami z przenoszeniem ramion za głowę', 'triceps', 'dumbbell', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/triceps/wyciskanie-francuskie-hantlami-z-przenoszeniem-ramion-za-glowe'],
+  ['Wyciskanie francuskie hantlami (Dumbbell skull crusher)', 'triceps', 'dumbbell', 'isolation', 10, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/triceps/wyciskanie-francuskie-hantlami'],
+  ['Wąskie pompki', 'triceps', 'bodyweight', 'compound', 8, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/triceps/waskie-pompki'],
+  ['Pompki na poręczach z gumą', 'triceps', 'bodyweight', 'compound', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/triceps/pompki-na-poreczach-z-guma'],
+  ['Prostowanie ramion z hantlami za siebie w opadzie tułowia', 'triceps', 'dumbbell', 'isolation', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/na-triceps/prostowanie-ramion-z-hantlami-za-siebie'],
+  ['Prostowanie ramion leżąc na ławce z użyciem wyciągu górnego', 'triceps', 'cable', 'isolation', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/na-triceps/prostowanie-ramion-lezac-na-lawce'],
+  ['Pompki w podporze tyłem na ławeczce (Bench dips)', 'triceps', 'bodyweight', 'compound', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/na-triceps/pompki-w-podporze-tylem-na-laweczce-bench'],
+  ['Pompki na triceps na poręczach (Dips – triceps version)', 'triceps', 'bodyweight', 'compound', 6, 12, 'https://www.fabrykasily.pl/cwiczenia/na-triceps/pompki-na-triceps-na-poreczach-dips'],
+  ['Pompki w oparciu o sztangę wąskim chwytem', 'triceps', 'barbell', 'compound', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/na-triceps/pompki-w-oparciu-o-sztange-waskim'],
+  ['Prostowanie przedramienia w pionie ze sztangielką', 'triceps', 'dumbbell', 'isolation', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/na-triceps/prostowanie-przedramienia-w-pionie-ze-sztangielka'],
+  ['Prostowanie przedramion w pionie ze sztangą oburącz', 'triceps', 'barbell', 'isolation', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/na-triceps/prostowanie-przedramion-w-pionie-ze-sztanga'],
+  ['Prostowanie przedramion w pionie ze sztangielką oburącz', 'triceps', 'dumbbell', 'isolation', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/na-triceps/prostowanie-przedramion-w-pionie-ze-sztangielka'],
+  ['Prostowanie przedramion z gryfem łamanym nachwytem z wyciągu', 'triceps', 'cable', 'isolation', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/na-triceps/prostowanie-przedramion-z-gryfem-lamanym-trzymanym'],
+  ['Prostowanie przedramion z gryfem prostym nachwytem z wyciągu', 'triceps', 'cable', 'isolation', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/na-triceps/prostowanie-przedramion-z-gryfem-prostym-trzymanym'],
+  ['Prostowanie przedramion z liną z wyciągu dolnego stojąc', 'triceps', 'cable', 'isolation', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/na-triceps/prostowanie-przedramion-z-lina-z-wyciagu'],
+  ['Prostowanie przedramion ze sztangą łamaną leżąc (Skull crusher)', 'triceps', 'barbell', 'isolation', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/na-triceps/prostowanie-przedramion-ze-sztanga-lamana-lezac'],
+  ['Prostowanie przedramion ze sztangielką oburącz siedząc', 'triceps', 'dumbbell', 'isolation', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/na-triceps/prostowanie-przedramion-ze-sztangielka-trzymana-oburacz'],
+  ['Prostowanie ramienia jednorącz z wyciągu dolnego stojąc', 'triceps', 'cable', 'isolation', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/na-triceps/prostowanie-ramienia-jednoracz-z-wyciagu-dolnego'],
+  ['Prostowanie ramienia z wyciągu górnego', 'triceps', 'cable', 'isolation', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/na-triceps/prostowanie-ramienia-z-wykorzystaniem-wyciagu-gornego'],
+  ['Prostowanie ramion na maszynie triceps', 'triceps', 'machine', 'isolation', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/na-triceps/prostowanie-ramion-na-maszynie-triceps-machine'],
+  ['Prostowanie ramion z gryfem podchwytem z wyciągu górnego', 'triceps', 'cable', 'isolation', 12, 15, 'https://www.fabrykasily.pl/cwiczenia/na-triceps/prostowanie-ramion-z-gryfem-trzymanym-podchwytem'],
+  ['Wąskie pompki na triceps (Diamentowe pompki)', 'triceps', 'bodyweight', 'compound', 8, 15, 'https://www.fabrykasily.pl/cwiczenia/na-triceps/waskie-pompki-na-triceps-diamentowe-pompki'],
+  ['Wyciskanie sztangi łamanej wąskim chwytem na ławce płaskiej', 'triceps', 'barbell', 'compound', 6, 10, 'https://www.fabrykasily.pl/cwiczenia/na-triceps/wyciskanie-sztangi-lamanej-waskim-chwytem'],
+  ['Wyciskanie sztangi na suwnicy Smitha wąskim chwytem na triceps', 'triceps', 'machine', 'compound', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/na-triceps/wyciskanie-sztangi-na-suwnicy-smitha-waskim'],
+
+  // ============ BICEPS ============
+  ['Uginanie ramion z gumą', 'biceps', 'bodyweight', 'isolation', 15, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/biceps/uginanie-ramion-z-guma'],
+  ['Zginanie ramion ze sztangą nachwytem', 'biceps', 'barbell', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/biceps/zginanie-ramion-ze-sztanga-nachwytem'],
+  ['Uginanie ramion na TRX', 'biceps', 'bodyweight', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/biceps/uginanie-ramion-na-trx'],
+  ['Uginanie ramion z hantlami nachwytem', 'biceps', 'dumbbell', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/biceps/uginanie-ramion-z-hantlami-nachwytem'],
+  ['Uginanie ramion z hantlami w oparciu o ławeczkę (Spider curl)', 'biceps', 'dumbbell', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/biceps/uginanie-ramion-z-hantlami-w-oparciu-o-laweczke'],
+  ['Uginanie ramion ze sztangą w oparciu o ławeczkę', 'biceps', 'barbell', 'isolation', 10, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/biceps/uginanie-ramion-ze-sztanga-w-oparciu-o-laweczke'],
+  ['Zginanie ramion z hantlami na modlitewniku chwytem młotkowym', 'biceps', 'dumbbell', 'isolation', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/biceps/zginanie-ramion-z-hantlami-na-modlitewniku-chwytem-mlotkowym'],
+  ['Uginanie ramienia z linką wyciągu dolnego stojąc', 'biceps', 'cable', 'isolation', 12, 15, 'https://www.fabrykasily.pl/atlas-cwiczen/biceps/uginanie-ramienia-z-linka-wyciagu-dolnego-stojac'],
+  ['Zginanie ramion z hantlami na modlitewniku', 'biceps', 'dumbbell', 'isolation', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/biceps/zginanie-ramion-z-hantlami-na-modlitewniku'],
+  ['Zottman curl', 'biceps', 'dumbbell', 'isolation', 10, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/biceps/zottman-curl'],
+  ['Uginanie ramion z hantlami z rotacją (Supinated biceps curl)', 'biceps', 'dumbbell', 'isolation', 8, 12, 'https://www.fabrykasily.pl/atlas-cwiczen/biceps/uginanie-ramion-z-hantlami-z-rotacja'],
+  ['Zginanie przedramienia z hantlem na modlitewniku', 'biceps', 'dumbbell', 'isolation', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/na-biceps/zginanie-przedramienia-z-hantlem-na-modlitewniku'],
+  ['Zginanie przedramion w wąskim chwycie ze sztangą stojąc', 'biceps', 'barbell', 'isolation', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/na-biceps/zginanie-przedramion-w-waskim-chwycie'],
+  ['Jednoczesne zginanie przedramion stojąc z wyciągów górnych', 'biceps', 'cable', 'isolation', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/na-biceps/jednoczesne-zginanie-przedramion-stojac-z-wykorzystaniem'],
+  ['Zginanie przedramion z drążkiem wyciągu dolnego na modlitewniku', 'biceps', 'cable', 'isolation', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/na-biceps/zginanie-przedramion-z-drazkiem-wyciagu-dolnego'],
+  ['Zginanie przedramion z gryfem wyciągu górnego leżąc', 'biceps', 'cable', 'isolation', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/na-biceps/zginanie-przedramion-z-gryfem-wyciagu-gornego'],
+  ['Zginanie przedramion z hantlami w chwycie młotkowym (Hammer curl)', 'biceps', 'dumbbell', 'isolation', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/na-biceps/zginanie-przedramion-z-hantlami-w-chwycie'],
+  ['Zginanie przedramion w chwycie młotkowym siedząc na ławce', 'biceps', 'dumbbell', 'isolation', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/na-biceps/zginanie-przedramion-w-chwycie-mlotkowym-siedzac'],
+  ['Zginanie przedramion z gryfem łamanym na modlitewniku', 'biceps', 'barbell', 'isolation', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/na-biceps/zginanie-przedramion-z-gryfem-lamanym'],
+  ['Zginanie przedramion na zewnątrz siedząc na ławce 75 stopni', 'biceps', 'dumbbell', 'isolation', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/na-biceps/zginanie-przedramion-na-zewnatrz-siedzac'],
+  ['Zginanie przedramion z liną z wyciągu dolnego stojąc', 'biceps', 'cable', 'isolation', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/na-biceps/zginanie-przedramion-z-lina-z-wyciagu'],
+  ['Zginanie przedramion ze sztangą łamaną stojąc', 'biceps', 'barbell', 'isolation', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/na-biceps/zginanie-przedramion-ze-sztanga-lamana-stojac'],
+  ['Zginanie przedramion z hantlem w opadzie tułowia', 'biceps', 'dumbbell', 'isolation', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/na-biceps/zginanie-przedramion-z-hantlem-w-opadzie'],
+  ['Zginanie przedramienia z hantlem – łokieć oparty na udzie (Concentration curl)', 'biceps', 'dumbbell', 'isolation', 10, 12, 'https://www.fabrykasily.pl/cwiczenia/na-biceps/zginanie-przedramienia-z-hantlem-lokiec'],
+  ['Zginanie przedramion z hantlami z rotacją siedząc na ławce 90 stopni', 'biceps', 'dumbbell', 'isolation', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/na-biceps/zginanie-przedramion-z-hantlami-z-rotacja'],
+  ['Zginanie przedramion z drążkiem wyciągu dolnego stojąc', 'biceps', 'cable', 'isolation', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/na-biceps/zginanie-przedramion-z-drazkiem-wyciagu-dolnego-2'],
+  ['Zginanie przedramion ze sztangą stojąc (Barbell biceps curl)', 'biceps', 'barbell', 'isolation', 8, 12, 'https://www.fabrykasily.pl/cwiczenia/na-biceps/zginanie-przedramion-ze-sztanga-stojac-barbell'],
+
+  // ============ ŁYDKI ============
+  ['Wspięcia na palce jednonóż', 'łydki', 'bodyweight', 'isolation', 15, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/lydki/wspiecia-na-palce-jednonoz'],
+  ['Wspięcia na palce jednonóż z hantlami', 'łydki', 'dumbbell', 'isolation', 12, 20, 'https://www.fabrykasily.pl/atlas-cwiczen/lydki/wspiecia-na-palce-jednonoz-z-hantlami'],
+  ['Wspięcia na palcach siedząc ze sztangą na kolanach', 'łydki', 'barbell', 'isolation', 12, 20, 'https://www.fabrykasily.pl/cwiczenia/na-lydki/wspiecia-na-palcach-w-pozycji-siedzacej'],
+  ['Wspięcia na palcach na suwnicy (Leg press calf raise)', 'łydki', 'machine', 'isolation', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/na-lydki/wspiecia-na-palcach-na-suwnicy-calf'],
+  ['Wspięcia na palcach siedząc z użyciem sztangielki', 'łydki', 'dumbbell', 'isolation', 12, 20, 'https://www.fabrykasily.pl/cwiczenia/na-lydki/wspiecia-na-palcach-siedzac-z-uzyciem'],
+  ['Wspięcia na palcach stojąc z hantlą (Dumbbell calf raise)', 'łydki', 'dumbbell', 'isolation', 12, 20, 'https://www.fabrykasily.pl/cwiczenia/na-lydki/wspiecia-na-palcach-stojac-z-hantlami'],
+  ['Wspięcia na palcach stojąc na suwnicy Smitha', 'łydki', 'machine', 'isolation', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/na-lydki/wspiecia-na-palcach-stojac-z-wykorzystaniem-2'],
+  ['Wspięcia na palcach stojąc ze sztangą na plecach (Standing barbell calf raise)', 'łydki', 'barbell', 'isolation', 10, 15, 'https://www.fabrykasily.pl/cwiczenia/na-lydki/wspiecia-na-palcach-stojac-ze-sztanga'],
+  ['Wspięcia na palcach siedząc na maszynie (Seated calf raise machine)', 'łydki', 'machine', 'isolation', 12, 20, 'https://www.fabrykasily.pl/cwiczenia/na-lydki/wspiecia-na-palcach-siedzac-na-maszynie']
 ];
 
-const fsExercises = fsRaw.map((d, i) => ({
+const EX = fsRaw.map((d, i) => ({
   id: 'fs-' + i,
   name: d[0],
   m: d[1],
   eq: d[2],
   t: d[3],
   rr: [d[4], d[5]],
-  unit: d[4] >= 20 && d[1] === 'core' && d[0].toLowerCase().includes('deska') ? 's' : 'powt',
+  unit: d[4] >= 30 && d[1] === 'core' && d[0].toLowerCase().includes('deska') || d[0].toLowerCase().includes('spacer') || d[0].toLowerCase().includes('zwis') ? 's' : 'powt',
   url: d[6]
 }));
 
 // ============================================================
-// BAZA ĆWICZEŃ: ORYGINALNA (zabezpieczenie)
+// HELPERS
 // ============================================================
-const originalEx = [
-  { id: 'bb-bench', name: 'Wyciskanie sztangi na ławce płaskiej', m: 'klatka', eq: 'barbell', t: 'compound', rr: [5, 10] },
-  { id: 'bb-incline', name: 'Wyciskanie sztangi na ławce skośnej', m: 'klatka', eq: 'barbell', t: 'compound', rr: [6, 12] },
-  { id: 'bb-decline', name: 'Wyciskanie sztangi na ławce ujemnej', m: 'klatka', eq: 'barbell', t: 'compound', rr: [6, 12] },
-  { id: 'bb-floor-press', name: 'Wyciskanie sztangi z podłogi', m: 'klatka', eq: 'barbell', t: 'compound', rr: [5, 8] },
-  { id: 'db-bench', name: 'Wyciskanie hantli na ławce płaskiej', m: 'klatka', eq: 'dumbbell', t: 'compound', rr: [6, 12] },
-  { id: 'db-incline', name: 'Wyciskanie hantli na ławce skośnej', m: 'klatka', eq: 'dumbbell', t: 'compound', rr: [6, 12] },
-  { id: 'db-decline', name: 'Wyciskanie hantli na ławce ujemnej', m: 'klatka', eq: 'dumbbell', t: 'compound', rr: [8, 12] },
-  { id: 'db-floor-press', name: 'Wyciskanie hantli z podłogi', m: 'klatka', eq: 'dumbbell', t: 'compound', rr: [6, 10] },
-  { id: 'sa-db-bench', name: 'Wyciskanie hantli jednorącz', m: 'klatka', eq: 'dumbbell', t: 'compound', rr: [8, 12] },
-  { id: 'db-fly-flat', name: 'Rozpiętki hantlami na ławce płaskiej', m: 'klatka', eq: 'dumbbell', t: 'isolation', rr: [10, 15] },
-  { id: 'db-fly-incline', name: 'Rozpiętki hantlami na ławce skośnej', m: 'klatka', eq: 'dumbbell', t: 'isolation', rr: [10, 15] },
-  { id: 'db-fly-decline', name: 'Rozpiętki hantlami na ławce ujemnej', m: 'klatka', eq: 'dumbbell', t: 'isolation', rr: [10, 15] },
-  { id: 'svend-press', name: 'Svend press (ściskanie talerza)', m: 'klatka', eq: 'dumbbell', t: 'isolation', rr: [12, 20] },
-  { id: 'around-world', name: 'Around the worlds z hantlami', m: 'klatka', eq: 'dumbbell', t: 'isolation', rr: [10, 15] },
-  { id: 'cable-cross-high', name: 'Krzyżowanie wyciągów z góry', m: 'klatka', eq: 'cable', t: 'isolation', rr: [10, 15] },
-  { id: 'cable-cross-low', name: 'Krzyżowanie wyciągów z dołu', m: 'klatka', eq: 'cable', t: 'isolation', rr: [10, 15] },
-  { id: 'cable-cross-mid', name: 'Krzyżowanie wyciągów na wprost', m: 'klatka', eq: 'cable', t: 'isolation', rr: [10, 15] },
-  { id: 'cable-fly-bench', name: 'Rozpiętki na wyciągu na ławce', m: 'klatka', eq: 'cable', t: 'isolation', rr: [10, 15] },
-  { id: 'sa-cable-press', name: 'Wyciskanie wyciągu jednorącz', m: 'klatka', eq: 'cable', t: 'compound', rr: [10, 15] },
-  { id: 'pec-deck', name: 'Pec deck (butterfly)', m: 'klatka', eq: 'machine', t: 'isolation', rr: [10, 15] },
-  { id: 'machine-press-flat', name: 'Wyciskanie na maszynie (płaskie)', m: 'klatka', eq: 'machine', t: 'compound', rr: [8, 12] },
-  { id: 'machine-press-incline', name: 'Wyciskanie na maszynie (skośne)', m: 'klatka', eq: 'machine', t: 'compound', rr: [8, 12] },
-  { id: 'machine-press-decline', name: 'Wyciskanie na maszynie (ujemne)', m: 'klatka', eq: 'machine', t: 'compound', rr: [8, 12] },
-  { id: 'smith-bench-flat', name: 'Wyciskanie na suwnicy Smitha (płaskie)', m: 'klatka', eq: 'machine', t: 'compound', rr: [6, 12] },
-  { id: 'smith-bench-incline', name: 'Wyciskanie na suwnicy Smitha (skośne)', m: 'klatka', eq: 'machine', t: 'compound', rr: [6, 12] },
-  { id: 'dips-chest', name: 'Dipy na poręczach (klatka)', m: 'klatka', eq: 'bodyweight', t: 'compound', rr: [6, 15] },
-  { id: 'pushup', name: 'Pompki klasyczne', m: 'klatka', eq: 'bodyweight', t: 'compound', rr: [10, 25] },
-  { id: 'pushup-incline', name: 'Pompki ze stopami niżej (łatwiejsze)', m: 'klatka', eq: 'bodyweight', t: 'compound', rr: [10, 25] },
-  { id: 'pushup-decline', name: 'Pompki ze stopami w górze', m: 'klatka', eq: 'bodyweight', t: 'compound', rr: [8, 20] },
-  { id: 'pushup-deficit', name: 'Pompki na uchwytach (deficit)', m: 'klatka', eq: 'bodyweight', t: 'compound', rr: [8, 15] },
-  { id: 'pushup-archer', name: 'Pompki łucznika', m: 'klatka', eq: 'bodyweight', t: 'compound', rr: [5, 12] },
-  { id: 'plyo-pushup', name: 'Pompki plyometryczne', m: 'klatka', eq: 'bodyweight', t: 'compound', rr: [5, 10] },
-  { id: 'deadlift', name: 'Martwy ciąg klasyczny', m: 'plecy', eq: 'barbell', t: 'compound', rr: [3, 6] },
-  { id: 'sumo-dl', name: 'Martwy ciąg sumo', m: 'plecy', eq: 'barbell', t: 'compound', rr: [3, 6] },
-  { id: 'trap-bar-dl', name: 'Martwy ciąg trap-bar', m: 'plecy', eq: 'barbell', t: 'compound', rr: [4, 8] },
-  { id: 'rack-pull', name: 'Rack pulls (martwy ciąg z podstawek)', m: 'plecy', eq: 'barbell', t: 'compound', rr: [5, 8] },
-  { id: 'deficit-dl', name: 'Martwy ciąg z deficytu', m: 'plecy', eq: 'barbell', t: 'compound', rr: [4, 6] },
-  { id: 'pull-up', name: 'Podciąganie nachwytem', m: 'plecy', eq: 'bodyweight', t: 'compound', rr: [5, 12] },
-  { id: 'pull-up-wide', name: 'Podciąganie szerokim nachwytem', m: 'plecy', eq: 'bodyweight', t: 'compound', rr: [4, 10] },
-  { id: 'chin-up', name: 'Podciąganie podchwytem', m: 'plecy', eq: 'bodyweight', t: 'compound', rr: [5, 12] },
-  { id: 'pull-up-neutral', name: 'Podciąganie chwytem neutralnym', m: 'plecy', eq: 'bodyweight', t: 'compound', rr: [5, 12] },
-  { id: 'weighted-pull-up', name: 'Podciąganie z obciążeniem', m: 'plecy', eq: 'bodyweight', t: 'compound', rr: [4, 8] },
-  { id: 'inverted-row', name: 'Australijskie podciąganie (wiosło)', m: 'plecy', eq: 'bodyweight', t: 'compound', rr: [8, 15] },
-  { id: 'lat-pulldown-wide', name: 'Ściąganie drążka szerokim chwytem', m: 'plecy', eq: 'cable', t: 'compound', rr: [8, 12] },
-  { id: 'lat-pulldown-narrow', name: 'Ściąganie drążka wąskim chwytem', m: 'plecy', eq: 'cable', t: 'compound', rr: [8, 12] },
-  { id: 'lat-pulldown-neutral', name: 'Ściąganie drążka chwytem neutralnym', m: 'plecy', eq: 'cable', t: 'compound', rr: [8, 12] },
-  { id: 'lat-pulldown-reverse', name: 'Ściąganie drążka podchwytem', m: 'plecy', eq: 'cable', t: 'compound', rr: [8, 12] },
-  { id: 'sa-lat-pulldown', name: 'Ściąganie wyciągu jednorącz', m: 'plecy', eq: 'cable', t: 'compound', rr: [10, 15] },
-  { id: 'straight-arm-pulldown', name: 'Ściąganie wyciągu prostymi rękami', m: 'plecy', eq: 'cable', t: 'isolation', rr: [10, 15] },
-  { id: 'bb-row', name: 'Wiosłowanie sztangą w opadzie', m: 'plecy', eq: 'barbell', t: 'compound', rr: [6, 10] },
-  { id: 'yates-row', name: 'Wiosłowanie sztangą podchwytem (Yates)', m: 'plecy', eq: 'barbell', t: 'compound', rr: [6, 10] },
-  { id: 'pendlay-row', name: 'Pendlay row (wiosłowanie z podłogi)', m: 'plecy', eq: 'barbell', t: 'compound', rr: [5, 8] },
-  { id: 'meadows-row', name: 'Meadows row (landmine jednorącz)', m: 'plecy', eq: 'barbell', t: 'compound', rr: [8, 12] },
-  { id: 'seal-row', name: 'Seal row (wiosło na ławce w pozycji leżącej)', m: 'plecy', eq: 'barbell', t: 'compound', rr: [8, 12] },
-  { id: 't-bar', name: 'Wiosłowanie T-bar', m: 'plecy', eq: 'barbell', t: 'compound', rr: [8, 12] },
-  { id: 'db-row', name: 'Wiosłowanie hantlą jednorącz', m: 'plecy', eq: 'dumbbell', t: 'compound', rr: [8, 12] },
-  { id: 'kroc-row', name: 'Kroc row (ciężka wiosło hantlą)', m: 'plecy', eq: 'dumbbell', t: 'compound', rr: [10, 20] },
-  { id: 'chest-supp-db-row', name: 'Wiosłowanie hantlami z podparciem klatki', m: 'plecy', eq: 'dumbbell', t: 'compound', rr: [8, 12] },
-  { id: 'cable-row-wide', name: 'Wiosłowanie wyciągiem (szeroko)', m: 'plecy', eq: 'cable', t: 'compound', rr: [8, 12] },
-  { id: 'cable-row-narrow', name: 'Wiosłowanie wyciągiem (wąsko)', m: 'plecy', eq: 'cable', t: 'compound', rr: [8, 12] },
-  { id: 'sa-cable-row', name: 'Wiosłowanie wyciągiem jednorącz', m: 'plecy', eq: 'cable', t: 'compound', rr: [10, 15] },
-  { id: 'machine-row', name: 'Wiosłowanie na maszynie', m: 'plecy', eq: 'machine', t: 'compound', rr: [8, 12] },
-  { id: 'high-row-machine', name: 'High row na maszynie', m: 'plecy', eq: 'machine', t: 'compound', rr: [8, 12] },
-  { id: 'db-pullover', name: 'Pullover z hantlą', m: 'plecy', eq: 'dumbbell', t: 'isolation', rr: [10, 15] },
-  { id: 'cable-pullover', name: 'Pullover na wyciągu', m: 'plecy', eq: 'cable', t: 'isolation', rr: [10, 15] },
-  { id: 'face-pull', name: 'Przyciąganie liny do twarzy', m: 'plecy', eq: 'cable', t: 'isolation', rr: [12, 20] },
-  { id: 'shrugs-db', name: 'Wzruszenia barkami z hantlami', m: 'plecy', eq: 'dumbbell', t: 'isolation', rr: [10, 15] },
-  { id: 'shrugs-bb', name: 'Wzruszenia barkami ze sztangą', m: 'plecy', eq: 'barbell', t: 'isolation', rr: [10, 15] },
-  { id: 'shrugs-cable', name: 'Wzruszenia barkami na wyciągu', m: 'plecy', eq: 'cable', t: 'isolation', rr: [12, 20] },
-  { id: 'shrugs-trap-bar', name: 'Wzruszenia barkami trap-bar', m: 'plecy', eq: 'barbell', t: 'isolation', rr: [8, 12] },
-  { id: 'ohp', name: 'Wyciskanie żołnierskie stojąc (OHP)', m: 'barki', eq: 'barbell', t: 'compound', rr: [5, 10] },
-  { id: 'seated-bb-press', name: 'Wyciskanie sztangi siedząc', m: 'barki', eq: 'barbell', t: 'compound', rr: [6, 10] },
-  { id: 'push-press', name: 'Push press (z odbicia nóg)', m: 'barki', eq: 'barbell', t: 'compound', rr: [4, 8] },
-  { id: 'btn-press', name: 'Wyciskanie zza karku', m: 'barki', eq: 'barbell', t: 'compound', rr: [6, 10] },
-  { id: 'landmine-press', name: 'Landmine press (mina)', m: 'barki', eq: 'barbell', t: 'compound', rr: [8, 12] },
-  { id: 'db-shoulder-press', name: 'Wyciskanie hantli nad głowę stojąc', m: 'barki', eq: 'dumbbell', t: 'compound', rr: [6, 12] },
-  { id: 'seated-db-press', name: 'Wyciskanie hantli nad głowę siedząc', m: 'barki', eq: 'dumbbell', t: 'compound', rr: [6, 12] },
-  { id: 'arnold', name: 'Arnold press', m: 'barki', eq: 'dumbbell', t: 'compound', rr: [8, 12] },
-  { id: 'sa-db-press', name: 'Wyciskanie hantli nad głowę jednorącz', m: 'barki', eq: 'dumbbell', t: 'compound', rr: [8, 12] },
-  { id: 'machine-shoulder', name: 'Wyciskanie barków na maszynie', m: 'barki', eq: 'machine', t: 'compound', rr: [8, 12] },
-  { id: 'smith-shoulder-press', name: 'Wyciskanie nad głowę na suwnicy Smitha', m: 'barki', eq: 'machine', t: 'compound', rr: [6, 12] },
-  { id: 'lateral-raise', name: 'Wznosy hantli bokiem', m: 'barki', eq: 'dumbbell', t: 'isolation', rr: [10, 15] },
-  { id: 'seated-lateral', name: 'Wznosy hantli bokiem siedząc', m: 'barki', eq: 'dumbbell', t: 'isolation', rr: [12, 15] },
-  { id: 'leaning-lateral', name: 'Wznosy bokiem w przechyle (jednorącz)', m: 'barki', eq: 'dumbbell', t: 'isolation', rr: [12, 15] },
-  { id: 'cable-lateral', name: 'Wznosy linki bokiem', m: 'barki', eq: 'cable', t: 'isolation', rr: [12, 20] },
-  { id: 'machine-lateral', name: 'Wznosy bokiem na maszynie', m: 'barki', eq: 'machine', t: 'isolation', rr: [10, 15] },
-  { id: 'front-raise-db', name: 'Wznosy hantli przodem', m: 'barki', eq: 'dumbbell', t: 'isolation', rr: [10, 15] },
-  { id: 'front-raise-bb', name: 'Wznosy sztangi przodem', m: 'barki', eq: 'barbell', t: 'isolation', rr: [10, 15] },
-  { id: 'front-raise-cable', name: 'Wznosy linki przodem', m: 'barki', eq: 'cable', t: 'isolation', rr: [12, 20] },
-  { id: 'plate-raise', name: 'Wznosy talerzem przodem', m: 'barki', eq: 'barbell', t: 'isolation', rr: [10, 15] },
-  { id: 'rear-delt-machine', name: 'Odwrotne rozpiętki na maszynie (rear delt)', m: 'barki', eq: 'machine', t: 'isolation', rr: [10, 15] },
-  { id: 'rear-delt-db', name: 'Odwrotne rozpiętki hantlami w opadzie', m: 'barki', eq: 'dumbbell', t: 'isolation', rr: [12, 15] },
-  { id: 'rear-delt-cable', name: 'Odwrotne rozpiętki na wyciągu', m: 'barki', eq: 'cable', t: 'isolation', rr: [12, 20] },
-  { id: 'cable-rear-cross', name: 'Krzyżowanie wyciągów na tylne aktony', m: 'barki', eq: 'cable', t: 'isolation', rr: [12, 20] },
-  { id: 'cuban-press', name: 'Cuban press', m: 'barki', eq: 'dumbbell', t: 'compound', rr: [8, 12] },
-  { id: 'bradford-press', name: 'Bradford press', m: 'barki', eq: 'barbell', t: 'compound', rr: [8, 12] },
-  { id: 'pike-pushup', name: 'Pompki w pozycji szczupaka', m: 'barki', eq: 'bodyweight', t: 'compound', rr: [8, 15] },
-  { id: 'handstand-pushup', name: 'Pompki w staniu na rękach', m: 'barki', eq: 'bodyweight', t: 'compound', rr: [3, 8] },
-  { id: 'bb-curl', name: 'Uginanie ramion ze sztangą prostą', m: 'biceps', eq: 'barbell', t: 'isolation', rr: [8, 12] },
-  { id: 'ez-curl', name: 'Uginanie ramion ze sztangą łamaną (EZ)', m: 'biceps', eq: 'barbell', t: 'isolation', rr: [8, 12] },
-  { id: 'db-curl', name: 'Uginanie ramion z hantlami stojąc', m: 'biceps', eq: 'dumbbell', t: 'isolation', rr: [8, 12] },
-  { id: 'seated-db-curl', name: 'Uginanie hantli siedząc', m: 'biceps', eq: 'dumbbell', t: 'isolation', rr: [8, 12] },
-  { id: 'alt-db-curl', name: 'Uginanie hantli naprzemiennie', m: 'biceps', eq: 'dumbbell', t: 'isolation', rr: [10, 15] },
-  { id: 'hammer-curl', name: 'Uginanie młotkowe', m: 'biceps', eq: 'dumbbell', t: 'isolation', rr: [8, 12] },
-  { id: 'cross-hammer', name: 'Uginanie młotkowe na klatkę', m: 'biceps', eq: 'dumbbell', t: 'isolation', rr: [10, 12] },
-  { id: 'preacher-curl-bb', name: 'Uginanie na modlitewniku ze sztangą', m: 'biceps', eq: 'barbell', t: 'isolation', rr: [8, 12] },
-  { id: 'preacher-curl-db', name: 'Uginanie na modlitewniku z hantlą', m: 'biceps', eq: 'dumbbell', t: 'isolation', rr: [8, 12] },
-  { id: 'preacher-machine', name: 'Uginanie na modlitewniku (maszyna)', m: 'biceps', eq: 'machine', t: 'isolation', rr: [10, 15] },
-  { id: 'cable-curl', name: 'Uginanie ramion na wyciągu (drążek)', m: 'biceps', eq: 'cable', t: 'isolation', rr: [10, 15] },
-  { id: 'cable-rope-curl', name: 'Uginanie ramion na wyciągu (linka)', m: 'biceps', eq: 'cable', t: 'isolation', rr: [10, 15] },
-  { id: 'bayesian-curl', name: 'Bayesian curl (wyciąg za plecami)', m: 'biceps', eq: 'cable', t: 'isolation', rr: [10, 15] },
-  { id: 'concentration-curl', name: 'Uginanie z koncentracją (concentration curl)', m: 'biceps', eq: 'dumbbell', t: 'isolation', rr: [10, 12] },
-  { id: 'incline-curl', name: 'Uginanie hantli na ławce skośnej', m: 'biceps', eq: 'dumbbell', t: 'isolation', rr: [8, 12] },
-  { id: 'spider-curl', name: 'Spider curl', m: 'biceps', eq: 'dumbbell', t: 'isolation', rr: [10, 12] },
-  { id: 'zottman-curl', name: 'Zottman curl', m: 'biceps', eq: 'dumbbell', t: 'isolation', rr: [10, 12] },
-  { id: '21s', name: '21-tki ze sztangą', m: 'biceps', eq: 'barbell', t: 'isolation', rr: [21, 21] },
-  { id: 'reverse-curl', name: 'Uginanie sztangi nachwytem (reverse)', m: 'biceps', eq: 'barbell', t: 'isolation', rr: [10, 12] },
-  { id: 'drag-curl', name: 'Drag curl', m: 'biceps', eq: 'barbell', t: 'isolation', rr: [10, 12] },
-  { id: 'tri-pushdown-rope', name: 'Prostowanie ramion na wyciągu (linka)', m: 'triceps', eq: 'cable', t: 'isolation', rr: [10, 15] },
-  { id: 'tri-pushdown-vbar', name: 'Prostowanie ramion na wyciągu (V-bar)', m: 'triceps', eq: 'cable', t: 'isolation', rr: [10, 15] },
-  { id: 'tri-pushdown-bar', name: 'Prostowanie ramion na wyciągu (drążek prosty)', m: 'triceps', eq: 'cable', t: 'isolation', rr: [10, 15] },
-  { id: 'reverse-pushdown', name: 'Prostowanie ramion podchwytem', m: 'triceps', eq: 'cable', t: 'isolation', rr: [12, 15] },
-  { id: 'sa-pushdown', name: 'Prostowanie ramion jednorącz na wyciągu', m: 'triceps', eq: 'cable', t: 'isolation', rr: [10, 15] },
-  { id: 'overhead-tri-db', name: 'Wyciskanie francuskie nad głową (hantel)', m: 'triceps', eq: 'dumbbell', t: 'isolation', rr: [10, 15] },
-  { id: 'overhead-tri-cable', name: 'Wyciskanie francuskie nad głową (wyciąg)', m: 'triceps', eq: 'cable', t: 'isolation', rr: [10, 15] },
-  { id: 'overhead-tri-ez', name: 'Wyciskanie francuskie nad głową (EZ)', m: 'triceps', eq: 'barbell', t: 'isolation', rr: [10, 12] },
-  { id: 'skullcrusher-ez', name: 'Wyciskanie francuskie leżąc (EZ)', m: 'triceps', eq: 'barbell', t: 'isolation', rr: [8, 12] },
-  { id: 'skullcrusher-db', name: 'Wyciskanie francuskie leżąc (hantle)', m: 'triceps', eq: 'dumbbell', t: 'isolation', rr: [10, 12] },
-  { id: 'jm-press', name: 'JM press', m: 'triceps', eq: 'barbell', t: 'compound', rr: [6, 10] },
-  { id: 'tate-press', name: 'Tate press', m: 'triceps', eq: 'dumbbell', t: 'isolation', rr: [10, 12] },
-  { id: 'close-grip', name: 'Wyciskanie wąsko sztangą', m: 'triceps', eq: 'barbell', t: 'compound', rr: [6, 10] },
-  { id: 'close-grip-smith', name: 'Wyciskanie wąsko na suwnicy Smitha', m: 'triceps', eq: 'machine', t: 'compound', rr: [8, 12] },
-  { id: 'tri-dips', name: 'Dipy między ławkami', m: 'triceps', eq: 'bodyweight', t: 'compound', rr: [8, 15] },
-  { id: 'parallel-dips', name: 'Dipy na poręczach (triceps)', m: 'triceps', eq: 'bodyweight', t: 'compound', rr: [6, 12] },
-  { id: 'diamond-pushup', name: 'Pompki diamentowe', m: 'triceps', eq: 'bodyweight', t: 'compound', rr: [8, 15] },
-  { id: 'kickback', name: 'Wyprost ramienia w opadzie (kickback)', m: 'triceps', eq: 'dumbbell', t: 'isolation', rr: [10, 15] },
-  { id: 'cable-kickback', name: 'Kickback na wyciągu', m: 'triceps', eq: 'cable', t: 'isolation', rr: [12, 15] },
-  { id: 'back-squat', name: 'Przysiad ze sztangą (back squat)', m: 'czworogłowe', eq: 'barbell', t: 'compound', rr: [5, 10] },
-  { id: 'low-bar-squat', name: 'Przysiad low-bar', m: 'czworogłowe', eq: 'barbell', t: 'compound', rr: [3, 6] },
-  { id: 'front-squat', name: 'Przysiad przedni (front squat)', m: 'czworogłowe', eq: 'barbell', t: 'compound', rr: [5, 8] },
-  { id: 'pause-squat', name: 'Przysiad z pauzą', m: 'czworogłowe', eq: 'barbell', t: 'compound', rr: [3, 6] },
-  { id: 'box-squat', name: 'Box squat (przysiad na skrzynię)', m: 'czworogłowe', eq: 'barbell', t: 'compound', rr: [3, 6] },
-  { id: 'zercher-squat', name: 'Przysiad Zerchera', m: 'czworogłowe', eq: 'barbell', t: 'compound', rr: [6, 10] },
-  { id: 'safety-bar-squat', name: 'Przysiad ze sztangą bezpieczeństwa', m: 'czworogłowe', eq: 'barbell', t: 'compound', rr: [5, 8] },
-  { id: 'goblet-squat', name: 'Przysiad goblet z hantlą', m: 'czworogłowe', eq: 'dumbbell', t: 'compound', rr: [8, 12] },
-  { id: 'heel-elev-goblet', name: 'Przysiad goblet z piętami uniesionymi', m: 'czworogłowe', eq: 'dumbbell', t: 'compound', rr: [8, 12] },
-  { id: 'bulgarian', name: 'Przysiad bułgarski (split squat)', m: 'czworogłowe', eq: 'dumbbell', t: 'compound', rr: [8, 12] },
-  { id: 'fes-split-squat', name: 'Split squat z przednią nogą uniesioną', m: 'czworogłowe', eq: 'dumbbell', t: 'compound', rr: [8, 12] },
-  { id: 'lunges', name: 'Wykroki w miejscu z hantlami', m: 'czworogłowe', eq: 'dumbbell', t: 'compound', rr: [8, 12] },
-  { id: 'walking-lunges', name: 'Wykroki chodzone z hantlami', m: 'czworogłowe', eq: 'dumbbell', t: 'compound', rr: [10, 16] },
-  { id: 'reverse-lunges', name: 'Wykroki w tył', m: 'czworogłowe', eq: 'dumbbell', t: 'compound', rr: [8, 12] },
-  { id: 'step-up', name: 'Wchodzenie na skrzynię', m: 'czworogłowe', eq: 'dumbbell', t: 'compound', rr: [8, 12] },
-  { id: 'cossack-squat', name: 'Przysiad kozacki', m: 'czworogłowe', eq: 'dumbbell', t: 'compound', rr: [6, 10] },
-  { id: 'leg-press', name: 'Wypychanie nogami na suwnicy', m: 'czworogłowe', eq: 'machine', t: 'compound', rr: [8, 15] },
-  { id: 'sa-leg-press', name: 'Wypychanie nogą jednonóż', m: 'czworogłowe', eq: 'machine', t: 'compound', rr: [10, 15] },
-  { id: 'hack-squat', name: 'Hack przysiad (maszyna)', m: 'czworogłowe', eq: 'machine', t: 'compound', rr: [8, 12] },
-  { id: 'pendulum-squat', name: 'Pendulum squat (maszyna)', m: 'czworogłowe', eq: 'machine', t: 'compound', rr: [8, 12] },
-  { id: 'belt-squat', name: 'Przysiad z pasem (belt squat)', m: 'czworogłowe', eq: 'machine', t: 'compound', rr: [8, 12] },
-  { id: 'smith-squat', name: 'Przysiad na suwnicy Smitha', m: 'czworogłowe', eq: 'machine', t: 'compound', rr: [8, 12] },
-  { id: 'leg-ext', name: 'Prostowanie nóg siedząc', m: 'czworogłowe', eq: 'machine', t: 'isolation', rr: [10, 15] },
-  { id: 'sa-leg-ext', name: 'Prostowanie nogi jednonóż', m: 'czworogłowe', eq: 'machine', t: 'isolation', rr: [12, 15] },
-  { id: 'sissy-squat', name: 'Sissy squat', m: 'czworogłowe', eq: 'bodyweight', t: 'isolation', rr: [10, 15] },
-  { id: 'cyclist-squat', name: 'Przysiad cyklisty (wąska postawa)', m: 'czworogłowe', eq: 'dumbbell', t: 'compound', rr: [8, 12] },
-  { id: 'wall-sit', name: 'Wall sit (siad pod ścianą)', m: 'czworogłowe', eq: 'bodyweight', t: 'isolation', rr: [30, 60], unit: 's' },
-  { id: 'pistol-squat', name: 'Pistolet (przysiad jednonóż)', m: 'czworogłowe', eq: 'bodyweight', t: 'compound', rr: [4, 8] },
-  { id: 'rdl', name: 'Martwy ciąg rumuński (RDL)', m: 'dwugłowe uda', eq: 'barbell', t: 'compound', rr: [6, 10] },
-  { id: 'db-rdl', name: 'RDL z hantlami', m: 'dwugłowe uda', eq: 'dumbbell', t: 'compound', rr: [8, 12] },
-  { id: 'sl-rdl', name: 'RDL na jednej nodze', m: 'dwugłowe uda', eq: 'dumbbell', t: 'compound', rr: [8, 12] },
-  { id: 'stiff-leg-dl', name: 'Stiff-leg deadlift (sztywne nogi)', m: 'dwugłowe uda', eq: 'barbell', t: 'compound', rr: [6, 10] },
-  { id: 'lying-curl', name: 'Uginanie nóg leżąc', m: 'dwugłowe uda', eq: 'machine', t: 'isolation', rr: [8, 12] },
-  { id: 'seated-curl', name: 'Uginanie nóg siedząc', m: 'dwugłowe uda', eq: 'machine', t: 'isolation', rr: [10, 15] },
-  { id: 'standing-curl', name: 'Uginanie nóg stojąc', m: 'dwugłowe uda', eq: 'machine', t: 'isolation', rr: [10, 15] },
-  { id: 'nordic-curl', name: 'Nordic curl', m: 'dwugłowe uda', eq: 'bodyweight', t: 'isolation', rr: [4, 8] },
-  { id: 'ghr', name: 'Glute-ham raise (GHR)', m: 'dwugłowe uda', eq: 'machine', t: 'isolation', rr: [6, 10] },
-  { id: 'good-morning', name: 'Good morning ze sztangą', m: 'dwugłowe uda', eq: 'barbell', t: 'compound', rr: [8, 12] },
-  { id: 'pull-through', name: 'Cable pull-through', m: 'dwugłowe uda', eq: 'cable', t: 'compound', rr: [10, 15] },
-  { id: 'reverse-hyper', name: 'Reverse hyper (odwrotne unoszenie tułowia)', m: 'dwugłowe uda', eq: 'machine', t: 'isolation', rr: [10, 15] },
-  { id: 'back-extension', name: 'Hyperextension (unoszenie tułowia)', m: 'dwugłowe uda', eq: 'bodyweight', t: 'isolation', rr: [10, 15] },
-  { id: 'hip-thrust', name: 'Hip thrust ze sztangą', m: 'pośladki', eq: 'barbell', t: 'compound', rr: [8, 12] },
-  { id: 'db-hip-thrust', name: 'Hip thrust z hantlą', m: 'pośladki', eq: 'dumbbell', t: 'compound', rr: [10, 15] },
-  { id: 'machine-hip-thrust', name: 'Hip thrust na maszynie', m: 'pośladki', eq: 'machine', t: 'compound', rr: [10, 15] },
-  { id: 'sl-hip-thrust', name: 'Hip thrust na jednej nodze', m: 'pośladki', eq: 'bodyweight', t: 'compound', rr: [8, 12] },
-  { id: 'b-stance-hip-thrust', name: 'B-stance hip thrust', m: 'pośladki', eq: 'barbell', t: 'compound', rr: [10, 15] },
-  { id: 'glute-bridge', name: 'Mostek biodrowy', m: 'pośladki', eq: 'bodyweight', t: 'isolation', rr: [12, 20] },
-  { id: 'frog-pump', name: 'Frog pump', m: 'pośladki', eq: 'bodyweight', t: 'isolation', rr: [15, 25] },
-  { id: 'cable-kickback', name: 'Pośladek na wyciągu (kickback)', m: 'pośladki', eq: 'cable', t: 'isolation', rr: [12, 15] },
-  { id: 'machine-kickback', name: 'Kickback pośladkowy na maszynie', m: 'pośladki', eq: 'machine', t: 'isolation', rr: [10, 15] },
-  { id: 'glute-medius', name: 'Wznosy nogi bokiem (glute medius)', m: 'pośladki', eq: 'cable', t: 'isolation', rr: [12, 20] },
-  { id: 'clamshell', name: 'Clamshells z taśmą', m: 'pośladki', eq: 'bodyweight', t: 'isolation', rr: [15, 20] },
-  { id: 'standing-calf', name: 'Wspięcia na palce stojąc (maszyna)', m: 'łydki', eq: 'machine', t: 'isolation', rr: [10, 15] },
-  { id: 'seated-calf', name: 'Wspięcia na palce siedząc (maszyna)', m: 'łydki', eq: 'machine', t: 'isolation', rr: [12, 20] },
-  { id: 'donkey-calf', name: 'Donkey calf raise', m: 'łydki', eq: 'machine', t: 'isolation', rr: [10, 15] },
-  { id: 'leg-press-calf', name: 'Wspięcia na suwnicy', m: 'łydki', eq: 'machine', t: 'isolation', rr: [10, 15] },
-  { id: 'smith-calf', name: 'Wspięcia na suwnicy Smitha', m: 'łydki', eq: 'machine', t: 'isolation', rr: [10, 15] },
-  { id: 'sl-db-calf', name: 'Wspięcia jednonóż z hantlą', m: 'łydki', eq: 'dumbbell', t: 'isolation', rr: [12, 20] },
-  { id: 'db-calf', name: 'Wspięcia z hantlami', m: 'łydki', eq: 'dumbbell', t: 'isolation', rr: [12, 20] },
-  { id: 'bb-calf', name: 'Wspięcia ze sztangą', m: 'łydki', eq: 'barbell', t: 'isolation', rr: [10, 15] },
-  { id: 'tibialis-raise', name: 'Wznosy piszczeli (tibialis)', m: 'łydki', eq: 'bodyweight', t: 'isolation', rr: [15, 25] },
-  { id: 'wrist-curl-bb', name: 'Uginanie nadgarstków ze sztangą', m: 'przedramiona', eq: 'barbell', t: 'isolation', rr: [12, 20] },
-  { id: 'wrist-curl-db', name: 'Uginanie nadgarstków z hantlami', m: 'przedramiona', eq: 'dumbbell', t: 'isolation', rr: [12, 20] },
-  { id: 'reverse-wrist-curl', name: 'Odwrotne uginanie nadgarstków', m: 'przedramiona', eq: 'barbell', t: 'isolation', rr: [12, 20] },
-  { id: 'behind-back-wrist', name: 'Uginanie nadgarstków zza pleców', m: 'przedramiona', eq: 'barbell', t: 'isolation', rr: [12, 20] },
-  { id: 'farmers-carry', name: 'Spacer farmera', m: 'przedramiona', eq: 'dumbbell', t: 'compound', rr: [20, 40], unit: 's' },
-  { id: 'plate-pinch', name: 'Pinch grip (ściskanie talerzy)', m: 'przedramiona', eq: 'bodyweight', t: 'isolation', rr: [15, 30], unit: 's' },
-  { id: 'dead-hang', name: 'Wis na drążku', m: 'przedramiona', eq: 'bodyweight', t: 'isolation', rr: [20, 60], unit: 's' },
-  { id: 'wrist-roller', name: 'Wrist roller (zwijanie ciężaru)', m: 'przedramiona', eq: 'bodyweight', t: 'isolation', rr: [3, 6] },
-  { id: 'plank', name: 'Deska (plank)', m: 'core', eq: 'bodyweight', t: 'isolation', rr: [30, 60], unit: 's' },
-  { id: 'side-plank', name: 'Deska boczna', m: 'core', eq: 'bodyweight', t: 'isolation', rr: [20, 45], unit: 's' },
-  { id: 'leg-raise', name: 'Unoszenie nóg w zwisie', m: 'core', eq: 'bodyweight', t: 'isolation', rr: [8, 15] },
-  { id: 'knee-raise', name: 'Unoszenie kolan w zwisie', m: 'core', eq: 'bodyweight', t: 'isolation', rr: [10, 20] },
-  { id: 'cable-crunch', name: 'Brzuszki na wyciągu', m: 'core', eq: 'cable', t: 'isolation', rr: [10, 15] },
-  { id: 'decline-crunch', name: 'Brzuszki na ławce ujemnej', m: 'core', eq: 'bodyweight', t: 'isolation', rr: [12, 20] },
-  { id: 'situp', name: 'Klasyczne brzuszki', m: 'core', eq: 'bodyweight', t: 'isolation', rr: [15, 25] },
-  { id: 'russian-twist', name: 'Russian twist', m: 'core', eq: 'dumbbell', t: 'isolation', rr: [16, 30] },
-  { id: 'bicycle-crunch', name: 'Rowerek (bicycle crunch)', m: 'core', eq: 'bodyweight', t: 'isolation', rr: [16, 30] },
-  { id: 'ab-wheel', name: 'Rolka do brzucha', m: 'core', eq: 'bodyweight', t: 'isolation', rr: [8, 15] },
-  { id: 'dragon-flag', name: 'Dragon flag', m: 'core', eq: 'bodyweight', t: 'isolation', rr: [4, 8] },
-  { id: 'l-sit', name: 'L-sit', m: 'core', eq: 'bodyweight', t: 'isolation', rr: [10, 30], unit: 's' },
-  { id: 'v-up', name: 'V-up', m: 'core', eq: 'bodyweight', t: 'isolation', rr: [10, 20] },
-  { id: 'mountain-climber', name: 'Mountain climbers', m: 'core', eq: 'bodyweight', t: 'isolation', rr: [20, 40] },
-  { id: 'dead-bug', name: 'Dead bug', m: 'core', eq: 'bodyweight', t: 'isolation', rr: [10, 15] },
-  { id: 'pallof-press', name: 'Pallof press', m: 'core', eq: 'cable', t: 'isolation', rr: [10, 15] },
-  { id: 'woodchopper', name: 'Wood chopper na wyciągu', m: 'core', eq: 'cable', t: 'isolation', rr: [10, 15] },
-  { id: 'hanging-windshield', name: 'Wycieraczki w zwisie', m: 'core', eq: 'bodyweight', t: 'isolation', rr: [6, 12] }
-];
-
-const EX = [...fsExercises, ...originalEx];
-
-// YouTube search URL helper
-const ytUrl = (name) => `https://www.youtube.com/results?search_query=${encodeURIComponent(name + ' fabryka siły')}`;
-
-// Plate calculator (kg, standard plates)
 const PLATES = [25, 20, 15, 10, 5, 2.5, 1.25];
 function calcPlates(targetWeight, barWeight = 20) {
   const perSide = (targetWeight - barWeight) / 2;
@@ -311,24 +474,17 @@ function calcPlates(targetWeight, barWeight = 20) {
   const result = [];
   let remaining = perSide;
   for (const p of PLATES) {
-    while (remaining >= p - 0.001) {
-      result.push(p);
-      remaining -= p;
-    }
+    while (remaining >= p - 0.001) { result.push(p); remaining -= p; }
   }
   return result;
 }
 
-// Warm-up calculator: returns array of {weight, reps}
 function warmupSets(topWeight, isCompound) {
   if (topWeight < 30) return [];
   const sets = isCompound
     ? [{ pct: 0.4, reps: 8 }, { pct: 0.6, reps: 5 }, { pct: 0.8, reps: 3 }]
     : [{ pct: 0.5, reps: 8 }, { pct: 0.75, reps: 5 }];
-  return sets.map(s => ({
-    weight: Math.round((topWeight * s.pct) / 2.5) * 2.5,
-    reps: s.reps,
-  }));
+  return sets.map(s => ({ weight: Math.round((topWeight * s.pct) / 2.5) * 2.5, reps: s.reps }));
 }
 
 const EQUIPMENT_AVAILABILITY = {
@@ -371,60 +527,13 @@ function generatePlan(profile) {
   const seen = new Set();
   const days = profile.days;
 
-  const PUSH = [
-    { muscles: ['klatka'], type: 'compound', sets: 4 },
-    { muscles: ['barki'], type: 'compound', sets: 3 },
-    { muscles: ['klatka'], sets: 3 },
-    { muscles: ['barki'], type: 'isolation', sets: 3 },
-    { muscles: ['triceps'], sets: 3 },
-    { muscles: ['triceps'], sets: 3 },
-  ];
-  const PULL = [
-    { muscles: ['plecy'], type: 'compound', sets: 4 },
-    { muscles: ['plecy'], type: 'compound', sets: 3 },
-    { muscles: ['plecy'], sets: 3 },
-    { muscles: ['barki'], type: 'isolation', sets: 3 },
-    { muscles: ['biceps'], sets: 3 },
-    { muscles: ['biceps'], sets: 3 },
-  ];
-  const LEGS = [
-    { muscles: ['czworogłowe'], type: 'compound', sets: 4 },
-    { muscles: ['dwugłowe uda'], type: 'compound', sets: 3 },
-    { muscles: ['pośladki', 'czworogłowe'], sets: 3 },
-    { muscles: ['czworogłowe'], type: 'isolation', sets: 3 },
-    { muscles: ['dwugłowe uda'], type: 'isolation', sets: 3 },
-    { muscles: ['łydki'], sets: 4 },
-  ];
-  const UPPER = [
-    { muscles: ['klatka'], type: 'compound', sets: 4 },
-    { muscles: ['plecy'], type: 'compound', sets: 4 },
-    { muscles: ['barki'], type: 'compound', sets: 3 },
-    { muscles: ['plecy'], sets: 3 },
-    { muscles: ['biceps'], sets: 3 },
-    { muscles: ['triceps'], sets: 3 },
-  ];
-  const LOWER = [
-    { muscles: ['czworogłowe'], type: 'compound', sets: 4 },
-    { muscles: ['dwugłowe uda'], type: 'compound', sets: 3 },
-    { muscles: ['czworogłowe'], type: 'isolation', sets: 3 },
-    { muscles: ['dwugłowe uda'], type: 'isolation', sets: 3 },
-    { muscles: ['łydki'], sets: 4 },
-    { muscles: ['core'], sets: 3 },
-  ];
-  const FBA = [
-    { muscles: ['czworogłowe'], type: 'compound', sets: 4 },
-    { muscles: ['klatka'], type: 'compound', sets: 4 },
-    { muscles: ['plecy'], type: 'compound', sets: 4 },
-    { muscles: ['barki'], type: 'isolation', sets: 3 },
-    { muscles: ['biceps'], sets: 3 },
-  ];
-  const FBB = [
-    { muscles: ['dwugłowe uda'], type: 'compound', sets: 4 },
-    { muscles: ['barki'], type: 'compound', sets: 4 },
-    { muscles: ['plecy'], type: 'compound', sets: 4 },
-    { muscles: ['klatka'], sets: 3 },
-    { muscles: ['triceps'], sets: 3 },
-  ];
+  const PUSH = [ { muscles: ['klatka'], type: 'compound', sets: 4 }, { muscles: ['barki'], type: 'compound', sets: 3 }, { muscles: ['klatka'], sets: 3 }, { muscles: ['barki'], type: 'isolation', sets: 3 }, { muscles: ['triceps'], sets: 3 } ];
+  const PULL = [ { muscles: ['plecy'], type: 'compound', sets: 4 }, { muscles: ['plecy'], type: 'compound', sets: 3 }, { muscles: ['plecy'], sets: 3 }, { muscles: ['barki'], type: 'isolation', sets: 3 }, { muscles: ['biceps'], sets: 3 } ];
+  const LEGS = [ { muscles: ['czworogłowe'], type: 'compound', sets: 4 }, { muscles: ['dwugłowe uda'], type: 'compound', sets: 3 }, { muscles: ['pośladki', 'czworogłowe'], sets: 3 }, { muscles: ['czworogłowe'], type: 'isolation', sets: 3 }, { muscles: ['łydki'], sets: 4 } ];
+  const UPPER = [ { muscles: ['klatka'], type: 'compound', sets: 4 }, { muscles: ['plecy'], type: 'compound', sets: 4 }, { muscles: ['barki'], type: 'compound', sets: 3 }, { muscles: ['biceps'], sets: 3 }, { muscles: ['triceps'], sets: 3 } ];
+  const LOWER = [ { muscles: ['czworogłowe'], type: 'compound', sets: 4 }, { muscles: ['dwugłowe uda'], type: 'compound', sets: 3 }, { muscles: ['łydki'], sets: 4 }, { muscles: ['core'], sets: 3 } ];
+  const FBA = [ { muscles: ['czworogłowe'], type: 'compound', sets: 4 }, { muscles: ['klatka'], type: 'compound', sets: 4 }, { muscles: ['plecy'], type: 'compound', sets: 4 }, { muscles: ['barki'], type: 'isolation', sets: 3 }, { muscles: ['biceps'], sets: 3 } ];
+  const FBB = [ { muscles: ['dwugłowe uda'], type: 'compound', sets: 4 }, { muscles: ['barki'], type: 'compound', sets: 4 }, { muscles: ['plecy'], type: 'compound', sets: 4 }, { muscles: ['klatka'], sets: 3 }, { muscles: ['triceps'], sets: 3 } ];
 
   const splits = {
     2: [['Trening A — Full Body', FBA], ['Trening B — Full Body', FBB]],
@@ -435,14 +544,11 @@ function generatePlan(profile) {
   };
 
   const layout = splits[days] || splits[3];
-  return layout.map(([label, recipe]) => {
-    const localSeen = new Set();
-    return buildWorkout(label, recipe, eq, localSeen);
-  });
+  return layout.map(([label, recipe]) => buildWorkout(label, recipe, eq, new Set()));
 }
 
 // ============================================================
-// PROGRESSIVE OVERLOAD ALGORITHM
+// PROGRESSION ALGORITHM
 // ============================================================
 function getRecommendation(exercise, history) {
   const isBW = exercise.eq === 'bodyweight';
@@ -452,60 +558,24 @@ function getRecommendation(exercise, history) {
 
   if (!history || history.length === 0) {
     const startWeight = isBW ? 0 : (isCompound ? (exercise.eq === 'barbell' ? 40 : 10) : (exercise.eq === 'barbell' ? 20 : 5));
-    return {
-      weight: startWeight,
-      reps: minR + Math.floor((maxR - minR) / 2),
-      note: 'Pierwszy raz — dobierz ciężar tak, by zostawić 2-3 RIR.',
-    };
+    return { weight: startWeight, reps: minR + Math.floor((maxR - minR) / 2), note: 'Pierwszy raz — zostaw 2-3 powtórzenia w zapasie (RIR).' };
   }
 
   const last = history[history.length - 1];
   const valid = last.sets.filter(s => s.completed && s.reps > 0);
-  if (valid.length === 0) {
-    return {
-      weight: last.sets[0]?.weight || 0,
-      reps: minR,
-      note: 'Powtórz ostatnie wartości.',
-    };
-  }
+  if (valid.length === 0) return { weight: last.sets[0]?.weight || 0, reps: minR, note: 'Powtórz ostatnie wartości.' };
 
   const avgRIR = valid.reduce((a, s) => a + (s.rir ?? 2), 0) / valid.length;
   const topReps = Math.max(...valid.map(s => s.reps));
   const lastWeight = valid[0].weight;
 
-  if (avgRIR >= 3) {
-    return {
-      weight: isBW ? lastWeight : lastWeight + increment * 2,
-      reps: minR,
-      note: 'Ostatnio za łatwo (RIR 3+). Skok ciężaru.',
-    };
-  }
+  if (avgRIR >= 3) return { weight: isBW ? lastWeight : lastWeight + increment * 2, reps: minR, note: 'Ostatnio za łatwo. Skok ciężaru.' };
   if (avgRIR >= 1.5) {
-    if (topReps >= maxR) {
-      return {
-        weight: isBW ? lastWeight : lastWeight + increment,
-        reps: minR,
-        note: `Górny zakres osiągnięty. +${increment} kg, restart powtórzeń.`,
-      };
-    }
-    return {
-      weight: lastWeight,
-      reps: Math.min(topReps + 1, maxR),
-      note: 'Spróbuj dorzucić 1 powtórzenie.',
-    };
+    if (topReps >= maxR) return { weight: isBW ? lastWeight : lastWeight + increment, reps: minR, note: `Górny zakres osiągnięty. +${increment} kg.` };
+    return { weight: lastWeight, reps: Math.min(topReps + 1, maxR), note: 'Spróbuj dorzucić 1 powtórzenie.' };
   }
-  if (avgRIR >= 0.5) {
-    return {
-      weight: lastWeight,
-      reps: topReps,
-      note: 'Konsoliduj — ten sam ciężar i powtórzenia.',
-    };
-  }
-  return {
-    weight: isBW ? lastWeight : Math.max(0, lastWeight - increment * 2),
-    reps: minR,
-    note: 'Zostawiłeś wszystko (RIR 0). Lekki deload.',
-  };
+  if (avgRIR >= 0.5) return { weight: lastWeight, reps: topReps, note: 'Ten sam ciężar i powtórzenia.' };
+  return { weight: isBW ? lastWeight : Math.max(0, lastWeight - increment * 2), reps: minR, note: 'Lekki deload (RIR 0 ostatnio).' };
 }
 
 // ============================================================
@@ -519,10 +589,7 @@ const KEY_ACTIVE = 'progres:active';
 async function loadAll() {
   const out = { profile: null, plan: null, history: {}, active: null };
   for (const [field, key] of [['profile', KEY_PROFILE], ['plan', KEY_PLAN], ['history', KEY_HISTORY], ['active', KEY_ACTIVE]]) {
-    try {
-      const v = localStorage.getItem(key);
-      if (v) out[field] = JSON.parse(v);
-    } catch (e) {}
+    try { const v = localStorage.getItem(key); if (v) out[field] = JSON.parse(v); } catch (e) {}
   }
   if (!out.history || typeof out.history !== 'object') out.history = {};
   return out;
@@ -535,7 +602,7 @@ async function saveOne(key, val) {
 }
 
 // ============================================================
-// UI HELPERS
+// UI HELPERS & ONBOARDING
 // ============================================================
 const FONT_IMPORT = `
 @import url('https://fonts.googleapis.com/css2?family=Anton&family=Sora:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap');
@@ -545,104 +612,49 @@ body, html, #root { background: #0a0a0a; }
 .font-body { font-family: 'Sora', sans-serif; }
 .font-mono { font-family: 'JetBrains Mono', monospace; }
 input[type="number"] { -moz-appearance: textfield; }
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
 .scroll-hide::-webkit-scrollbar { display: none; }
 .scroll-hide { -ms-overflow-style: none; scrollbar-width: none; }
-@keyframes pulse-lime { 0%,100% { box-shadow: 0 0 0 0 rgba(212,255,0,0.4); } 50% { box-shadow: 0 0 0 8px rgba(212,255,0,0); } }
-.pulse-lime { animation: pulse-lime 2s infinite; }
 `;
 
 const Btn = ({ children, onClick, variant = 'primary', className = '', ...rest }) => {
   const base = 'font-display uppercase tracking-wider text-base py-3 px-5 transition-all active:scale-[0.97] flex items-center justify-center gap-2';
   const styles = {
     primary: 'bg-[#d4ff00] text-black hover:bg-[#c0e800]',
-    ghost: 'bg-transparent text-white border border-neutral-800 hover:border-neutral-600',
+    ghost: 'bg-transparent text-white border border-neutral-800 hover:border-neutral-700',
     dark: 'bg-neutral-900 text-white border border-neutral-800',
     danger: 'bg-transparent text-red-400 border border-red-900/60',
   };
   return <button onClick={onClick} className={`${base} ${styles[variant]} ${className}`} {...rest}>{children}</button>;
 };
 
-// ============================================================
-// ONBOARDING
-// ============================================================
 function Onboarding({ onDone }) {
   const [step, setStep] = useState(0);
   const [data, setData] = useState({ goal: null, experience: null, days: null, equipment: null });
-
   const steps = [
-    {
-      key: 'goal', q: 'Jaki jest Twój cel?',
-      opts: [
-        { v: 'muscle', l: 'Budowa masy', d: 'Hipertrofia, średnie zakresy' },
-        { v: 'strength', l: 'Siła', d: 'Niskie powtórzenia, większy ciężar' },
-        { v: 'both', l: 'Siła + masa', d: 'Mieszane podejście' },
-      ],
-    },
-    {
-      key: 'experience', q: 'Twoje doświadczenie',
-      opts: [
-        { v: 'beginner', l: 'Początkujący', d: 'Mniej niż 6 miesięcy' },
-        { v: 'intermediate', l: 'Średniozaawansowany', d: '6 mies. – 2 lata' },
-        { v: 'advanced', l: 'Zaawansowany', d: 'Ponad 2 lata' },
-      ],
-    },
-    {
-      key: 'days', q: 'Ile dni w tygodniu trenujesz?',
-      opts: [
-        { v: 2, l: '2 dni', d: 'Full Body × 2' },
-        { v: 3, l: '3 dni', d: 'Push / Pull / Legs' },
-        { v: 4, l: '4 dni', d: 'Upper / Lower × 2' },
-        { v: 5, l: '5 dni', d: 'PPL + Upper/Lower' },
-        { v: 6, l: '6 dni', d: 'Push/Pull/Legs × 2' },
-      ],
-    },
-    {
-      key: 'equipment', q: 'Jaki masz sprzęt?',
-      opts: [
-        { v: 'full_gym', l: 'Pełna siłownia', d: 'Sztanga, hantle, wyciągi, maszyny' },
-        { v: 'home_full', l: 'Dom: sztanga + hantle', d: 'Bez wyciągów i maszyn' },
-        { v: 'dumbbell', l: 'Tylko hantle', d: 'Hantle + masa ciała' },
-        { v: 'bodyweight', l: 'Masa ciała', d: 'Bez sprzętu' },
-      ],
-    },
+    { key: 'goal', q: 'Jaki jest Twój cel?', opts: [{ v: 'muscle', l: 'Budowa masy', d: 'Hipertrofia' }, { v: 'strength', l: 'Siła', d: 'Niskie powtórzenia' }, { v: 'both', l: 'Siła + masa', d: 'Mieszane' }] },
+    { key: 'experience', q: 'Twoje doświadczenie', opts: [{ v: 'beginner', l: 'Początkujący', d: '< 6 miesięcy' }, { v: 'intermediate', l: 'Średniozaawansowany', d: '6m – 2 lata' }, { v: 'advanced', l: 'Zaawansowany', d: '> 2 lata' }] },
+    { key: 'days', q: 'Dni w tygodniu?', opts: [{ v: 3, l: '3 dni', d: 'PPL' }, { v: 4, l: '4 dni', d: 'Upper/Lower' }, { v: 5, l: '5 dni', d: 'PPL + UL' }, { v: 6, l: '6 dni', d: 'PPL x2' }] },
+    { key: 'equipment', q: 'Jaki masz sprzęt?', opts: [{ v: 'full_gym', l: 'Pełna siłownia', d: 'Wszystko' }, { v: 'home_full', l: 'Dom: sztanga + hantle', d: 'Brak maszyn' }, { v: 'dumbbell', l: 'Tylko hantle', d: 'Hantle + BW' }, { v: 'bodyweight', l: 'Masa ciała', d: 'Bez sprzętu' }] },
   ];
-
   const cur = steps[step];
 
   const choose = (val) => {
     const next = { ...data, [cur.key]: val };
     setData(next);
-    if (step < steps.length - 1) {
-      setTimeout(() => setStep(step + 1), 150);
-    } else {
-      onDone(next);
-    }
+    if (step < steps.length - 1) setTimeout(() => setStep(step + 1), 150);
+    else onDone(next);
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white font-body flex flex-col">
-      <div className="px-5 pt-12 pb-6">
-        <div className="flex gap-1.5 mb-8">
-          {steps.map((_, i) => (
-            <div key={i} className={`h-1 flex-1 rounded-full ${i <= step ? 'bg-[#d4ff00]' : 'bg-neutral-800'}`} />
-          ))}
-        </div>
-        <div className="text-neutral-500 text-xs uppercase tracking-widest mb-2">Krok {step + 1} z {steps.length}</div>
-        <h1 className="font-display text-4xl uppercase leading-tight">{cur.q}</h1>
-      </div>
-      <div className="flex-1 px-5 pb-8 space-y-3">
+    <div className="min-h-screen bg-[#0a0a0a] text-white flex flex-col p-5 pt-12">
+      <div className="flex gap-1.5 mb-8">{steps.map((_, i) => <div key={i} className={`h-1 flex-1 rounded-full ${i <= step ? 'bg-[#d4ff00]' : 'bg-neutral-800'}`} />)}</div>
+      <h1 className="font-display text-4xl uppercase mb-8">{cur.q}</h1>
+      <div className="space-y-3">
         {cur.opts.map(opt => (
-          <button
-            key={opt.v}
-            onClick={() => choose(opt.v)}
-            className={`w-full text-left p-5 border transition-all active:scale-[0.99] ${
-              data[cur.key] === opt.v ? 'border-[#d4ff00] bg-[#d4ff00]/5' : 'border-neutral-800 hover:border-neutral-700'
-            }`}
-          >
+          <button key={opt.v} onClick={() => choose(opt.v)} className={`w-full text-left p-5 border ${data[cur.key] === opt.v ? 'border-[#d4ff00] bg-[#d4ff00]/5' : 'border-neutral-800'}`}>
             <div className="font-display text-2xl uppercase">{opt.l}</div>
-            <div className="text-sm text-neutral-500 mt-1">{opt.d}</div>
+            <div className="text-sm text-neutral-500">{opt.d}</div>
           </button>
         ))}
       </div>
@@ -651,88 +663,53 @@ function Onboarding({ onDone }) {
 }
 
 // ============================================================
-// HOME
+// WIDOKI GŁÓWNE
 // ============================================================
-function HomeView({ profile, plan, history, onStart, onPickWorkout }) {
+function HomeView({ plan, history, onStart }) {
   const totalSessions = Object.values(history).reduce((a, h) => a + (h?.length || 0), 0);
-  const lastDate = useMemo(() => {
-    let max = 0;
-    for (const sessions of Object.values(history)) {
-      for (const s of sessions || []) {
-        if (s.date > max) max = s.date;
-      }
-    }
-    return max;
-  }, [history]);
-
-  // Suggest next workout: cycle through plan based on last completed
+  
   const todayIdx = useMemo(() => {
     if (!plan || plan.length === 0) return 0;
+    
+    // Create a deduplicated list of sessions by sessionId
     const sessionsMap = {};
     for (const [exId, sessions] of Object.entries(history)) {
       for (const s of sessions || []) {
         if (!sessionsMap[s.sessionId]) {
-          sessionsMap[s.sessionId] = {
-            sessionId: s.sessionId,
-            workoutName: s.workoutName,
-            date: s.date,
-          };
+          sessionsMap[s.sessionId] = { date: s.date, workoutName: s.workoutName };
         }
       }
     }
-    const sessionsList = Object.values(sessionsMap).sort((a, b) => b.date - a.date);
-    if (sessionsList.length === 0) return 0;
-    const lastName = sessionsList[0]?.workoutName;
+    const sessionList = Object.values(sessionsMap).sort((a, b) => b.date - a.date);
+    
+    if (sessionList.length === 0) return 0;
+    const lastName = sessionList[0]?.workoutName;
     const idx = plan.findIndex(w => w.name === lastName);
     return idx === -1 ? 0 : (idx + 1) % plan.length;
   }, [plan, history]);
 
   const next = plan?.[todayIdx];
-  const daysSince = lastDate ? Math.floor((Date.now() - lastDate) / 86400000) : null;
 
   return (
     <div className="px-5 pt-10 pb-24">
-      <div className="flex items-baseline justify-between mb-1">
-        <h1 className="font-display text-5xl uppercase">PROGRES</h1>
-        <span className="font-mono text-xs text-neutral-600">v1.0</span>
-      </div>
-      <p className="text-neutral-500 text-sm uppercase tracking-widest mb-8">Trener siłowy</p>
-
-      <div className="grid grid-cols-2 gap-3 mb-8">
-        <div className="border border-neutral-800 p-4">
-          <div className="text-xs text-neutral-500 uppercase tracking-wider mb-1">Sesje</div>
-          <div className="font-mono text-3xl text-[#d4ff00]">{totalSessions}</div>
-        </div>
-        <div className="border border-neutral-800 p-4">
-          <div className="text-xs text-neutral-500 uppercase tracking-wider mb-1">Ostatnio</div>
-          <div className="font-mono text-3xl text-white">
-            {daysSince === null ? '—' : daysSince === 0 ? 'dziś' : `${daysSince}d`}
-          </div>
-        </div>
-      </div>
+      <h1 className="font-display text-5xl uppercase text-[#d4ff00]">PROGRES</h1>
+      <p className="text-neutral-500 text-sm uppercase mb-8">Trener Siłowy</p>
 
       {next && (
-        <div className="border-2 border-[#d4ff00] p-5 mb-6 relative overflow-hidden">
-          <div className="absolute top-2 right-2 text-xs font-mono text-[#d4ff00] uppercase">Dziś</div>
-          <div className="text-xs uppercase tracking-widest text-neutral-400 mb-2">Następny trening</div>
-          <h2 className="font-display text-3xl uppercase mb-1">{next.name}</h2>
-          <div className="text-sm text-neutral-400 mb-5">{next.exercises.length} ćwiczeń · {next.exercises.reduce((a, e) => a + e.sets, 0)} serii</div>
-          <Btn onClick={() => onStart(todayIdx)} className="w-full pulse-lime"><Play size={18} strokeWidth={3}/>Rozpocznij</Btn>
+        <div className="border border-[#d4ff00] p-5 mb-6">
+          <div className="text-xs uppercase text-neutral-400 mb-2">Następny w planie</div>
+          <h2 className="font-display text-3xl uppercase mb-4">{next.name}</h2>
+          <Btn onClick={() => onStart(todayIdx)} className="w-full"><Play size={18} strokeWidth={3}/>Rozpocznij</Btn>
         </div>
       )}
 
-      <div className="text-xs text-neutral-500 uppercase tracking-widest mb-3">Tygodniowy plan</div>
+      <div className="text-xs text-neutral-500 uppercase tracking-widest mb-3">Twój plan</div>
       <div className="space-y-2">
         {plan?.map((w, i) => (
-          <button
-            key={i}
-            onClick={() => onPickWorkout(i)}
-            className={`w-full text-left p-4 border ${i === todayIdx ? 'border-[#d4ff00]/40 bg-[#d4ff00]/5' : 'border-neutral-800'} flex items-center justify-between active:scale-[0.99] transition`}
-          >
+          <button key={i} onClick={() => onStart(i)} className={`w-full text-left p-4 border ${i === todayIdx ? 'border-[#d4ff00]/40 bg-[#d4ff00]/5' : 'border-neutral-800'} flex items-center justify-between`}>
             <div>
-              <div className="font-mono text-xs text-neutral-500 mb-0.5">DZIEŃ {i + 1}</div>
+              <div className="font-mono text-xs text-neutral-500">DZIEŃ {i + 1}</div>
               <div className="font-display text-xl uppercase">{w.name}</div>
-              <div className="text-xs text-neutral-500 mt-1">{w.exercises.length} ćwiczeń</div>
             </div>
             <ChevronRight className="text-neutral-600" />
           </button>
@@ -753,71 +730,46 @@ function ExerciseDetail({ exercise, history, onClose, onSwap, swapMode }) {
   const exHistory = history?.[exercise.id] || [];
   const allSets = exHistory.flatMap(s => s.sets.filter(st => st.completed));
   const pr = allSets.reduce((a, s) => Math.max(a, s.weight || 0), 0);
-  const vUrl = exercise.url || ytUrl(exercise.name);
 
   return (
     <div className="fixed inset-0 z-50 bg-black/80 flex items-end sm:items-center justify-center" onClick={onClose}>
-      <div
-        className="bg-[#0a0a0a] border-t-2 sm:border-2 border-[#d4ff00] w-full max-w-lg max-h-[90vh] overflow-y-auto"
-        onClick={e => e.stopPropagation()}
-      >
-        <div className="sticky top-0 bg-[#0a0a0a] border-b border-neutral-900 px-5 py-4 flex items-start justify-between gap-3">
+      <div className="bg-[#0a0a0a] border-t-2 sm:border-2 border-[#d4ff00] w-full max-w-lg max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+        <div className="p-5 flex justify-between items-start border-b border-neutral-900">
           <div>
-            <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-[#d4ff00] mb-1">
+            <div className="flex items-center gap-2 text-[10px] uppercase text-[#d4ff00] mb-1">
               <span>{exercise.m}</span>
               <span className="text-neutral-700">·</span>
               <span className="text-neutral-500">{eqLabel(exercise.eq)}</span>
-              <span className="text-neutral-700">·</span>
-              <span className="text-neutral-500">{exercise.t === 'compound' ? 'Wielost.' : 'Izol.'}</span>
             </div>
             <h2 className="font-display text-2xl uppercase leading-tight">{exercise.name}</h2>
           </div>
-          <button onClick={onClose} className="shrink-0 w-8 h-8 flex items-center justify-center text-neutral-500 hover:text-white">
-            <X size={20}/>
-          </button>
+          <button onClick={onClose} className="shrink-0 text-neutral-500 hover:text-white"><X size={24}/></button>
         </div>
-
         <div className="p-5 space-y-5">
           {pr > 0 && (
             <div className="border border-neutral-800 p-3 flex items-center gap-3">
               <Award className="text-[#d4ff00]" size={20}/>
               <div>
-                <div className="text-[10px] uppercase tracking-widest text-neutral-500">Twój rekord</div>
+                <div className="text-[10px] text-neutral-500 uppercase">Twój rekord</div>
                 <div className="font-mono text-lg text-white">{pr} kg</div>
               </div>
             </div>
           )}
-
           <div className="border border-neutral-800 p-3">
-            <div className="text-xs uppercase tracking-widest text-neutral-500 mb-2">Zakres roboczy</div>
-            <div className="font-mono text-base text-white">{exercise.rr[0]}–{exercise.rr[1]} {exercise.unit || 'powtórzeń'}</div>
+            <div className="text-xs uppercase text-neutral-500 mb-1">Zakres roboczy</div>
+            <div className="font-mono text-white">{exercise.rr[0]}–{exercise.rr[1]} {exercise.unit || 'powt'}</div>
           </div>
-
-          <a
-            href={vUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-full bg-neutral-900 border border-neutral-800 hover:border-red-500/60 transition-colors p-4 flex items-center justify-between"
-          >
+          <a href={exercise.url} target="_blank" rel="noopener noreferrer" className="bg-neutral-900 border border-neutral-800 p-4 flex items-center justify-between hover:border-red-500 transition-colors">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-7 bg-red-600 rounded-sm flex items-center justify-center">
-                <Play size={14} fill="white" stroke="white"/>
-              </div>
+              <div className="w-10 h-7 bg-red-600 flex items-center justify-center rounded-sm"><Play size={14} fill="white" stroke="white"/></div>
               <div>
-                <div className="font-display text-base uppercase">Zobacz wideo instruktaż</div>
-                <div className="text-[10px] text-neutral-500 uppercase tracking-widest">
-                  {exercise.url ? 'Wideo z Fabryki Siły' : 'Wyszukaj na YouTube'}
-                </div>
+                <div className="font-display uppercase text-base">Zobacz instruktaż</div>
+                <div className="text-[10px] text-neutral-500 uppercase tracking-widest">Wideo z Fabryki Siły</div>
               </div>
             </div>
             <ExternalLink size={16} className="text-neutral-500"/>
           </a>
-
-          {onSwap && (
-            <Btn variant="ghost" onClick={onSwap} className="w-full">
-              <Repeat size={16}/>{swapMode ? 'Wymień to ćwiczenie' : 'Pokaż alternatywy'}
-            </Btn>
-          )}
+          {onSwap && <Btn variant="ghost" onClick={onSwap} className="w-full"><Repeat size={16}/>{swapMode ? 'Wymień to ćwiczenie' : 'Pokaż alternatywy'}</Btn>}
         </div>
       </div>
     </div>
@@ -1192,27 +1144,17 @@ function SetRow({ idx, set, ex, recommended, allTimeBest, onUpdate }) {
 // ============================================================
 function HistoryView({ history }) {
   const allSessions = useMemo(() => {
-    const sessionsMap = {};
-    
-    // Zbieramy historię i grupujemy po sessionId, żeby aplikacja nie wysypywała się przy ładowaniu starych treningów
-    for (const [exId, sessions] of Object.entries(history)) {
-      for (const s of sessions || []) {
-        if (!sessionsMap[s.sessionId]) {
-          sessionsMap[s.sessionId] = {
-            sessionId: s.sessionId,
-            workoutName: s.workoutName,
-            date: s.date,
-            exercises: []
-          };
-        }
-        sessionsMap[s.sessionId].exercises.push({
-          exerciseId: exId,
-          sets: s.sets
-        });
-      }
+    const arr = [];
+    for (const sessions of Object.values(history)) {
+      for (const s of sessions || []) arr.push(s);
     }
-    
-    return Object.values(sessionsMap).sort((a, b) => b.date - a.date);
+    // dedupe by sessionId
+    const seen = new Set();
+    return arr.filter(s => {
+      if (seen.has(s.sessionId)) return false;
+      seen.add(s.sessionId);
+      return true;
+    }).sort((a, b) => b.date - a.date);
   }, [history]);
 
   return (
@@ -1382,8 +1324,7 @@ function LibraryView({ history }) {
               <div className="flex items-baseline justify-between gap-2">
                 <h3 className="font-body text-sm text-white truncate flex-1">{e.name}</h3>
                 <div className="flex items-center gap-1.5 shrink-0">
-                  {/* POPRAWKA: Pokazuje ładny napis WIDEO dla ćwiczeń z FS */}
-                  <span className="text-[9px] font-mono text-[#d4ff00] uppercase">{e.url ? 'WIDEO FS' : 'WIDEO YT'}</span>
+                  <span className="text-[9px] font-mono text-[#d4ff00] uppercase">WIDEO</span>
                   <span className="text-[10px] font-mono text-neutral-500 uppercase">{e.t === 'compound' ? 'Wielost.' : 'Izol.'}</span>
                 </div>
               </div>
@@ -1743,7 +1684,6 @@ export default function App() {
     saveOne(KEY_ACTIVE, newActive);
   };
 
-  // POPRAWKA: Zapisywanie na stałe wymiany ćwiczenia do planu treningowego
   const handleSwapExercise = (exIdx, newEx) => {
     if (!active || !plan) return;
     
@@ -1783,7 +1723,7 @@ export default function App() {
     setActive(null);
     saveOne(KEY_ACTIVE, null);
     
-    // POPRAWKA: Powrót do ekranu głównego (Dziś)
+    // Zmiana: Powrót do ekranu głównego
     setView('home');
   };
 
